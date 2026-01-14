@@ -56,6 +56,164 @@ String.valueOf(request.getAttribute("resNum")); %>
         padding: 12px 30px;
         font-size: 1.1em;
       }
+
+
+      /* ✅ 배경 오버레이  */
+.popup-overlay{
+  position: fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;   /* 팝업(1000)보다 1 낮게 */
+  display:none;
+}
+
+/* ✅ 팝업이 오버레이 위로 오게 */
+.sub-popup{
+  z-index: 1000;
+}
+  /* ================================
+   ✅ 구독 혜택 팝업 스타일
+================================ */
+.sub-popup{
+  position: fixed;
+  top: 220px;
+  left: 50px;
+  width: 520px;
+  max-width: calc(100vw - 24px);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 14px;
+  padding: 22px 22px 16px;
+  z-index: 1000;
+  box-shadow: 0 18px 45px rgba(0,0,0,.18);
+}
+
+.sub-popup__x{
+  position:absolute;
+  top:10px;
+  right:12px;
+  width:34px;
+  height:34px;
+  border:none;
+  background:transparent;
+  font-size:26px;
+  line-height:34px;
+  cursor:pointer;
+  color:#111;
+  opacity:.65;
+}
+.sub-popup__x:hover{ opacity:1; }
+
+.sub-popup__title{
+  text-align: center;
+  margin: 0 0 30px 10px;
+  font-size: 44px;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+}
+
+.sub-popup__desc{
+  text-align: center;
+  font-size: 16px;
+  color:#222;
+  line-height:1.5;
+  margin-bottom: 16px;
+}
+
+.sub-popup__grid{
+  display:flex;
+  flex-direction:column;
+  gap: 16px;
+}
+
+.sub-popup__row{
+  display:grid;
+  grid-template-columns: 1fr 30px 1fr;
+  align-items:center;
+  gap: 10px;
+}
+
+.sub-popup__card{
+  margin:0;
+  background:#fff;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 8px;
+  overflow:hidden;
+  min-height: 120px;
+  display:flex;
+  flex-direction:column;
+}
+
+.sub-popup__card img{
+  width:100%;
+  height: 150px;
+  object-fit: cover;
+  background:#f3f4f6;
+  display:block;
+}
+
+.sub-popup__arrow{
+  text-align:center;
+  font-size: 26px;
+  font-weight: 700;
+  color:#111;
+  opacity:.7;
+}
+
+.sub-popup__cap{
+  padding: 10px 10px 12px;
+  text-align:center;
+  font-size: 16px;
+  font-weight: 700;
+  color:#111;
+}
+
+.sub-popup__hr{
+  border:none;
+  border-top: 1px solid rgba(0,0,0,.10);
+  margin: 14px 0 12px;
+}
+
+.sub-popup__footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 10px;
+}
+
+.sub-popup__check{
+  font-size: 14px;
+  color:#111;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.sub-popup__btn{
+  border:none;
+  background:#0ea5e9;
+  color:#fff;
+  font-weight:700;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor:pointer;
+}
+.sub-popup__btn:hover{ opacity:.92; }
+
+@media (max-width: 560px){
+  .sub-popup{
+    left: 12px;
+    right: 12px;
+    width: auto;
+    top: 12px;
+  }
+  .sub-popup__title{ font-size: 34px; }
+  .sub-popup__row{ grid-template-columns: 1fr 26px 1fr; }
+  .sub-popup__card img{ height: 120px; }
+}
+
+
+
     </style>
   </head>
 
@@ -377,6 +535,65 @@ String.valueOf(request.getAttribute("resNum")); %>
 
     <script src="<%= request.getContextPath() %>/js/reservation-pie.js"></script>
     <script src="<%= request.getContextPath() %>/js/reservation-calendar.js"></script>
+
+<!-- ================================
+     ✅ 구독 혜택 팝업 (7일간 숨김)
+================================ -->
+<div id="popup-overlay" class="popup-overlay" style="display:none;"></div>
+<div id="ad-popup" class="sub-popup" style="display:none;">
+  <button class="sub-popup__x" type="button" onclick="closePopup()" aria-label="닫기">×</button>
+
+  <h2 class="sub-popup__title">구독 혜택</h2>
+
+  <div class="sub-popup__desc">
+    <div>여행하기 예산배분 잠금 활성화</div>
+    <div>일1회 경로 생성 → 무제한 이용 가능</div>
+  </div>
+
+  <div class="sub-popup__grid">
+    <!-- ✅ Row 1: 예산 배분 잠금 → 해제 -->
+    <div class="sub-popup__row">
+      <figure class="sub-popup__card">
+        <img src="/img/ad/ad1.PNG" alt="예산배분 잠금 상태" />
+      </figure>
+
+      <div class="sub-popup__arrow">→</div>
+
+      <figure class="sub-popup__card">
+        <img src="/img/ad/ad2.PNG" alt="예산배분 무제한 상태" />
+      </figure>
+    </div>
+
+    <!-- ✅ Row 2: 경로 보기 1회 → 무제한 -->
+    <div class="sub-popup__row">
+      <figure class="sub-popup__card">
+        <img src="/img/ad/ad3.PNG" alt="차량 경로 보기 1회" />
+        <figcaption class="sub-popup__cap">차량 경로 보기 일 1회</figcaption>
+      </figure>
+
+      <div class="sub-popup__arrow">→</div>
+
+      <figure class="sub-popup__card">
+        <img src="/img/ad/ad3.PNG" alt="무제한 이용 가능" />
+        <figcaption class="sub-popup__cap">무제한 이용 가능</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <hr class="sub-popup__hr" />
+
+  <div class="sub-popup__footer">
+    <label class="sub-popup__check">
+      <input type="checkbox" id="today-check" />
+      7일 동안 보지 않기
+    </label>
+
+    <button class="sub-popup__btn" type="button" onclick="closePopup()">닫기</button>
+  </div>
+</div>
+
+
+
 
     <%@ include file="components/footer.jsp" %>
 
@@ -1153,6 +1370,41 @@ String.valueOf(request.getAttribute("resNum")); %>
       app.mixin(window.ReservationCalendarMixin);
 
       app.mount("#app"); // Vue 앱 시작
+
+
+     // ================================
+  // ✅ 광고 팝업 제어 (7일)
+  // ================================
+  document.addEventListener("DOMContentLoaded", function () {
+  const popup = document.getElementById("ad-popup");
+  const overlay = document.getElementById("popup-overlay");
+  if (!popup || !overlay) return;
+
+  const expiry = localStorage.getItem("ad-expiry");
+  const now = new Date().getTime();
+
+  if (!expiry || now > parseInt(expiry)) {
+    popup.style.display = "block";
+    overlay.style.display = "block";
+  } else {
+    popup.style.display = "none";
+    overlay.style.display = "none";
+  }
+});
+
+function closePopup() {
+  const popup = document.getElementById("ad-popup");
+  const overlay = document.getElementById("popup-overlay");
+  const isChecked = document.getElementById("today-check")?.checked;
+
+  if (isChecked) {
+    const expiryDate = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
+    localStorage.setItem("ad-expiry", expiryDate);
+  }
+
+  popup.style.display = "none";
+  overlay.style.display = "none";
+}
     </script>
   </body>
 </html>
