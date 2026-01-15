@@ -1659,7 +1659,7 @@
                   /* ✅ (추가) 추천 여행지 둘러보기 Swiper 초기화 */
                   self.initRegionSwiper();
                 });
-              },
+              }
 
               /* ✅ 지도 생성 + relayout 강제 (붕 뜨는 문제 해결: 최종 방어 버전) */
               initMap() {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.LodgeMapper">
+    <update id="Payment" parameterType="hashmap">
+    	UPDATE RESERVATION_ACC
+    	SET
+        	ROOM_NAME    = #{roomName},
+        	CHECK_IN     = TO_DATE(#{checkIn}, 'YYYY-MM-DD'),
+        	CHECK_OUT    = TO_DATE(#{checkOut}, 'YYYY-MM-DD'),
+        	STAY_DAYS    = #{stayDays},
+        	PEOPLE_CNT   = #{peopleCnt},
+        	TOTAL_PRICE  = #{totalPrice},
+        	PAYMENT_UID  = #{paymentUid},
+        	PAYMENT_STAT = 'PAID',
+        	UDATETIME    = SYSDATE,
+	    WHERE RESNUM = #{resNum}
+	</update>
+    
+</mapper>

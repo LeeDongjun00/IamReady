@@ -4,7 +4,8 @@
 
 <mapper namespace="com.example.test1.mapper.ReviewMapper">
 	<select id="myResList" parameterType="hashmap" resultType="com.example.test1.model.Review">
-		SELECT * FROM RESERVATION 
+		SELECT * FROM RESERVATION  R
+   		left join RESERVATION_ACC A ON R.RES_NUM = A.RESNUM
 		WHERE USER_ID = #{userId}		
 		ORDER BY RDATETIME DESC
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
