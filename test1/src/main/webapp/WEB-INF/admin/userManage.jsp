@@ -1,13 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <meta charset="UTF-8">
 
-<h2>대시보드</h2>
+<h2>회원 관리</h2>
 
-<div id="dashboardApp">
+<div id="userManageApp">
   <table>
     <tr>
       <th>회원수</th>
-      <th>신고</th>
+      <th>문의</th>
     </tr>
     <!-- <tr>
       <td>{{ memberCnt }}</td>
@@ -15,12 +15,12 @@
     </tr> -->
   </table>
   <div>
-    dashboard
+    userManage
   </div>
 </div>
 
 <script>
-const dashboardApp = Vue.createApp({
+const userManageApp = Vue.createApp({
   data() {
     return {
       memberCnt: 0,
@@ -52,5 +52,5 @@ const dashboardApp = Vue.createApp({
   }
 });
 
-dashboardApp.mount('#dashboardApp');
+userManageApp.mount('#userManageApp');
 </script>

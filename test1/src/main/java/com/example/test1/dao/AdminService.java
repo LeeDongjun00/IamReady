@@ -1,8 +1,13 @@
 package com.example.test1.dao;
 
 import com.example.test1.mapper.AdminMapper;
+import com.example.test1.mapper.MemberMapper;
 import com.example.test1.model.Comment;
 import com.example.test1.model.MainBoard;
+import com.example.test1.model.Member;
+import com.example.test1.model.Report;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -11,20 +16,26 @@ import java.util.Map;
 
 @Service
 public class AdminService {
+//	@Autowired
+//	AdminMapper adminMapper;
+	
     private final AdminMapper adminMapper;
 
     public AdminService(AdminMapper adminMapper) {
         this.adminMapper = adminMapper;
     }
 
+    //문의글 목록 조회
     public List<MainBoard> getInquiryBoards() {
         return adminMapper.selectInquiryBoards();
     }
 
+    //댓글 등록
     public void insertComment(MainBoard mainboard) {
         adminMapper.insertComment(mainboard);
     }
 
+    //특정 게시글의 목록 조회
     public List<MainBoard> getCommentsByBoardNo(String boardNo) {
         return adminMapper.selectCommentsByBoardNo(boardNo);
     }
@@ -51,6 +62,10 @@ public class AdminService {
     public List<HashMap<String, Object>> selectReportList(HashMap<String, Object> param) throws Exception {
         return adminMapper.selectReportList(param);
     }
+    
+//    public List<HashMap<String, Object>> getReportList(HashMap<String, Object> map) {
+//		return adminMapper.selectReportList(map);
+//	}
     
     // ✅ 내 게시글 조회
     public List<HashMap<String, Object>> getMyPosts(Map<String, Object> param) {
