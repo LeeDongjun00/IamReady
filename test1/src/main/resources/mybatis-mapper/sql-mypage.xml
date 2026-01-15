@@ -23,8 +23,13 @@
 	</update>
 	
 	<delete id="mypageRelease" parameterType="hashmap">
-		DELETE
+		<!--DELETE
 		FROM USERS
+		WHERE USER_ID = #{userId}-->
+		UPDATE USERS
+		SET
+			DELETED_YN = 'Y',
+			DELETED_AT = SYSDATE
 		WHERE USER_ID = #{userId}
 	</delete>
 	

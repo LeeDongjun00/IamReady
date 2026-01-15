@@ -153,10 +153,17 @@
             <label>문자인증</label><br>
             <input type="text" class="inputWidth" v-model="inputNum" :placeholder="timer">
             <template v-if="!smsFlg">
-              <button @click="fnSms" class="checkButton">인증번호 전송</button>
+              <button @click="fnGetPhone" class="checkButton">인증번호 전송</button>
+
+              <!-- 테스트용 코드 -->
+              <!-- <button @click="fnTempSms" class="checkButton">인증번호 전송</button> -->
             </template>
             <template v-else>
               <button @click="fnSmsAuth" class="checkButton">인증 확인</button>
+
+              <!-- 테스트용 코드 -->
+              <!-- <button @click="fnTempTest" class="checkButton">인증 확인</button> -->
+               
               <span class="timer">{{ timer }}</span>
             </template>
           </div>
@@ -184,16 +191,18 @@
           certifiFlg: false,
           inputNum: "",
           certifiStr: "",
+
+          userPhone: "",
         };
       },
       methods: {
-        fnConfirm() {
+        fnConfirm() { // 탈퇴 확인
           this.confirmFlg = true;
         },
-        fnCancel() {
+        fnCancel() { // 창 닫기
           window.close();
         },
-        fnRelease() {
+        fnRelease() { // 회원 탈퇴 처리
           let self = this;
           let param = { userId: self.userId };
           $.ajax({
@@ -214,13 +223,14 @@
             },
           });
         },
-        fnReceiveMessage(event) {
+        fnReceiveMessage(event) { // 부모창에서 userId 받기
           if (event.origin !== window.location.origin) return;
           this.userId = event.data.userId;
         },
-        fnSms() {
+        fnSms() { // 인증용 문자 전송
           let self = this;
           let param = { phone: self.phone1 + self.phone2 + self.phone3 };
+
           $.ajax({
             url: "/send-one",
             dataType: "json",
@@ -238,7 +248,7 @@
             },
           });
         },
-        fnTimer() {
+        fnTimer() { // 타이머 설정
           let self = this;
           let interval = setInterval(() => {
             if (self.count == 0) {
@@ -253,7 +263,7 @@
             }
           }, 1000);
         },
-        fnSmsAuth() {
+        fnSmsAuth() { // 문자인증 번호 일치 여부 확인
           if (this.certifiStr == this.inputNum) {
             alert("문자인증이 완료되었습니다.");
             this.certifiFlg = true;
@@ -261,8 +271,44 @@
             alert("문자인증에 실패했습니다.");
           }
         },
+        fnGetPhone() { // 등록된 전화번호와 입력한 전화번호 일치 여부 확인
+          let self = this;
+          let param = { userId : self.userId};
+          let tempPhone = self.phone1 + '-' + self.phone2 + '-' + self.phone3
+          $.ajax({
+            url: "/member/idCheck.dox",
+            dataType: "json",
+            type: "POST",
+            data: param,
+            success(data) {
+              self.userPhone = data.info.phone;
+              
+              if(self.userPhone === tempPhone){
+                
+                fnSms();
+              } else {
+                
+                alert("등록된 전화번호와 일치하지 않습니다.");
+                return;
+              }
+            },
+          });
+        },
+
+        //테스트용 임시 함수
+        fnTempSms() {
+          let self = this;
+          
+          self.smsFlg = true;
+        },
+        fnTempTest() {
+          let self = this;
+          
+          self.certifiFlg = true;
+        }
       },
       mounted() {
+        let self = this;
         window.addEventListener("message", this.fnReceiveMessage);
       },
     });

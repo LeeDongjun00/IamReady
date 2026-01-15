@@ -33,6 +33,7 @@ public class MemberService {
 			String message = member != null ? "이미 사용중인 아이디 입니다." : "사용 가능한 아이디 입니다.";
 			String result = member != null ? "true" : "false";
 			
+			resultMap.put("info", member);
 			resultMap.put("msg", message);
 			resultMap.put("result", result);
 		} catch (Exception e) {
