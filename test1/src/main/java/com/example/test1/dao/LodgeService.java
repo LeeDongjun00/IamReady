@@ -195,7 +195,7 @@ public class LodgeService {
 		
 		try {
 			Lodge info = LodgeMapper.AccInfo(map);
-			resultMap.put("Accinfo", info);
+			resultMap.put("accinfo", info);
 			resultMap.put("result", "success");
 			
 		} catch (Exception e) {

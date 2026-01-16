@@ -10,6 +10,7 @@
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
@@ -278,6 +279,18 @@
         color: #333;
         margin-left: 10px;
       }
+      .pay-btn {
+        width: 90%;
+        background: linear-gradient(to right, #e61e4d, #d70466);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>
@@ -311,11 +324,52 @@
             <button @click="fnadd(item.resNum)">후기작성하기</button>
 
             <button v-if="status == 'S'" @click="fninfo(item)">지도보기</button>
-            <button v-if="item.contentId != null" @click="fnResAcc(item.res)">숙소예약확인하기</button>
+            <button v-if="item.contentId != null" @click="fnResAcc(item.resNum)">숙소예약확인하기</button>
             <div class="card-footer">
               <span>{{ item.rdatetime }}</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div v-if="accModal" class="modal-overlay" @click.self="accModal = false">
+        <div class="panel" style="max-width: 480px">
+          <div class="panel-btn">
+            <h2>예약 정보 확인</h2>
+            <button class="modal-close-btn" @click="accModal = false">✖</button>
+          </div>
+
+          <div class="card">
+            <div class="label">숙소 이름</div>
+            <div class="value">{{ accInfo.AccomName }}</div>
+          </div>
+
+          <div class="card">
+            <div class="label">방 이름</div>
+            <div class="value">{{ accInfo.RoomName }}</div>
+          </div>
+
+          <div class="card">
+            <div class="label">예약자</div>
+            <div class="value">{{ accInfo.Reserver }}</div>
+          </div>
+
+          <div class="card">
+            <div class="label">숙박 일정</div>
+            <div class="value">{{ accInfo.CheckIn }} ~ {{ accInfo.CheckOut }}</div>
+          </div>
+
+          <div class="card">
+            <div class="label">인원</div>
+            <div class="value">{{ accInfo.PeopleCnt }}명</div>
+          </div>
+
+          <div class="card">
+            <div class="label">금액</div>
+            <div class="price">₩{{ accInfo.TotalPrice.toLocaleString() }}</div>
+          </div>
+
+          <button v-if="accInfo.PaymentStat != 'PAID'" class="pay-btn" @click="fnAccPayment">결제하기</button>
         </div>
       </div>
 
@@ -366,6 +420,7 @@
 </html>
 
 <script>
+  IMP.init("imp06808578");
   const app = Vue.createApp({
     data() {
       return {
@@ -391,6 +446,10 @@
         positionsByDay: {},
         selectedItem: {},
         selectedDay: 1,
+
+        accInfo: {},
+        accModal: false,
+        paymentUid: "",
       };
     },
     methods: {
@@ -442,8 +501,12 @@
         $.ajax({
           url: "/Acc-info.dox",
           type: "GET",
-          data: { resNum: item.resNum },
-          success: function (data) {},
+          data: { resNum: item },
+          success: function (data) {
+            console.log(data);
+            self.accInfo = data.accinfo;
+            self.accModal = true;
+          },
         });
       },
       fninfo(item) {
@@ -475,6 +538,58 @@
             self.selectedDay = days[0];
             const firstDayPois = self.positionsByDay[self.selectedDay];
             self.openModal(firstDayPois);
+          },
+        });
+      },
+      fnAccPayment: function () {
+        let self = this;
+        IMP.request_pay(
+          {
+            pg: "html5_inicis.INIpayTest",
+            pay_method: "card",
+            merchant_uid: "merchant_" + new Date().getTime(),
+            name: self.accInfo.RoomName,
+            amount: 1,
+            buyer_tel: "010-0000-0000",
+          },
+          function (rsp) {
+            // callback
+            console.log(rsp);
+
+            if (rsp.success) {
+              // 결제 성공 시
+              // alert("성공");
+              console.log(rsp);
+              self.paymentUid = rsp.imp_uid;
+              self.fnAdd();
+            } else {
+              // 결제 실패 시
+              alert("오류가 발생했습니다.");
+              return;
+            }
+          }
+        );
+      },
+      fnAdd() {
+        let self = this;
+        let param = {
+          resNum: self.accInfo.ResNum,
+          roomName: self.accInfo.RoomName,
+          checkIn: self.accInfo.CheckIn,
+          checkOut: self.accInfo.CheckOut,
+          stayDays: self.accInfo.StayDays,
+          peopleCnt: self.accInfo.PeopleCnt,
+          totalPrice: self.accInfo.TotalPrice,
+          paymentUid: self.paymentUid,
+        };
+        $.ajax({
+          url: "/payment.dox",
+          dataType: "json",
+          type: "POST",
+          data: param,
+          success: function (data) {
+            alert(data.msg);
+            self.accModal = false;
           },
         });
       },
