@@ -15,7 +15,7 @@ public class Lodge {
 	private int TotalPrice;
 		
 	private String PaymentUid;
-	private String PaymentStatus;
+	private String PaymentStat;
 	
 	private String Cdatetime;
 	private String Udatetime;

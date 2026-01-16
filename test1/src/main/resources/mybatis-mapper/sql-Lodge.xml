@@ -3,6 +3,13 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.test1.mapper.LodgeMapper">
+
+	<select id="AccInfo" parameterType="hashmap" resultType="com.example.test1.model.Lodge">
+		SELECT A.*, TO_CHAR(A.CHECK_IN,'YYYY-MM-DD') CHECKIN , TO_CHAR(A.CHECK_OUT,'YYYY-MM-DD') CHECKOUT FROM
+		RESERVATION_ACC A
+		WHERE RESNUM = #{resNum}
+	</select>
+
     <update id="Payment" parameterType="hashmap">
     	UPDATE RESERVATION_ACC
     	SET
@@ -14,7 +21,7 @@
         	TOTAL_PRICE  = #{totalPrice},
         	PAYMENT_UID  = #{paymentUid},
         	PAYMENT_STAT = 'PAID',
-        	UDATETIME    = SYSDATE,
+        	UDATETIME    = SYSDATE
 	    WHERE RESNUM = #{resNum}
 	</update>
     
