@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,20 +38,21 @@ public class ResController {
             Reservation reservation = createReservation(request);
 
             reservation.setUserId("999");
+
             Long calculatedPrice = calculateTotalPrice(request);
             reservation.setPrice(String.valueOf(calculatedPrice));
+
             setAreaNumFromRequest(reservation, request);
             setThemNumFromRequest(reservation, request);
 
-            // 예산 할당량(%)
-            setBudgetWeights(reservation, request);
+            // ✅ 퍼센트가 아닌 "원(금액)"으로 환산하여 컬럼에 저장
+            applyBudgetAllocationsByAmount(reservation, request, calculatedPrice);
 
             if (reservation.getPackname() == null) {
                 reservation.setPackname("임시 패키지명");
             }
 
             List<Poi> pois = createPoiList(request);
-
             Long resNum = resService.saveNewReservation(reservation, pois);
 
             return ResponseEntity.ok(Map.of("resNum", resNum, "message", "일정 저장 성공"));
@@ -64,7 +66,6 @@ public class ResController {
 
     @GetMapping("/reservation-view.do")
     public String reservationView(@RequestParam("resNum") Long resNum, Model model) {
-
         Reservation reservationDetails = resService.getReservationDetails(resNum);
         List<Poi> pois = resService.getPoisByResNum(resNum);
 
@@ -88,7 +89,7 @@ public class ResController {
         return "reservation-view";
     }
 
-    // --- 자동차 길찾기: 기존 ResService 재활용 (프론트 x/y → Poi로 변환) ---
+    // --- 자동차 길찾기: 기존 ResService 재활용 ---
 
     @PostMapping("/api/route/build")
     @ResponseBody
@@ -98,14 +99,12 @@ public class ResController {
                 return ResponseEntity.badRequest().body(Map.of("error", "최소 2개 지점이 필요합니다."));
             }
 
-            // req.pois(x,y) → Poi(mapX,mapY)로 변환하여 기존 서비스 사용
             List<Poi> poiList = req.getPois().stream().map(p -> {
                 Poi poi = new Poi();
                 poi.setContentId(p.getContentId());
                 poi.setPlaceName(p.getName());
-                // 경도/위도 매핑
-                poi.setMapX(p.getX());
-                poi.setMapY(p.getY());
+                poi.setMapX(p.getX()); // 경도
+                poi.setMapY(p.getY()); // 위도
                 return poi;
             }).collect(Collectors.toList());
 
@@ -120,16 +119,6 @@ public class ResController {
     }
 
     // --- Private Helper Methods ---
-
-    private void setBudgetWeights(Reservation reservation, ReservationRequest request) {
-        Map<String, Integer> weights = request.getBudgetWeights();
-        if (weights == null) return;
-
-        reservation.setEtcBudget(weights.getOrDefault("etc", 0).floatValue());
-        reservation.setAccomBudget(weights.getOrDefault("accom", 0).floatValue());
-        reservation.setFoodBudget(weights.getOrDefault("food", 0).floatValue());
-        reservation.setActBudget(weights.getOrDefault("act", 0).floatValue());
-    }
 
     private Long calculateTotalPrice(ReservationRequest request) {
         return request.getItinerary().values().stream()
@@ -176,19 +165,62 @@ public class ResController {
                     return dtos.stream()
                             .map(dto -> {
                                 Poi poi = new Poi();
-
                                 poi.setContentId(dto.getContentId());
                                 poi.setTypeId(dto.getTypeId());
                                 poi.setReservDate(date);
                                 poi.setPlaceName(dto.getTitle());
-
                                 poi.setRating(0);
                                 poi.setContent("");
-
                                 return poi;
                             });
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * ✅ budgetWeights(% 등분) → "금액(원)"으로 환산해서 Reservation의 *_budget 컬럼에 세팅
+     * - 합계가 100이 아니면 정규화
+     * - 반올림 후 마지막 항목(act)에 잔차 보정
+     */
+    private void applyBudgetAllocationsByAmount(Reservation reservation, ReservationRequest request, long totalPrice) {
+        Map<String, Integer> weights = request.getBudgetWeights();
+        if (weights == null || totalPrice <= 0) {
+            // 방어적으로 0 세팅
+            reservation.setEtcBudget(0f);
+            reservation.setAccomBudget(0f);
+            reservation.setFoodBudget(0f);
+            reservation.setActBudget(0f);
+            return;
+        }
+
+        // 입력 순서를 고정(FE와 표기 순서 일치)
+        Map<String, Integer> ordered = new LinkedHashMap<>();
+        ordered.put("etc",  weights.getOrDefault("etc", 0));
+        ordered.put("accom",weights.getOrDefault("accom", 0));
+        ordered.put("food", weights.getOrDefault("food", 0));
+        ordered.put("act",  weights.getOrDefault("act", 0));
+
+        int sum = ordered.values().stream().mapToInt(Integer::intValue).sum();
+        if (sum <= 0) {
+            reservation.setEtcBudget(0f);
+            reservation.setAccomBudget(0f);
+            reservation.setFoodBudget(0f);
+            reservation.setActBudget(0f);
+            return;
+        }
+
+        long etcAmt = Math.round(totalPrice * (ordered.get("etc")   / (double) sum));
+        long accomAmt = Math.round(totalPrice * (ordered.get("accom") / (double) sum));
+        long foodAmt = Math.round(totalPrice * (ordered.get("food")  / (double) sum));
+
+        long partial = etcAmt + accomAmt + foodAmt;
+        long actAmt = totalPrice - partial; // 잔차 보정
+
+        // DTO 세터가 Float라 가정 → 원 단위를 그대로 Float로 저장
+        reservation.setEtcBudget((float) etcAmt);
+        reservation.setAccomBudget((float) accomAmt);
+        reservation.setFoodBudget((float) foodAmt);
+        reservation.setActBudget((float) actAmt);
     }
 
     /** 프론트 요청 DTO (새 파일 생성 없이 내부 클래스 사용) */
@@ -197,7 +229,6 @@ public class ResController {
         private Long resNum;     // 로깅용
         private String day;      // "YYYY-MM-DD"
         private List<RoutePoiLite> pois;
-
         @Data
         private static class RoutePoiLite {
             private Long contentId;

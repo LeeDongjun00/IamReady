@@ -27,7 +27,7 @@ public class ResService {
     @Value("${kakao.navi.rest-key}")
     private String kakaoRestKey;
 
-    @Value("${kakao.navi.priority:RECOMMEND}") // FAST, SHORTEST, FREE, RECOMMEND 등
+    @Value("${kakao.navi.priority:RECOMMEND}")
     private String kakaoPriority;
 
     private final RestTemplate routeRt = new RestTemplate();
@@ -38,12 +38,10 @@ public class ResService {
     public Long saveNewReservation(Reservation reservation, List<Poi> pois) {
         resMapper.insertReservation(reservation);
         Long resNum = Long.parseLong(reservation.getResNum());
-
         for (Poi poi : pois) {
             poi.setResNum(resNum);
             resMapper.insertPoi(poi);
         }
-
         return resNum;
     }
 
@@ -53,18 +51,13 @@ public class ResService {
 
     public Reservation getReservationDetails(Long resNum) {
         Reservation reservation = resMapper.selectReservationByResNum(resNum);
-
-        if (reservation == null) {
-            return null;
-        }
-
+        if (reservation == null) return null;
         List<Poi> pois = getPoisByResNum(resNum);
         reservation.setPois(pois);
-
         return reservation;
     }
 
-    // ---- 자동차 경로(도로) 생성: 기존 Poi DTO 재활용 ----
+    // ---- 자동차 경로(도로) 생성 ----
 
     /**
      * 입력: Poi 목록 (mapX: 경도, mapY: 위도)
@@ -84,7 +77,6 @@ public class ResService {
 
             Segment seg = callKakaoDirections(o.getMapX(), o.getMapY(), d.getMapX(), d.getMapY());
 
-            // 좌표 이어 붙이기(중복 제거)
             for (Map<String, Object> p : seg.points) {
                 double x = (double) p.get("x");
                 double y = (double) p.get("y");
@@ -112,7 +104,6 @@ public class ResService {
         return resp;
     }
 
-    /** Kakao Mobility Directions API 호출 */
     private Segment callKakaoDirections(double ox, double oy, double dx, double dy) {
         URI uri = UriComponentsBuilder.fromHttpUrl(kakaoDirectionsBase)
                 .queryParam("origin", ox + "," + oy)
@@ -133,7 +124,6 @@ public class ResService {
         return parseDirections(res.getBody());
     }
 
-    /** 응답 파싱 -> segment 좌표/거리/시간/톨비 */
     @SuppressWarnings("unchecked")
     private Segment parseDirections(Map body) {
         List<Map<String, Object>> routes = (List<Map<String, Object>>) body.get("routes");
@@ -181,7 +171,6 @@ public class ResService {
         return seg;
     }
 
-    /** 내부용 DTO */
     private static class Segment {
         List<Map<String, Object>> points;
         long distance, duration, toll;
