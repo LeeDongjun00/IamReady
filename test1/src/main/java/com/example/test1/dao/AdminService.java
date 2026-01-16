@@ -3,11 +3,13 @@ package com.example.test1.dao;
 import com.example.test1.mapper.AdminMapper;
 import com.example.test1.mapper.MemberMapper;
 import com.example.test1.model.Comment;
+import com.example.test1.model.Lodge;
 import com.example.test1.model.MainBoard;
 import com.example.test1.model.Member;
 import com.example.test1.model.Report;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -55,8 +57,20 @@ public class AdminService {
         return adminMapper.selectBadUsers();
     }
     
-    public void changeUserStatus(HashMap<String, Object> param) throws Exception {
-        adminMapper.changeUserStatus(param);
+    //유저 정지
+    public HashMap<String, Object> changeUserStatus(HashMap<String, Object> map) throws Exception {
+        HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			int cnt = adminMapper.changeUserStatus(map);
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
     }
 
     public List<HashMap<String, Object>> selectReportList(HashMap<String, Object> param) throws Exception {
@@ -116,8 +130,23 @@ public class AdminService {
     public void updateUserStatus(HashMap<String, Object> param) throws Exception {
         adminMapper.updateUserStatusDirect(param);
     }
-    public List<HashMap<String, Object>> getAllUsers() throws Exception {
-        return adminMapper.selectAllUsers();
+    public HashMap<String, Object> getAllUsers(HashMap<String , Object>map)  {
+    	HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			List<Admin> List = adminMapper.selectAllUsers(map);
+			int cnt = adminMapper.selectAllUsersCnt(map);
+			resultMap.put("user", List);
+			resultMap.put("cnt", cnt);
+			resultMap.put("result", "success");
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
     }
 
 

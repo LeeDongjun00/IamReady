@@ -222,16 +222,37 @@
 	
 	<select id="selectAllUsers" resultType="hashmap">
 	  SELECT 
-	    USER_ID AS userId,
-	    NAME AS name,
-	    NICKNAME AS nickname,
-	    PHONE AS phone,
-	    STATUS AS status,
-	    EMAIL AS email,
-	    GENDER AS gender,
-	    TO_CHAR(CDATETIME, 'YYYY-MM-DD') AS joinDate
-	  FROM USERS
+	    U.*, TO_CHAR(U.CDATETIME,'YYYY-MM-DD') CDATE , TO_CHAR(U.DELETED_AT,'YYYY-MM-DD') DTIME , TO_CHAR(U.END_SUBS,'YYYY-MM-DD') SDATE
+	  FROM USERS U
+	  WHERE 1=1
+	  	<if test="searchOption == 'USER_ID'">
+			AND USER_ID LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'EMAIL'">
+			AND EMAIL LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'NAME'">
+			AND NAME LIKE '%' || #{keyword} || '%' 
+		</if>
 	  ORDER BY CDATETIME DESC
+	  OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	
+	<select id="selectAllUsersCnt" resultType="int">
+	  SELECT 
+	    COUNT(*)
+	  FROM USERS U
+	  WHERE 1=1
+	  	<if test="searchOption == 'USER_ID'">
+			AND USER_ID LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'EMAIL'">
+			AND EMAIL LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'NAME'">
+			AND NAME LIKE '%' || #{keyword} || '%' 
+		</if>
+	 
 	</select>
 
 </mapper>

@@ -5,6 +5,7 @@ import com.example.test1.model.MainBoard;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,10 @@ import java.util.Map;
 
 @Controller
 public class AdminController {
-    private final AdminService adminService;
 
+    @Autowired
+    AdminService adminService;
+    
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
@@ -265,20 +268,20 @@ public class AdminController {
     //유저 상태 변경
     @RequestMapping(value = "/user-status-update.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateUserStatus(@RequestBody HashMap<String, Object> param) throws Exception {
-        adminService.updateUserStatus(param);
-        HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("result", "success");
-        return new ObjectMapper().writeValueAsString(resultMap);
+    public String updateUserStatus(@RequestParam HashMap<String, Object> map) throws Exception {
+        
+        HashMap<String, Object> resultMap = adminService.changeUserStatus(map);
+       
+        return new Gson().toJson(resultMap);
     }
 
     //회원 목록 조회
-    @RequestMapping(value = "/user-list.dox", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/user-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getAllUsers() throws Exception {
-        HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("userList", adminService.getAllUsers());
-        return new ObjectMapper().writeValueAsString(resultMap);
+    public String getAllUsers(@RequestParam HashMap<String, Object> map) throws Exception {
+        HashMap<String, Object> resultMap = adminService.getAllUsers(map);
+        
+        return new Gson().toJson(resultMap);
     }
 
 
