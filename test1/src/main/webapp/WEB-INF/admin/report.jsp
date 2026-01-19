@@ -25,6 +25,31 @@
 .reportTip {
   font-size: 14px;
 }
+
+.reportContents img {
+  max-width: 250px;
+  height: auto;
+}
+
+.user-deleted {
+  /* 탈퇴 */
+  color: #9E9E9E;
+  text-decoration: line-through;
+}
+.user-blocked {
+  /* 차단 */
+  color: #E53935;
+  font-weight: bold;
+}
+.user-normal {
+  /* 일반 */
+  color: #0080ff;
+}
+.user-admin {
+  /* 관리자 */
+  color: #5E35B1;
+  font-weight: bold;
+}
 </style>
 
 <h2>신고 관리</h2>
@@ -40,8 +65,8 @@
       <th>신고글 번호</th>
       <!-- <th>신고된 회원 ID</th>
       <th>신고된 회원 닉네임</th> -->
-      <th>신고 대상</th>
-      <th>신고 내용</th>
+      <th>신고 대상(아이디, 닉네임)</th>
+      <th>신고 사유</th>
       <th>신고자</th>
     </tr>
     <tr v-for="item in list" :key="item.REPORTNUM">
@@ -61,11 +86,17 @@
           <a href="javascript:;" @click="fnGetInfo(item.REPORTED_USER_ID, item.BOARDNO1, null)"><span v-else>{{item.BOARDNO1}}</span></a>
         </td>
         <td>
-          <span v-if="item.REPORTED_NICKNAME != null">{{item.REPORTED_USER_ID}} / {{item.REPORTED_NICKNAME}}</span>
-          <span v-else>{{item.REPORTED_USER_ID}} / 탈퇴한 사용자</span>
+          <a href="javascript:;" @click="fnUserManage(item.REPORTED_USER_ID, item.DELETED_YN)" :class="getUserStatus(item.STATUS, item.DELETED_YN)">
+            <span v-if="item.REPORTED_NICKNAME != null">{{item.REPORTED_USER_ID}} / {{item.REPORTED_NICKNAME}}</span>
+            <span v-else>{{item.REPORTED_USER_ID}} / 탈퇴한 사용자</span>
+          </a>
+
+          
         </td>
         <td>{{item.CONTENT}}</td>
         <td>{{item.REPORT_USER_ID}}</td>
+
+        <!-- <td>{{ item.STATUS }} / {{ item.DELETED_YN }}</td> -->
     </tr>
   </table>
 
@@ -73,9 +104,32 @@
    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
     <div class="modal">
       <h3>신고 정보</h3>
-      <p>BOARD NO : {{ selectedBoardNo }}</p>
-      <p v-if="selectedCommentNo != null">COMMENT NO : {{ selectedCommentNo }}</p>
-      <p>신고된 회원 ID : {{ reportedUserId }}</p>
+      <div>
+        <p>신고자 : {{ reportInfo.reportUserId }}</p>
+        <p>신고 대상 : {{ reportInfo.reportedUserId }}</p>
+        <p>신고 사유 : {{ reportInfo.content }}</p>
+      </div>
+      <h3>신고 사항</h3>
+      <div>
+        
+        <div v-if="!reportInfo.commentNo && !reportInfo.boardNo">
+          <p>신고 게시글이 삭제되었습니다.</p>
+        </div>
+
+        <div v-else-if="!reportInfo.commentNo">
+          <p>신고 게시글 번호 : {{ reportInfo.boardNo }}</p>
+          <p>신고 게시글 제목 : {{ reportInfo.title }}</p>
+          <p>신고 게시글 내용 : </p>
+          <p class="reportContents" v-html="reportInfo.boardContents"></p>
+          
+        </div>
+
+        <div v-else>
+          <p>신고 게시글 번호 : {{ reportInfo.boardNo }}</p>
+          <p>신고 댓글 번호 : {{ reportInfo.commentNo }}</p>
+          <p>신고 댓글 내용 : {{ reportInfo.commentContents }}</p>
+        </div>
+      </div>
 
       <button @click="closeModal">닫기</button>
     </div>
@@ -92,7 +146,11 @@
         showModal: false,
         selectedBoardNo: null,
         selectedCommentNo: null,
-        reportedUserId: null
+        reportedUserId: null,
+
+        reportInfo: {},
+
+        selectedUserId: null,
       };
     },
     methods: {
@@ -124,7 +182,7 @@
         this.selectedBoardNo = boardNo;
         this.selectedCommentNo = commentNo;
 
-        // this.fnGetBoardComment();
+        this.fnGetBoardComment();
 
         this.showModal = true;
       },
@@ -150,9 +208,41 @@
             type: "POST",
             data: param,
             success: function (data) {
-              console.log(data);
+              
+              if(data.result == "success"){
+                // console.log(data);
+                self.reportInfo = data.info[0];
+                console.log(self.reportInfo);
+              } else {
+                console.log("오류 발생")
+              }
             }
         });
+      },
+
+      fnUserManage(reportedUserId, deletedYn){
+        // alert("신고 대상 사용자 ID: " + reportedUserId);
+        if(deletedYn === 'Y' || !deletedYn) {
+          alert("탈퇴한 사용자입니다.");
+        } else {
+          
+        }
+      },
+
+      getUserStatus(status, deletedYn) {
+        if (deletedYn === 'Y' || !deletedYn) {
+          return 'user-deleted';
+        } else {
+          if(status === 'B') {
+            return 'user-blocked';
+          }
+          else if (status === 'A') {
+            return 'user-admin';
+          }
+          else if (status === 'U'|| status === 'S') {
+            return 'user-normal';
+          }
+        }
       }
     },
     mounted() {

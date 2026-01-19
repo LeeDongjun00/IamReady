@@ -18,10 +18,44 @@ import java.util.Map;
 
 @Service
 public class AdminService {
-//	@Autowired
-//	AdminMapper adminMapper;
+	@Autowired
+	AdminMapper adminMapper;
 	
-    private final AdminMapper adminMapper;
+//    private final AdminMapper adminMapper;
+	
+	public HashMap<String, Object> getReportedBC(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		System.out.println(map);
+//		String hashPwd = passwordEncoder.encode((String) map.get("pwd"));
+//		map.put("hashPwd", hashPwd);
+//		
+//		int cnt = memberMapper.memberAdd(map);
+//
+//		if(cnt<1) {
+//			resultMap.put("result", "fail");
+//		} else {
+//			resultMap.put("result", "success");
+//		}
+		List<MainBoard> admin = adminMapper .getReportedBoardComment(map);
+		String message = ""; 
+		String result = "";
+		
+		try {
+			resultMap.put("info", admin);
+			message = "확인.";
+			result = "success";
+			
+			resultMap.put("msg", message);
+			resultMap.put("result", result);
+			
+			System.out.println(admin);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+		}
+		
+		return resultMap;
+	}
 
     public AdminService(AdminMapper adminMapper) {
         this.adminMapper = adminMapper;

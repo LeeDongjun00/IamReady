@@ -22,6 +22,17 @@ public class MainBoard {
 	private String adopt;
 	private String nickname;
 	private String nickName; // ✅ 댓글용 닉네임 필드 추가
-	private String reported_user_id;
+	
+	private String reportedUserId;
+	private String reportType;
+	private String reportNum;
+	private String reportUserId;
+	private String content;
+	private String boardUser;
+	private String commentUser;
+	private String boardContents;
+	private String commentContents;
+	private String status;
+	private String deletedYN;
 	
 }

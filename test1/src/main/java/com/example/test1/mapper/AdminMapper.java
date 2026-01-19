@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Mapper
 public interface AdminMapper {
-	
+	List<MainBoard> getReportedBoardComment(HashMap<String, Object> map);
 	
     List<MainBoard> selectInquiryBoards();
     // 댓글달기

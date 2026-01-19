@@ -75,6 +75,15 @@ public class AdminController {
         return resultMap;
     }
     
+    @RequestMapping(value = "/admin/getrbc.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String memberIdCheck(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = adminService.getReportedBC(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+    
 /******************************************************************/
     //레거시 코드들
     
