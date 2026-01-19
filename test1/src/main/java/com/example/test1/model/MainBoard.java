@@ -34,5 +34,11 @@ public class MainBoard {
 	private String commentContents;
 	private String status;
 	private String deletedYN;
+	private String reportProcess;
 	
+	private String month;
+	private String theme;
+	private int themeCnt;
+	private int totalAmount;
+	private int rn;
 }

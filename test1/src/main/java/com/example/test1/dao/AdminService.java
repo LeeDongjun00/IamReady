@@ -25,17 +25,7 @@ public class AdminService {
 	
 	public HashMap<String, Object> getReportedBC(HashMap<String, Object> map) {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-//		System.out.println(map);
-//		String hashPwd = passwordEncoder.encode((String) map.get("pwd"));
-//		map.put("hashPwd", hashPwd);
-//		
-//		int cnt = memberMapper.memberAdd(map);
-//
-//		if(cnt<1) {
-//			resultMap.put("result", "fail");
-//		} else {
-//			resultMap.put("result", "success");
-//		}
+
 		List<MainBoard> admin = adminMapper .getReportedBoardComment(map);
 		String message = ""; 
 		String result = "";
@@ -52,6 +42,130 @@ public class AdminService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.getMessage());
+		}
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> reportProcessY(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		System.out.println(map);
+//		String message = "";
+		try {
+			int cnt = adminMapper.updateProcessY(map);
+			System.out.println(cnt);
+			
+			if(cnt > 0) {
+				resultMap.put("msg", "처리되었습니다.");
+				resultMap.put("result", "success");
+			} else {
+				resultMap.put("msg", "실패했습니다.");
+				resultMap.put("result", "fail");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "오류가 발생했습니다.");
+			System.out.println(e.getMessage()); // e에 어떤 오류인지 담겨져 있음 -> 개발자가 오류를 확인하기 위해 사용하는 코드
+		}
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> userBan(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		System.out.println(map);
+//		String message = "";
+		try {
+			int cnt = adminMapper.userBan(map);
+			System.out.println(cnt);
+			
+			if(cnt > 0) {
+				resultMap.put("msg", "처리되었습니다.");
+				resultMap.put("result", "success");
+			} else {
+				resultMap.put("msg", "실패했습니다.");
+				resultMap.put("result", "fail");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "오류가 발생했습니다.");
+			System.out.println(e.getMessage()); // e에 어떤 오류인지 담겨져 있음 -> 개발자가 오류를 확인하기 위해 사용하는 코드
+		}
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> reportCnt(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		System.out.println(map);
+//		String message = "";
+		try {
+			int cnt = adminMapper.selectAllReportCnt(map);
+			System.out.println(cnt);
+			
+			resultMap.put("result", "success");
+			resultMap.put("CNT", cnt);
+			resultMap.put("msg", "성공");
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "오류가 발생했습니다.");
+			System.out.println(e.getMessage()); // e에 어떤 오류인지 담겨져 있음 -> 개발자가 오류를 확인하기 위해 사용하는 코드
+		}
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> getCNT(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		System.out.println(map);
+//		String message = "";
+		try {
+			int userCnt = adminMapper.selectUserCnt(map);
+			int reportCnt = adminMapper.selectReportNPCnt(map);
+			int inquiryCnt = adminMapper.selectInquiryNPCnt(map);
+			
+			resultMap.put("userCnt", userCnt);
+			resultMap.put("reportCnt", reportCnt);
+			resultMap.put("inquiryCnt", inquiryCnt);
+			
+			resultMap.put("result", "success");
+			resultMap.put("msg", "성공");
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "오류가 발생했습니다.");
+			System.out.println(e.getMessage()); // e에 어떤 오류인지 담겨져 있음 -> 개발자가 오류를 확인하기 위해 사용하는 코드
+		}
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> getBestTheme(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		System.out.println(map);
+//		String message = "";
+		try {
+			List<Admin> theme = adminMapper.getTopThemes(map);
+
+			System.out.println(theme);
+			
+			resultMap.put("topTheme", theme);
+			
+			resultMap.put("result", "success");
+			resultMap.put("msg", "성공");
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "오류가 발생했습니다.");
+			System.out.println(e.getMessage()); // e에 어떤 오류인지 담겨져 있음 -> 개발자가 오류를 확인하기 위해 사용하는 코드
 		}
 		
 		return resultMap;
@@ -107,9 +221,28 @@ public class AdminService {
 		return resultMap;
     }
 
+    //신고목록 가져오기
     public List<HashMap<String, Object>> selectReportList(HashMap<String, Object> param) throws Exception {
+    	int page = 1;
+        int pageSize = 10;
+
+        if (param.get("page") != null) {
+            page = Integer.parseInt(param.get("page").toString());
+        }
+
+        if (param.get("pageSize") != null) {
+            pageSize = Integer.parseInt(param.get("pageSize").toString());
+        }
+
+        int offset = (page - 1) * pageSize;
+
+        param.put("offset", offset);
+        param.put("pageSize", pageSize);
+
         return adminMapper.selectReportList(param);
     }
+    
+    
     
 //    public List<HashMap<String, Object>> getReportList(HashMap<String, Object> map) {
 //		return adminMapper.selectReportList(map);
