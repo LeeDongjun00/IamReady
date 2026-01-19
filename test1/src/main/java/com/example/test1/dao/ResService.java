@@ -1,9 +1,8 @@
-// ResService.java
 package com.example.test1.dao;
 
 import com.example.test1.mapper.ResMapper;
-import com.example.test1.model.reservation.Poi;
 import com.example.test1.model.Reservation;
+import com.example.test1.model.reservation.Poi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -47,20 +46,19 @@ public class ResService {
             resMapper.insertPoi(poi);
         }
 
-        // 3) 숙소(typeId=32)만 RESERVATION_ACC 저장
-        String reserver = reservation.getUserId(); // 필요하면 닉네임 컬럼으로 교체
+        // 3) 숙소(typeId=32) "1개만" RESERVATION_ACC 저장 (RESNUM이 PK라 1건만 가능)
+        String reserver = reservation.getUserId(); // 닉네임이면 닉네임 값으로 교체
 
         for (Poi poi : pois) {
-            if (Integer.valueOf(32).equals(poi.getTypeId())) {
-                // contentId null이면 CONTENTID NOT NULL에서 터지니 방어
-                if (poi.getContentId() == null) continue;
-
+            Integer typeId = poi.getTypeId();
+            if (typeId != null && typeId == 32) {
                 resMapper.insertReservationAcc(
                         resNum,
                         poi.getPlaceName(),  // ACCOM_NAME
                         reserver,            // RESERVER
                         poi.getContentId()   // CONTENTID
                 );
+                break; // ✅ 중복키(ORA-00001) 방지: 일정당 숙소 1개만
             }
         }
 
@@ -93,6 +91,7 @@ public class ResService {
     // -------- 여행 포기(예약 삭제) --------
     @Transactional
     public boolean deleteReservationCascade(Long resNum) {
+        // FK 문제 방지: 자식(POI) → 부모(RESERVATION) 순서 삭제
         resMapper.deletePoisByResNum(resNum);
         return resMapper.deleteReservation(resNum) > 0;
     }

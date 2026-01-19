@@ -8,17 +8,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>예약 상세 확인</title>
 
-  <!-- ✅ jQuery: SRI 제거하여 로드 실패 방지 -->
+  <!-- ✅ jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  <!-- ✅ Vue: prod 빌드 -->
+  <!-- ✅ Vue3 (중요: compiler 포함 build) -->
+  <!-- runtime-only 쓰면 {{}} 그대로 보입니다. 반드시 아래 global.prod.js -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
   <script type="text/javascript"
           src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoAppKey}&libraries=services"></script>
-
-  <!-- Iamport (중복 삽입 금지) -->
-  <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
   <!-- Global CSS -->
   <link rel="stylesheet" href="/css/main-style.css">
@@ -73,6 +71,7 @@
 <%@ include file="components/header.jsp" %>
 
 <div class="wrap">
+  <!-- ✅ Vue가 여기 붙습니다 -->
   <div id="app">
     <h1 class="page-title">예약 상세 확인</h1>
 
@@ -92,15 +91,16 @@
     <div class="panel">
       <h3>예산 현황</h3>
       <div class="budget-total"><strong>총 예산:</strong> {{ formatPrice(reservation.price) }}원</div>
-      <div> 
+
+      <div>
         사용 가능 포인트 : {{info.totalPoint}}
       </div>
       <div>
-        포인트 사용량 : 
+        포인트 사용량 :
         <input type="number" v-model="usingPoint" :max="info.totalPoint" min="0" @input="limitPoint" style="width: 80px; text-align: right; height: 20px;">
-        <br>
-        <br>
+        <br><br>
       </div>
+
       <div class="budget-status-wrap">
         <div class="budget-status-item"><span class="label">기타 예산</span><span class="amount">{{ formatPrice(reservation.etcBudget) }}원</span></div>
         <div class="budget-status-item"><span class="label">관광 및 활동 예산</span><span class="amount">{{ formatPrice(reservation.actBudget) }}원</span></div>
@@ -111,7 +111,6 @@
       <div class="memo-card" aria-label="메모 영역">
         <div class="memo-title"><i class="fa-regular fa-note-sticky" style="margin-right:6px;"></i> 메모</div>
         <textarea class="memo-field" rows="5" v-model="memo" placeholder="여행 메모를 입력하세요."></textarea>
-        <div class="memo-hint">결제 성공 시 <code>RESERVATION.DESCRIPT</code>에 저장됩니다.</div>
       </div>
     </div>
 
@@ -137,6 +136,7 @@
           {{ index + 1 }}일차 ({{ formatDate(date) }})
         </button>
       </div>
+
       <div id="detail-schedule-list">
         <p v-if="poiList.length === 0">유효한 POI 일정이 없습니다.</p>
         <div v-else v-for="(poi, index) in itineraryByDate[activeDate]" :key="poi.poiId" class="poi-item">
@@ -147,7 +147,7 @@
     </div>
 
     <div class="save-button-wrap">
-      <button class="btn primary" @click="fnSave">결제 후 저장하기</button>
+      <button class="btn primary" @click="fnSave">저장 후 숙소결제로 이동</button>
       <button class="btn danger" @click="fnCancelReservation">여행 포기하기</button>
     </div>
   </div>
@@ -156,29 +156,25 @@
 <%@ include file="components/footer.jsp" %>
 
 <script>
-  // Iamport 초기화(중복방지)
-  (function initIMPOnce(){
-    if (window.IMP && typeof window.IMP.init === 'function') {
-      if (!window.__IMP_INIT__) {
-        window.IMP.init("imp06808578");
-        window.__IMP_INIT__ = true;
-      }
-    }
-  })();
-
   const app = Vue.createApp({
     data() {
       return {
         userId: "${sessionId}",
+
+        // ✅ 숙소 contentId (POI typeId=32에서 찾음)
+        accContentId: null,
+
         memo: "",
         reservation: {
-          resNum: 0, packName: "사용자 지정 코스 이름", price: 0,
-          startDate: "", endDate: "", pois: [], themNum: "", packname: "",
+          resNum: 0, packName: "", packname: "",
+          price: 0, startDate: "", endDate: "",
+          themNum: "", descript: "",
           etcBudget: 0, accomBudget: 0, foodBudget: 0, actBudget: 0
         },
         poiList: [],
-        kakaoAppKey: '${kakaoAppKey}',
-        map: null, itineraryByDate: {}, activeDate: null,
+        map: null,
+        itineraryByDate: {},
+        activeDate: null,
         themeOptions: [
           { code: 'FAMILY', label: '가족' }, { code: 'FRIEND', label: '친구' },
           { code: 'COUPLE', label: '연인' }, { code: 'LUXURY', label: '호화스러운' },
@@ -186,8 +182,10 @@
           { code: 'UNIQUE', label: '이색적인' }, { code: 'ADVENTURE', label: '모험' },
           { code: 'QUIET', label: '조용한' }
         ],
-        routePolyline: null, routeSummary: null, markers: [],
-        info:{},
+        routePolyline: null,
+        routeSummary: null,
+        markers: [],
+        info: {},
         usingPoint: 0
       };
     },
@@ -205,147 +203,220 @@
       formatPrice(v){ const n=Number(v); return isFinite(n)? n.toLocaleString() : '0'; },
       formatDate(d){ if(!d) return "날짜 없음"; try{ return String(d).split(' ')[0]; }catch(e){ return d; } },
 
+      // ✅ poiList에서 숙소(typeId=32) contentId 뽑기
+      setAccContentIdFromPois(){
+        const accomPoi = (this.poiList || []).find(p => String(p.typeId) === '32');
+        this.accContentId = (accomPoi && accomPoi.contentId) ? Number(accomPoi.contentId) : null;
+      },
+
       initializeMap(data){
-        if (!window.kakao || !kakao.maps) { document.getElementById('map-container').innerText='Kakao Map API 로드 실패.'; return; }
+        if (!window.kakao || !kakao.maps) {
+          document.getElementById('map-container').innerText='Kakao Map API 로드 실패.';
+          return;
+        }
         const container=document.getElementById('map-container');
         const options={ center:new kakao.maps.LatLng(data[0].mapY,data[0].mapX), level:7 };
         this.map=new kakao.maps.Map(container,options);
-        const bounds=new kakao.maps.LatLngBounds(); this.clearMarkers();
+
+        const bounds=new kakao.maps.LatLngBounds();
+        this.clearMarkers();
+
         data.forEach(p=>{
           const pos=new kakao.maps.LatLng(p.mapY,p.mapX);
-          const marker=new kakao.maps.Marker({ position:pos }); marker.setMap(this.map); this.markers.push(marker);
-          const info=new kakao.maps.InfoWindow({ content:'<div style="padding:5px;">'+(p.placeName||p.contentId)+'</div>' });
+          const marker=new kakao.maps.Marker({ position:pos });
+          marker.setMap(this.map);
+          this.markers.push(marker);
+
+          const info=new kakao.maps.InfoWindow({
+            content:'<div style="padding:5px;">'+(p.placeName||p.contentId)+'</div>'
+          });
           kakao.maps.event.addListener(marker,'mouseover',()=>info.open(this.map,marker));
           kakao.maps.event.addListener(marker,'mouseout',()=>info.close());
+
           bounds.extend(pos);
         });
+
         this.map.setBounds(bounds);
       },
-      clearMarkers(){ if(!this.markers) return; this.markers.forEach(m=>m.setMap(null)); this.markers=[]; },
+      clearMarkers(){
+        if(!this.markers) return;
+        this.markers.forEach(m=>m.setMap(null));
+        this.markers=[];
+      },
 
       drawPolyline(points){
         if(!this.map) return;
         if(this.routePolyline){ this.routePolyline.setMap(null); this.routePolyline=null; }
         if(!points||points.length===0) return;
+
         const path=points.map(pt=>new kakao.maps.LatLng(pt.y,pt.x));
         this.routePolyline=new kakao.maps.Polyline({ path, strokeWeight:5, strokeOpacity:0.9 });
         this.routePolyline.setMap(this.map);
-        const bounds=new kakao.maps.LatLngBounds(); path.forEach(latlng=>bounds.extend(latlng)); this.map.setBounds(bounds);
+
+        const bounds=new kakao.maps.LatLngBounds();
+        path.forEach(latlng=>bounds.extend(latlng));
+        this.map.setBounds(bounds);
       },
-      clearRoute(){ if(this.routePolyline){ this.routePolyline.setMap(null); this.routePolyline=null; } this.routeSummary=null; },
+      clearRoute(){
+        if(this.routePolyline){ this.routePolyline.setMap(null); this.routePolyline=null; }
+        this.routeSummary=null;
+      },
 
       async buildCarRoute(){
         const pois=this.itineraryByDate[this.activeDate]||[];
         const valid=pois.filter(p=>p.mapX!=null&&p.mapY!=null&&!isNaN(p.mapX)&&!isNaN(p.mapY));
-        if(valid.length<2){ alert('경로를 그릴 최소 2개 지점(출발/도착)이 필요합니다.'); return; }
+        if(valid.length<2){
+          alert('경로를 그릴 최소 2개 지점(출발/도착)이 필요합니다.');
+          return;
+        }
         try{
-          const payload={ resNum:this.reservation.resNum, day:this.activeDate,
-            pois: valid.map(p=>({ contentId:p.contentId, name:p.placeName||'', x:Number(p.mapX), y:Number(p.mapY) })) };
-          const resp=await $.ajax({ url:'/api/route/build', type:'POST', contentType:'application/json', data:JSON.stringify(payload) });
-          this.drawPolyline(resp.points); this.routeSummary=resp.summary||null;
-        }catch(e){ console.error(e); alert('경로 계산에 실패했습니다.'); }
+          const payload={
+            resNum:this.reservation.resNum,
+            day:this.activeDate,
+            pois: valid.map(p=>({
+              contentId:p.contentId,
+              name:p.placeName||'',
+              x:Number(p.mapX),
+              y:Number(p.mapY)
+            }))
+          };
+          const resp=await $.ajax({
+            url:'/api/route/build',
+            type:'POST',
+            contentType:'application/json',
+            data:JSON.stringify(payload)
+          });
+          this.drawPolyline(resp.points);
+          this.routeSummary=resp.summary||null;
+        }catch(e){
+          console.error(e);
+          alert('경로 계산에 실패했습니다.');
+        }
       },
 
-      // 결제금액 조회 → 결제 → 성공 시 코스명/메모 저장
+      // ✅ 여기만 변경: 결제 호출 제거 + 저장 후 lodge.do로 resNum/accContentId 넘김
       async fnSave(){
         try{
           const name=(this.reservation.packname||'').trim();
-          if(name.length===0){ if(!confirm('코스 이름이 비어 있습니다. 그대로 진행할까요?')) return; }
+          if(name.length===0){
+            if(!confirm('코스 이름이 비어 있습니다. 그대로 진행할까요?')) return;
+          }
 
-          // 1) 금액 조회
-          const amtResp=await $.ajax({ url:'/api/reservation/pay/amount', type:'GET', data:{ resNum:this.reservation.resNum } });
-          const payAmount=Number(amtResp.amount||0);
-          if(!isFinite(payAmount)||payAmount<=0){ alert('결제 금액이 유효하지 않습니다. (금액: '+payAmount+')'); return; }
+          // 숙소 없으면 막고 싶으면 여기서 return
+          if(!this.accContentId){
+            alert('숙소(contentId)가 없습니다. (typeId=32 숙소 POI가 없을 수 있습니다)');
+            return;
+          }
 
-          // 2) 결제
-          if(!(window.IMP && typeof window.IMP.request_pay==='function')){ alert('결제 모듈 초기화에 실패했습니다.'); return; }
-          const self=this;
-          window.IMP.request_pay({
-            pg:"html5_inicis", 
-            pay_method:"card",
-            merchant_uid:"merchant_"+new Date().getTime(),
-            name:"여행 결제 (숙박+식비)", 
-            // amount:payAmount - this.usingPoint, 
-            amount:1,
-            buyer_tel:"010-0000-0000"
-          }, async function(rsp){
-            if(rsp.success){
-              try{
-                // 3) 저장
-                const payload={ resNum:self.reservation.resNum, packName:name, userId:self.userId, descript:self.memo };
-                await $.ajax({ url:'/api/reservation/update/packname', type:'POST', contentType:'application/json', data:JSON.stringify(payload) });
-                alert("결제 및 저장에 성공했습니다. 나의 예약 페이지로 이동합니다.");
-                window.location.href='/myReservation.do?resNum='+self.reservation.resNum;
-              }catch(e){ console.error(e); alert('결제는 성공했지만 저장에 실패했습니다.'); }
-            }else{
-              alert('결제가 취소되었거나 실패했습니다.');
-            }
+          // 1) 저장 (코스명/메모 + accContentId 같이 보내기)
+          const payload={
+            resNum: this.reservation.resNum,
+            packName: name,
+            userId: this.userId,
+            descript: this.memo,
+            accContentId: this.accContentId
+          };
+
+          await $.ajax({
+            url:'/api/reservation/update/packname',
+            type:'POST',
+            contentType:'application/json',
+            data: JSON.stringify(payload)
           });
-        }catch(err){ console.error(err); alert('처리 중 오류가 발생했습니다.'); }
+
+          // 2) lodge로 이동 (값 2개 넘김)
+          const qs =
+            '?resNum=' + encodeURIComponent(this.reservation.resNum) +
+            '&accContentId=' + encodeURIComponent(this.accContentId);
+
+          window.location.href = '/lodge.do' + qs;
+
+        }catch(e){
+          console.error(e);
+          alert('저장/이동 중 오류가 발생했습니다.');
+        }
       },
 
       fnCancelReservation(){
         if(!confirm('정말로 이 예약을 삭제하시겠습니까?')) return;
         $.ajax({
-          url:'/api/reservation/delete', type:'POST', contentType:'application/json',
+          url:'/api/reservation/delete',
+          type:'POST',
+          contentType:'application/json',
           data:JSON.stringify({ resNum:this.reservation.resNum }),
-          success:()=>{ alert('예약이 삭제되었습니다.'); window.location.href='/main-list.do'; },
-          error:(jqXHR)=>{ alert('삭제 실패 ('+jqXHR.status+')'); }
+          success:()=>{
+            alert('예약이 삭제되었습니다.');
+            window.location.href='/main-list.do';
+          },
+          error:(jqXHR)=>{
+            alert('삭제 실패 ('+jqXHR.status+')');
+          }
         });
       },
 
       groupPoisByDate(list){
         const sorted=[].concat(list).sort((a,b)=>new Date(a.reservDate)-new Date(b.reservDate));
-        const grouped={}; sorted.forEach(p=>{ const d=this.formatDate(p.reservDate); if(!grouped[d]) grouped[d]=[]; grouped[d].push(p); });
-        this.itineraryByDate=grouped; if(Object.keys(grouped).length>0) this.activeDate=Object.keys(grouped)[0];
+        const grouped={};
+        sorted.forEach(p=>{
+          const d=this.formatDate(p.reservDate);
+          if(!grouped[d]) grouped[d]=[];
+          grouped[d].push(p);
+        });
+        this.itineraryByDate=grouped;
+        if(Object.keys(grouped).length>0) this.activeDate=Object.keys(grouped)[0];
       },
-      setActiveDate(d){ this.activeDate=d; this.clearRoute(); },
+      setActiveDate(d){
+        this.activeDate=d;
+        this.clearRoute();
+      },
 
       fnMemberPoint(){
-        let self = this;
-          let param = {
-            userId : self.userId
-          };
-          $.ajax({
-              url: "/point/recent.dox",
-              dataType: "json",
-              type: "POST",
-              data: param,
-              success: function (data) {
-                // console.log(data);
-                self.info = data.info;
-              }
-          });
+        const self=this;
+        $.ajax({
+          url: "/point/recent.dox",
+          dataType: "json",
+          type: "POST",
+          data: { userId: self.userId },
+          success: function (data) { self.info = data.info || {}; }
+        });
       },
 
       limitPoint(){
-        let self = this;
-        self.usingPoint = Math.floor(self.usingPoint);
-
-        if(self.usingPoint > self.info.totalPoint){
-          self.usingPoint = self.info.totalPoint;
-        }
-        
-        if(self.usingPoint < 0 || isNaN(self.usingPoint)){
-          self.usingPoint = 0;
-        }
+        this.usingPoint = Math.floor(this.usingPoint);
+        const max = Number(this.info.totalPoint || 0);
+        if(this.usingPoint > max) this.usingPoint = max;
+        if(this.usingPoint < 0 || isNaN(this.usingPoint)) this.usingPoint = 0;
       }
     },
+
     mounted(){
-      this.reservation=JSON.parse('<c:out value="${reservationJson}" escapeXml="false" />');
-      this.reservation.packname=this.reservation.packName;
-      if(this.reservation.descript) this.memo=this.reservation.descript;
+      try{
+        // ✅ JSP에서 내려준 JSON
+        this.reservation = JSON.parse('<c:out value="${reservationJson}" escapeXml="false" />');
+        this.reservation.packname = this.reservation.packName || this.reservation.packname || '';
+        if(this.reservation.descript) this.memo = this.reservation.descript;
 
-      const rawPoiList=JSON.parse('<c:out value="${poiListJson}" escapeXml="false" />');
-      this.poiList=rawPoiList.filter(p=>p.contentId && !isNaN(p.contentId) && Number(p.contentId)>0);
+        const rawPoiList = JSON.parse('<c:out value="${poiListJson}" escapeXml="false" />');
+        this.poiList = (rawPoiList || []).filter(p => p.contentId && !isNaN(p.contentId) && Number(p.contentId) > 0);
 
-      this.groupPoisByDate(this.poiList);
+        // ✅ 숙소 contentId 세팅
+        this.setAccContentIdFromPois();
 
-      const validMapPois=this.poiList.filter(p=>p.mapY!=null && p.mapX!=null && !isNaN(p.mapY) && !isNaN(p.mapX));
-      if(validMapPois.length>0) this.initializeMap(validMapPois);
-      else document.getElementById('map-container').innerText='DB에 저장된 좌표 정보가 없습니다.';
+        // ✅ 일정 그룹핑
+        this.groupPoisByDate(this.poiList);
 
-      this.fnMemberPoint();
+        // ✅ 지도
+        const validMapPois = this.poiList.filter(p=>p.mapY!=null && p.mapX!=null && !isNaN(p.mapY) && !isNaN(p.mapX));
+        if(validMapPois.length>0) this.initializeMap(validMapPois);
+        else document.getElementById('map-container').innerText='DB에 저장된 좌표 정보가 없습니다.';
+
+        // ✅ 포인트
+        this.fnMemberPoint();
+
+      }catch(e){
+        console.error('[mounted error]', e);
+        alert('페이지 데이터 파싱 중 오류가 발생했습니다. (콘솔 확인)');
+      }
     }
   });
 
