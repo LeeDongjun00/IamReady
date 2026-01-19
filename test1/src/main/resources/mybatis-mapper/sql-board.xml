@@ -52,6 +52,11 @@
 		<if test="order == 'cnt'">
 			ORDER BY B.CNT DESC
 		</if>
+		
+		<if test="pageType == 'adminInquiry'">
+  			ORDER BY  CASE WHEN NVL(T.CCNT, 0) = 0 THEN 0 ELSE 1 END
+		</if>
+		
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
 	
