@@ -1,3 +1,4 @@
+// ResService.java
 package com.example.test1.dao;
 
 import com.example.test1.mapper.ResMapper;
@@ -35,12 +36,34 @@ public class ResService {
     // -------- 예약 저장/조회 --------
     @Transactional
     public Long saveNewReservation(Reservation reservation, List<Poi> pois) {
+
+        // 1) 예약 저장
         resMapper.insertReservation(reservation);
         Long resNum = Long.parseLong(reservation.getResNum());
+
+        // 2) POI 저장
         for (Poi poi : pois) {
             poi.setResNum(resNum);
             resMapper.insertPoi(poi);
         }
+
+        // 3) 숙소(typeId=32)만 RESERVATION_ACC 저장
+        String reserver = reservation.getUserId(); // 필요하면 닉네임 컬럼으로 교체
+
+        for (Poi poi : pois) {
+            if (Integer.valueOf(32).equals(poi.getTypeId())) {
+                // contentId null이면 CONTENTID NOT NULL에서 터지니 방어
+                if (poi.getContentId() == null) continue;
+
+                resMapper.insertReservationAcc(
+                        resNum,
+                        poi.getPlaceName(),  // ACCOM_NAME
+                        reserver,            // RESERVER
+                        poi.getContentId()   // CONTENTID
+                );
+            }
+        }
+
         return resNum;
     }
 
@@ -70,7 +93,6 @@ public class ResService {
     // -------- 여행 포기(예약 삭제) --------
     @Transactional
     public boolean deleteReservationCascade(Long resNum) {
-        // FK 문제 방지: 자식(POI) → 부모(RESERVATION) 순서 삭제
         resMapper.deletePoisByResNum(resNum);
         return resMapper.deleteReservation(resNum) > 0;
     }

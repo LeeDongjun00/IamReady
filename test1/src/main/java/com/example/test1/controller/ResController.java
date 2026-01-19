@@ -30,7 +30,7 @@ public class ResController {
     private String kakaoAppKey;
 
     // =========================
-    // 예약 저장 (기존 로직)
+    // 예약 저장
     // =========================
     @PostMapping("/api/reservation/save")
     @ResponseBody

@@ -691,7 +691,6 @@
       }
 
       /* ================================
-         ✅ (추가) 메인 아래: 프리미엄 광고 + 추천 여행지 둘러보기(캐러셀)
          - 요구: images 경로 고정
          - 요구: 3장(region_1,2,3) / 화살표 좌우 / 루프(A) + 오토플레이(C)
          - 요구: 한 번에 2장씩 노출
@@ -716,15 +715,49 @@
         }
       }
 
+      /* ================================
+   프리미엄 광고 카드 (이미지 꽉 채우기)
+================================ */
       .premium-ad-card {
-        background: var(--card);
-        border-radius: 16px;
-        box-shadow: var(--shadow);
+        position: relative;
+        height: 190px;
+        /* 원하는 높이 (필요시 조절) */
+        background: transparent;
+        /* 배경 제거 */
+        border: 4.5px solid #22c55e;
+        /* 테두리 제거 */
+        border-radius: 0;
+        /* 카드 느낌 제거 */
+        box-shadow: none;
+        /* 그림자 제거 */
         overflow: hidden;
-        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 16px;
       }
 
       .premium-ad-card img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        /* ✅ 비율 유지 + 가득 채우기 */
+        object-position: center;
+      }
+
+      /* ================================
+   추천 여행지 카드 (박스 완전 제거)
+================================ */
+      .region-carousel-card {
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        overflow: hidden;
+      }
+
+      .region-carousel-card img {
         width: 100%;
         height: 100%;
         display: block;
@@ -1123,172 +1156,6 @@
         text-align: center;
         color: #333;
       }
-
-      /* ✅ 배경 오버레이 */
-      .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 999; /* 팝업(1000)보다 1 낮게 */
-        display: none;
-      }
-
-      /* ✅ 팝업이 오버레이 위로 오게 */
-      .sub-popup {
-        z-index: 1000;
-      }
-      /* ================================
-   ✅ 구독 혜택 팝업 스타일
-================================ */
-      .sub-popup {
-        position: fixed;
-        top: 250px;
-        left: 50px;
-        width: 520px;
-        max-width: calc(100vw - 24px);
-        background: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 14px;
-        padding: 22px 22px 16px;
-        z-index: 1000;
-        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
-      }
-
-      .sub-popup__x {
-        position: absolute;
-        top: 10px;
-        right: 12px;
-        width: 34px;
-        height: 34px;
-        border: none;
-        background: transparent;
-        font-size: 26px;
-        line-height: 34px;
-        cursor: pointer;
-        color: #111;
-        opacity: 0.65;
-      }
-      .sub-popup__x:hover {
-        opacity: 1;
-      }
-
-      .sub-popup__title {
-        margin: 0 0 30px 10px;
-        font-size: 44px;
-        line-height: 1.05;
-        letter-spacing: -0.5px;
-      }
-
-      .sub-popup__desc {
-        text-align: center;
-        font-size: 16px;
-        color: #222;
-        line-height: 1.5;
-        margin-bottom: 16px;
-      }
-
-      .sub-popup__grid {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .sub-popup__row {
-        display: grid;
-        grid-template-columns: 1fr 30px 1fr;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .sub-popup__card {
-        margin: 0;
-        background: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 8px;
-        overflow: hidden;
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .sub-popup__card img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-        background: #f3f4f6;
-        display: block;
-      }
-
-      .sub-popup__arrow {
-        text-align: center;
-        font-size: 26px;
-        font-weight: 700;
-        color: #111;
-        opacity: 0.7;
-      }
-
-      .sub-popup__cap {
-        padding: 10px 10px 12px;
-        text-align: center;
-        font-size: 16px;
-        font-weight: 700;
-        color: #111;
-      }
-
-      .sub-popup__hr {
-        border: none;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        margin: 14px 0 12px;
-      }
-
-      .sub-popup__footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .sub-popup__check {
-        font-size: 14px;
-        color: #111;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .sub-popup__btn {
-        border: none;
-        background: #0ea5e9;
-        color: #fff;
-        font-weight: 700;
-        border-radius: 8px;
-        padding: 8px 14px;
-        cursor: pointer;
-      }
-      .sub-popup__btn:hover {
-        opacity: 0.92;
-      }
-
-      @media (max-width: 560px) {
-        .sub-popup {
-          left: 12px;
-          right: 12px;
-          width: auto;
-          top: 12px;
-        }
-        .sub-popup__title {
-          font-size: 34px;
-        }
-        .sub-popup__row {
-          grid-template-columns: 1fr 26px 1fr;
-        }
-        .sub-popup__card img {
-          height: 120px;
-        }
-      }
     </style>
   </head>
 
@@ -1453,7 +1320,7 @@
         </div>
         <!-- /main-panels -->
 
-        <!-- ✅ (추가) 프리미엄 광고 + 추천 여행지 둘러보기 -->
+        <!-- 프리미엄 광고 + 추천 여행지 둘러보기 -->
         <div class="below-panels">
           <!-- 좌측: 플랫폼 광고 -->
           <div class="premium-ad-card">
@@ -1467,7 +1334,6 @@
                 <div class="region-carousel-badge"><i class="fa-solid fa-compass"></i></div>
                 <div>
                   <h3>추천 여행지 둘러보기</h3>
-                  <p>좌우 화살표로 이동할 수 있어요</p>
                 </div>
               </div>
 
@@ -1584,86 +1450,22 @@
           </div>
         </div>
       </div>
+      <!-- /content-wrapper -->
     </div>
+    <!-- /app -->
 
-    <!-- ================================ 
-     ✅ 구독 혜택 팝업 (7일간 숨김)
-  -->
-    <div id="popup-overlay" class="popup-overlay" style="display: none"></div>
-
-    <div id="ad-popup" class="sub-popup" style="display: none">
-      <button class="sub-popup__x" type="button" onclick="closePopup()" aria-label="닫기">×</button>
-
-      <h2 class="sub-popup__title">구독 혜택</h2>
-
-      <div class="sub-popup__desc">
-        <div>여행하기 예산배분 잠금 활성화</div>
-        <div>일1회 경로 생성 → 무제한 이용 가능</div>
-      </div>
-
-      <!-- 비교 영역 -->
-      <div class="sub-popup__grid">
-        <div class="sub-popup__row">
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad1.PNG" alt="예산배분 잠금 상태" />
-          </figure>
-
-          <div class="sub-popup__arrow">→</div>
-
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad2.PNG" alt="예산배분 무제한 상태" />
-          </figure>
-        </div>
-
-        <div class="sub-popup__row">
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad3.PNG" alt="차량 경로 보기 1회" />
-            <figcaption class="sub-popup__cap">차량 경로 보기 일 1회</figcaption>
-          </figure>
-
-          <div class="sub-popup__arrow">→</div>
-
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad3.PNG" alt="무제한 이용 가능" />
-            <figcaption class="sub-popup__cap">무제한 이용 가능</figcaption>
-          </figure>
-        </div>
-      </div>
-
-      <hr class="sub-popup__hr" />
-
-      <div class="sub-popup__footer">
-        <label class="sub-popup__check">
-          <input type="checkbox" id="today-check" />
-          7일 동안 보지 않기
-        </label>
-
-        <button class="sub-popup__btn" type="button" onclick="closePopup()">닫기</button>
-      </div>
-    </div>
     <%@ include file="components/footer.jsp" %>
 
-    <!-- ================================
-         ✅ Vue / Kakao JS
-    ================================= -->
     <script>
       const app = Vue.createApp({
         data() {
           return {
             map: null,
-            ps: null,
-            placeOverlay: null,
-            contentNode: null,
-            markers: [],
-            currCategory: "",
-            roadview: null,
-            roadviewClient: null,
-            lastClickedLatLng: null,
-            // 리스트
+            marker: null,
+
             userId: "${sessionId}",
             list: [],
             bestList: [],
-            liked: false,
             thumbnailMap: {},
             page: 1,
             pageSize: 6,
@@ -1675,112 +1477,91 @@
               "/img/defaultImg05.jpg",
               "/img/defaultImg06.jpg",
             ],
+
+            headCount: 2,
+            budget: 300000,
+
+            topBannerSwiper: null,
+            reviewSwiper: null,
+
+            /* ✅ (추가) 추천 여행지 둘러보기 Swiper */
+            regionSwiper: null,
+
+            selectedRegionKey: "",
+            selectedRegionName: "",
+            spotTitle: "지역을 선택해 주세요",
+
+            REGION: {
+              seoul: { name: "서울특별시", lat: 37.5665, lng: 126.978, jitter: 0.05, spot: "서울 대표 명소" },
+              gyeonggi: { name: "경기도", lat: 37.4138, lng: 127.5183, jitter: 0.12, spot: "경기 대표 명소" },
+              incheon: { name: "인천광역시", lat: 37.4563, lng: 126.7052, jitter: 0.08, spot: "인천 대표 명소" },
+
+              gangwon: { name: "강원특별자치도", lat: 37.8228, lng: 128.1555, jitter: 0.16, spot: "강원 대표 명소" },
+              chungnam: { name: "충청남도", lat: 36.6588, lng: 126.6728, jitter: 0.14, spot: "충남 대표 명소" },
+              jeonbuk: { name: "전북특별자치도", lat: 35.7175, lng: 127.153, jitter: 0.14, spot: "전북 대표 명소" },
+
+              daegu: { name: "대구광역시", lat: 35.8714, lng: 128.6014, jitter: 0.07, spot: "대구 대표 명소" },
+              busan: { name: "부산광역시", lat: 35.1796, lng: 129.0756, jitter: 0.08, spot: "부산 대표 명소" },
+              jeju: { name: "제주특별자치도", lat: 33.4996, lng: 126.5312, jitter: 0.12, spot: "제주 대표 명소" },
+            },
           };
         },
         methods: {
-          // 초기화
           init() {
-            let self = this;
+            const self = this;
+
             kakao.maps.load(() => {
               self.initMap();
-              // self.initCategory();
-              // self.initRoadview();
             });
-            self.$nextTick(() => self.initSwiper());
+
+            self.$nextTick(() => {
+              self.initTopBannerSwiper();
+              self.initSwiper();
+
+              /* ✅ (추가) 추천 여행지 둘러보기 Swiper 초기화 */
+              self.initRegionSwiper();
+            });
           },
 
-          // 지도 초기화
+          /* ✅ 지도 생성 + relayout 강제 (붕 뜨는 문제 해결: 최종 방어 버전) */
           initMap() {
-            let self = this;
+            const self = this;
             const mapContainer = document.getElementById("map");
-            const mapOption = {
-              center: new kakao.maps.LatLng(37.566826, 126.9786567),
-              level: 5,
-            };
-            self.map = new kakao.maps.Map(mapContainer, mapOption);
-            self.ps = new kakao.maps.services.Places(self.map);
-            self.placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 });
-            self.contentNode = document.createElement("div");
-            self.placeOverlay.setContent(self.contentNode);
-            // kakao.maps.event.addListener(self.map, "idle", ()=> self.searchPlaces());
 
-            // 주소 → 좌표 변환 후 "내 위치" 커스텀 마커 + 말풍선
-            let geocoder = new kakao.maps.services.Geocoder();
-            geocoder.addressSearch("인천광역시 부평구 부평1동 534-48", function (result, status) {
-              if (status === kakao.maps.services.Status.OK) {
-                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            const center = new kakao.maps.LatLng(37.566826, 126.9786567);
+            self.map = new kakao.maps.Map(mapContainer, { center, level: 7 });
+            self.marker = new kakao.maps.Marker({ position: center, map: self.map });
 
-                // 1) 커스텀 SVG 핀
-                const svgPin = `
-                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
-                    <defs>
-                      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#0ea5e9"/>
-                        <stop offset="100%" stop-color="#0284c7"/>
-                      </linearGradient>
-                    </defs>
-                    <path class="my-location-marker-shadow"
-                      d="M18 2c-6.1 0-11 4.86-11 10.86 0 7.67 9.47 18.6 10.16 19.39a1.15 1.15 0 0 0 1.68 0C19.53 31.46 29 20.53 29 12.86 29 6.86 24.1 2 18 2z"
-                      fill="url(#g)"/>
-                    <circle cx="18" cy="13" r="4.6" fill="#fff"/>
-                  </svg>`;
-                const markerImage = new kakao.maps.MarkerImage(
-                  "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgPin),
-                  new kakao.maps.Size(36, 36),
-                  { offset: new kakao.maps.Point(18, 36) }
-                );
-                var marker = new kakao.maps.Marker({
-                  map: self.map,
-                  position: coords,
-                  image: markerImage,
-                });
-
-                self.$nextTick(() => {
-                  self.initTopBannerSwiper();
-                  self.initSwiper();
-
-                  /* ✅ (추가) 추천 여행지 둘러보기 Swiper 초기화 */
-                  self.initRegionSwiper();
-                });
-
-                /* ✅ 지도 생성 + relayout 강제 (붕 뜨는 문제 해결: 최종 방어 버전) */
-                const mapContainer = document.getElementById("map");
-
-                const center = new kakao.maps.LatLng(37.566826, 126.9786567);
-                self.map = new kakao.maps.Map(mapContainer, { center, level: 7 });
-                self.marker = new kakao.maps.Marker({ position: center, map: self.map });
-
-                // ✅ 0) 화면 레이아웃이 진짜 잡힌 다음에 relayout (2번)
-                requestAnimationFrame(() => {
-                  if (!self.map) return;
-                  self.map.relayout();
-                  self.map.setCenter(center);
-                });
-
-                setTimeout(() => {
-                  if (!self.map) return;
-                  self.map.relayout();
-                  if (self.marker) self.map.setCenter(self.marker.getPosition());
-                }, 220);
-
-                // ✅ 1) 브라우저 리사이즈
-                window.addEventListener("resize", () => {
-                  if (!self.map) return;
-                  self.map.relayout();
-                  if (self.marker) self.map.setCenter(self.marker.getPosition());
-                });
-
-                // ✅ 2) 폰트 로딩(구글폰트가 늦게 적용되며 레이아웃 바뀌는 경우)
-                if (document.fonts && document.fonts.ready) {
-                  document.fonts.ready.then(() => {
-                    if (!self.map) return;
-                    self.map.relayout();
-                    if (self.marker) self.map.setCenter(self.marker.getPosition());
-                  });
-                }
-              }
+            // ✅ 0) 화면 레이아웃이 진짜 잡힌 다음에 relayout (2번)
+            requestAnimationFrame(() => {
+              if (!self.map) return;
+              self.map.relayout();
+              self.map.setCenter(center);
             });
+
+            setTimeout(() => {
+              if (!self.map) return;
+              self.map.relayout();
+              if (self.marker) self.map.setCenter(self.marker.getPosition());
+            }, 220);
+
+            // ✅ 1) 브라우저 리사이즈
+            window.addEventListener("resize", () => {
+              if (!self.map) return;
+              self.map.relayout();
+              if (self.marker) self.map.setCenter(self.marker.getPosition());
+            });
+
+            // ✅ 2) 폰트 로딩(구글폰트가 늦게 적용되며 레이아웃 바뀌는 경우)
+            if (document.fonts && document.fonts.ready) {
+              document.fonts.ready.then(() => {
+                if (!self.map) return;
+                self.map.relayout();
+                if (self.marker) self.map.setCenter(self.marker.getPosition());
+              });
+            }
           },
+
           fnSelectRegion(key) {
             const self = this;
             const info = self.REGION[key];
@@ -1981,7 +1762,7 @@
                 "명\n" +
                 "예산: " +
                 Number(self.budget || 0).toLocaleString() +
-                "원"
+                "원",
             );
           },
         },
@@ -2023,41 +1804,8 @@
           });
         },
       });
+
       app.mount("#app");
-
-      // ================================
-      // ✅ 광고 팝업 제어 (7일)
-      // ================================
-      document.addEventListener("DOMContentLoaded", function () {
-        const popup = document.getElementById("ad-popup");
-        const overlay = document.getElementById("popup-overlay");
-        if (!popup || !overlay) return;
-
-        const expiry = localStorage.getItem("ad-expiry");
-        const now = new Date().getTime();
-
-        if (!expiry || now > parseInt(expiry)) {
-          popup.style.display = "block";
-          overlay.style.display = "block";
-        } else {
-          popup.style.display = "none";
-          overlay.style.display = "none";
-        }
-      });
-
-      function closePopup() {
-        const popup = document.getElementById("ad-popup");
-        const overlay = document.getElementById("popup-overlay");
-        const isChecked = document.getElementById("today-check")?.checked;
-
-        if (isChecked) {
-          const expiryDate = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
-          localStorage.setItem("ad-expiry", expiryDate);
-        }
-
-        popup.style.display = "none";
-        overlay.style.display = "none";
-      }
     </script>
   </body>
 </html>
