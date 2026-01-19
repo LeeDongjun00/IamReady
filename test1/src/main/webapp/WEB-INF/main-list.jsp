@@ -658,7 +658,6 @@
       }
 
       /* ================================
-         ✅ (추가) 메인 아래: 프리미엄 광고 + 추천 여행지 둘러보기(캐러셀)
          - 요구: images 경로 고정
          - 요구: 3장(region_1,2,3) / 화살표 좌우 / 루프(A) + 오토플레이(C)
          - 요구: 한 번에 2장씩 노출
@@ -683,15 +682,50 @@
         }
       }
 
+      /* ================================
+   프리미엄 광고 카드 (이미지 꽉 채우기)
+================================ */
       .premium-ad-card {
-        background: var(--card);
-        border-radius: 16px;
-        box-shadow: var(--shadow);
+        position: relative;
+        height: 190px;
+        /* 원하는 높이 (필요시 조절) */
+        background: transparent;
+        /* 배경 제거 */
+        border: 4.5px solid #22c55e;
+        /* 테두리 제거 */
+        border-radius: 0;
+        /* 카드 느낌 제거 */
+        box-shadow: none;
+        /* 그림자 제거 */
         overflow: hidden;
-        border: 1px solid rgba(0, 0, 0, .06);
+        border-radius: 16px;
       }
 
       .premium-ad-card img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        /* ✅ 비율 유지 + 가득 채우기 */
+        object-position: center;
+      }
+
+
+      /* ================================
+   추천 여행지 카드 (박스 완전 제거)
+================================ */
+      .region-carousel-card {
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        overflow: hidden;
+      }
+
+      .region-carousel-card img {
         width: 100%;
         height: 100%;
         display: block;
@@ -1371,7 +1405,7 @@
 
           </div><!-- /main-panels -->
 
-          <!-- ✅ (추가) 프리미엄 광고 + 추천 여행지 둘러보기 -->
+          <!-- 프리미엄 광고 + 추천 여행지 둘러보기 -->
           <div class="below-panels">
             <!-- 좌측: 플랫폼 광고 -->
             <div class="premium-ad-card">
@@ -1385,7 +1419,6 @@
                   <div class="region-carousel-badge"><i class="fa-solid fa-compass"></i></div>
                   <div>
                     <h3>추천 여행지 둘러보기</h3>
-                    <p>좌우 화살표로 이동할 수 있어요</p>
                   </div>
                 </div>
 

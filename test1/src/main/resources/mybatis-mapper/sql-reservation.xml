@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.example.test1.mapper.ResMapper">
+
 
     <!-- 예약 INSERT (DESCRIPT 포함) -->
     <insert id="insertReservation" parameterType="com.example.test1.model.Reservation">
@@ -99,5 +99,13 @@
     <delete id="deleteReservation">
         DELETE FROM ADMIN.RESERVATION WHERE RES_NUM = #{resNum}
     </delete>
+
+    <!-- (신규) RESERVATION_ACC 저장 : 필수 컬럼만 넣고 나머지는 NULL/DEFAULT -->
+    <insert id="insertReservationAcc">
+        INSERT INTO ADMIN.RESERVATION_ACC
+            (RESNUM, ACCOM_NAME, RESERVER, PAYMENT_STAT, CDATETIME, CONTENTID)
+        VALUES
+            (#{resNum}, #{accomName}, #{reserver}, 'READY', SYSDATE, #{contentId})
+    </insert>
 
 </mapper>
