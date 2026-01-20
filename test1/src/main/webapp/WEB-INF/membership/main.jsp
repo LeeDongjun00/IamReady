@@ -4,219 +4,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>멤버쉽</title>
+    <title>멤버십</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-            integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/css/main-style.css">
     <link rel="stylesheet" href="/css/common-style.css">
     <link rel="stylesheet" href="/css/header-style.css">
     <link rel="stylesheet" href="/css/main-images.css">
     <style>
-        table, tr, td, th{
-            border : 1px solid black;
-            border-collapse: collapse;
-            padding : 5px 10px;
-            text-align: center;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
         }
-        th{
-            background-color: beige;
-        }
-        tr:nth-child(even){
-            background-color: azure;
-        }
-        .field{
+
+        .field {
             width: 100%;
-            height: 800px;
+            height: 750px;
         }
-        .mainField{
+
+        .mainField {
             margin: 15px auto;
             width: 80%;
             height: 700px;
-            border: 1px solid rgb(203, 203, 203);
-            border-radius: 10px;
+            background: white;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0px 0px 5px rgb(166, 165, 165);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
-        .membershipField{
-            display: flex;      
-            flex-direction: row;
-            height: 100%;
+        .topBar {
+            background: linear-gradient(135deg, #0078FF 0%, #00C9FF 100%);
+            height: 8px;
+        }
+
+        .membershipField {
+            display: flex;
+            height: calc(100% - 8px);
         }
 
         .sidebar {
-            width: 150px;
-            display: flex;
-            flex-direction: column;
-            /* border-right: 2px solid #ccc; */
-            background-color: #f8f8f8;
+            width: 240px;
+            background: #f8fafc;
+            padding: 30px 0;
+            border-right: 1px solid #e2e8f0;
         }
 
         .btn {
-            flex: none;
-            height: 50px;
+            width: 100%;
+            height: 60px;
             border: none;
-            border-bottom: 1px solid #ddd;
-            border-right: 2px solid #ccc;
-            background: #f8f8f8;
+            background: transparent;
+            font-size: 16px;
+            text-align: left;
+            padding: 0 30px;
+            color: #64748b;
             cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn i {
             font-size: 18px;
-            transition: background 0.2s, border-right 0.2s;
+            width: 20px;
         }
 
         .btn:hover {
-            background: #eee;
+            background: #f1f5f9;
+            color: #475569;
         }
 
         .btn.active {
-            background: #fff;
-            border-right: none; /* 활성화된 버튼은 경계선 제거 */
+            background: linear-gradient(90deg, rgba(0, 120, 255, 0.1) 0%, transparent 100%);
+            color: #0078FF;
+            font-weight: 600;
         }
 
-        /* 우측 콘텐츠 영역 */
+        .btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #0078FF 0%, #00C9FF 100%);
+        }
+
         .content {
             flex: 1;
-            /* border-left: 2px solid #ccc; */
-            padding: 20px;
-            background: #fff;
-            height: 100%;
-            text-align: center;
+            padding: 60px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .panel {
             display: none;
+            width: 100%;
+            max-width: 500px;
         }
 
         .panel.active {
             display: block;
+            animation: fadeIn 0.4s ease;
         }
 
-        .topBar{
-            background-color: #0078FF;
-            height: 30px;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
             text-align: center;
         }
 
-        .title{
-            font-size: 30px;
-            font-weight: bold;
-            height: 120px;
+        .plan-header {
+            margin-bottom: 30px;
         }
-        .price{
-            margin-top: 20px;
-            font-size: 25px;
-            font-weight: bold;
+
+        .plan-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .subBtn{
-            width: 400px;
-            height: 35px;
-            font-size: 18px;
-            border-radius: 10px;
-            border: 1px solid #9ecbff;
-            background-color: #9ecbff;
-            font-weight: bold;
+
+        .plan-title i {
+            color: #0078FF;
+            font-size: 24px;
         }
-        .subBtn:hover{
-            cursor: pointer;
-            background-color: #4a9efe;
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #f97316);
             color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .explainField{
-            background-color: rgb(237, 237, 237);
-            width: 400px;
-            margin: 30px auto;
-            border-radius: 10px;
+
+        .price {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0078FF 0%, #00C9FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
         }
-        .explainField div{
-            height: 80px;
-            font-weight: bold;
+
+        .price span {
+            font-size: 18px;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .benefits {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .benefits li {
+            list-style: none;
+            padding: 14px 0;
+            font-size: 15px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .benefits li:not(:last-child) {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .benefits i {
+            color: #10b981;
+            font-size: 18px;
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        .subBtn {
+            width: 100%;
+            height: 56px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #0078FF 0%, #00C9FF 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(0, 120, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subBtn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .subBtn:hover::before {
+            left: 100%;
+        }
+
+        .subBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 120, 255, 0.5);
+        }
+
+        .subBtn:active {
+            transform: translateY(0);
+        }
+
+        .coming-soon {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 18px;
+            padding: 60px 20px;
+        }
+
+        .coming-soon i {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .membershipField {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                padding: 20px 0;
+            }
+
+            .btn {
+                height: 50px;
+                padding: 0 20px;
+            }
+
+            .content {
+                padding: 40px 20px;
+            }
+
+            .plan-card {
+                padding: 30px 20px;
+            }
+
+            .price {
+                font-size: 40px;
+            }
         }
     </style>
 </head>
 <body>
     <%@ include file="../components/header.jsp" %>
     <div id="app">
-        <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        
-        
-
         <div class="field">
             <div class="mainField">
-                <div class="topBar">
-                    <br>
-                </div>
+                <div class="topBar"></div>
                 <div class="membershipField">
                     <div class="sidebar">
-                        <button class="btn active" data-target="panel1">월간 플랜</button>
-                        <button class="btn" data-target="panel2">연간 플랜</button>
-                        <button class="btn" data-target="panel3">추가 예정</button>
-                        <button class="btn" data-target="panel4">추가 예정</button>
+                        <button class="btn active" data-target="panel1">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>월간 플랜</span>
+                        </button>
+                        <button class="btn" data-target="panel2">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <span>연간 플랜</span>
+                        </button>
+                        <button class="btn" data-target="panel3">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>추가 예정</span>
+                        </button>
                     </div>
                     <div class="content">
                         <div id="panel1" class="panel active">
-                            <div class="title">
-                                <div>
-                                    <span>
+                            <div class="plan-card">
+                                <div class="plan-header">
+                                    <div class="plan-title">
                                         <span>월간 구독</span>
-                                        <i class="fa-solid fa-paper-plane" style="color: skyblue;"></i>
-                                    </span>
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </div>
+                                    <div class="price">₩4,900<span> / 월</span></div>
                                 </div>
-                                <div class="price">
-                                    4,900원
-                                </div>
-                            </div>
-                            <div class="btnField">
-                                <button v-if="status === 'U'" class="subBtn" @click="fnSub('구독(1개월)',4900, 'M')">구독하기</button>
-                                <button v-else-if="status === 'S'" class="subBtn" @click="fnSub('구독(1개월)',4900, 'M')">연장하기</button>
-                                <!-- <button @click="fnCancel">취소하기</button> -->
-                            </div>
-                            <div class="explainField">
-                                <br>
-                                <br>
-                                <!-- <div class="verticalMid">기본 일정 생성 가능</div>
-                                <div class="verticalMid">일정 저장 및 불러오기</div> -->
-                                <div class="verticalMid">포인트 추가 적립 2%</div>
-                                <div class="verticalMid">경로 생성 기능 일일 최대 5번</div>
+
+                                <ul class="benefits">
+                                    <li>
+                                        <i class="fa-solid fa-check-circle"></i>
+                                        <span>포인트 추가 적립 2%</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-check-circle"></i>
+                                        <span>경로 생성 기능 해제</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-check-circle"></i>
+                                        <span>예산 세부 관리</span>
+                                    </li>
+                                </ul>
+
+                                <button v-if="status === 'U'" class="subBtn" @click="fnSub('구독(1개월)',4900, 'M')">
+                                    구독하기
+                                </button>
+                                <button v-else-if="status === 'S'" class="subBtn" @click="fnSub('구독(1개월)',4900, 'M')">
+                                    연장하기
+                                </button>
                             </div>
                         </div>
+
                         <div id="panel2" class="panel">
-                            <div class="title">
-                                <div>
-                                    <span>
+                            <div class="plan-card">
+                                <div class="plan-header">
+                                    <div class="plan-title">
                                         <span>연간 구독</span>
-                                        <i class="fa-solid fa-paper-plane" style="color: skyblue;"></i>
-                                    </span>
+                                        <span class="badge">BEST</span>
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </div>
+                                    <div class="price">₩49,000<span> / 년</span></div>
                                 </div>
-                                <div class="price">
-                                    49,000원
-                                </div>
-                            </div>
-                            <div class="btnField">
-                                <button v-if="status === 'U'" class="subBtn" @click="fnSub('구독(1년)',49000, 'Y')">구독하기</button>
-                                <button v-else-if="status === 'S'" class="subBtn" @click="fnSub('구독(1년)',49000, 'Y')">연장하기</button>
-                                <!-- <button @click="fnCancel">취소하기</button> -->
-                            </div>
-                            <div class="explainField">
-                                <br>
-                                <br>
-                                <!-- <div class="verticalMid">기본 일정 생성 가능</div>
-                                <div class="verticalMid">일정 저장 및 불러오기</div> -->
-                                <div class="verticalMid">포인트 추가 적립 2%</div>
-                                <div class="verticalMid">경로 생성 기능 일일 최대 5번</div>
+
+                                <ul class="benefits">
+                                    <li>
+                                        <i class="fa-solid fa-check-circle"></i>
+                                        <span>포인트 추가 적립 2%</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-check-circle"></i>
+                                        <span>경로 생성 기능 해제</span>
+                                    </li>
+                                    <li>
+                                        <i class="fa-solid fa-check-circle"></i>
+                                        <span>예산 세부 관리</span>
+                                    </li>
+                                </ul>
+
+                                <button v-if="status === 'U'" class="subBtn" @click="fnSub('구독(1년)',49000, 'Y')">
+                                    구독하기
+                                </button>
+                                <button v-else-if="status === 'S'" class="subBtn" @click="fnSub('구독(1년)',49000, 'Y')">
+                                    연장하기
+                                </button>
                             </div>
                         </div>
-                        <div id="panel3" class="panel">추가 예정입니다.</div>
-                        <div id="panel4" class="panel">추가 예정입니다.</div>
+
+                        <div id="panel3" class="panel">
+                            <div class="coming-soon">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                                <div>추가 예정입니다</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
     <%@ include file="../components/footer.jsp" %>
 </body>
@@ -228,7 +404,6 @@
     const app = Vue.createApp({
         data() {
             return {
-                // 변수 - (key : value)
                 id : window.sessionData.id,
                 status : window.sessionData.status,
                 sellItem : "",
@@ -237,7 +412,6 @@
             };
         },
         methods: {
-            // 함수(메소드) - (key : function())
             fnList: function () {
                 let self = this;
                 let param = {};
@@ -273,36 +447,23 @@
                 self.sellItem = itemName;
                 self.sellPrice = itemPrice;
                 self.sellTag = itemTag;
-                //console.log(self.sellItem);
-                //console.log(self.sellPrice);
-                //console.log(self.sellTag);
+                
                 IMP.request_pay({
-				    pg: "html5_inicis",
-				    pay_method: "card",
-				    merchant_uid: "merchant_" + new Date().getTime(),
-				    name: self.sellItem,
-				    amount: 1, //판매 가격, 실제 판매시에는 1을 self.sellPrice로 변경
-				    buyer_tel: "010-0000-0000",
+                    pg: "html5_inicis",
+                    pay_method: "card",
+                    merchant_uid: "merchant_" + new Date().getTime(),
+                    name: self.sellItem,
+                    amount: 1,
+                    buyer_tel: "010-0000-0000",
                 }, 
-                function (rsp) { // callback
-			   	      if (rsp.success) {
-			   	        // 결제 성공 시
-						// alert("성공");
-						//console.log(rsp);
-                        // self.imp_uid = rsp.imp_uid;
-                        // self.paid_amount = rsp.paid_amount;
-                        // self.fnPayHistory();
-
-                        //결제 성공 시, 사용자의 스테이터스와 itemTag로 구분해서 실행
-
-                        //결제 성공 시, user의 status를 구독자 등급으로 변경
+                function (rsp) {
+                    if (rsp.success) {
                         self.fnStatusUp();
-			   	      } else {
-			   	        // 결제 실패 시
-						alert("오류가 발생했습니다.");
+                    } else {
+                        alert("오류가 발생했습니다.");
                         return;
-			   	      }
-		   	  	});
+                    }
+                });
             },
 
             fnStatusUp : function () {
@@ -319,7 +480,7 @@
                     sellTag : self.sellTag,
                     subsDay : subsDay
                 };
-                //console.log(param);
+                
                 $.ajax({
                     url: "/mypage/statusUp.dox",
                     dataType: "json",
@@ -328,8 +489,7 @@
                     success: function (data) {
                         if(data.result=="success"){
                             alert(data.msg);
-                            location.reload(); // 현재 창 새로고침
-                            // location.href="/myInfo.do";
+                            location.reload();
                         } else {
                             alert(data.msg);
                             return;
@@ -337,11 +497,9 @@
                     }
                 });
             }
-        }, // methods
+        },
         mounted() {
-            // 처음 시작할 때 실행되는 부분
             let self = this;
-
             self.fnPanelControl();
         }
     });

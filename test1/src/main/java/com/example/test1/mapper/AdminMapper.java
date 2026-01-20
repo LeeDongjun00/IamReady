@@ -67,6 +67,7 @@ public interface AdminMapper {
 	
 	List<Admin> getTopThemes(HashMap<String, Object> map);
 	
+	int resetLoginCnt(HashMap<String, Object> map);
 	
 	
 

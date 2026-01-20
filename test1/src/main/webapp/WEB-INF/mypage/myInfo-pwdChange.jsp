@@ -11,211 +11,194 @@
     <link rel="stylesheet" href="/css/common-style.css">
     <link rel="stylesheet" href="/css/header-style.css">
     <link rel="stylesheet" href="/css/main-images.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        
-        .checkButton{
-            margin-left: 10px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background: #f8fafc;
         }
-        .addr{
-            width: 250px;
-        }
-        .inputWidth{
-            width: 150px;
-        }
-        .phone input{
-            width: 50px;
-        }
-        .guide{
-            padding-left: 5px;
-            font-size: 12px;
-            color: blue;
-        }
-        .guideMust{
-            color: red;
-        }
-        .field{
-            margin: 20px auto;
-            width: 500px;
-            height: 600px;
-            padding-bottom: 100px;
-        }
-        .infoField{
-            border-style: solid;
-            border-radius: 10px;
-            border-width: 1px;
-            /* padding-left: 10%; */
-            background-color: white;
-            margin: 30px auto;
-            text-align: left;
-            box-shadow: 0px 0px 5px gray;
-            overflow: hidden;
-            height: 600px;
-        }
-        .infoField div{
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-        .infoBanner{
-            background-color: #0078FF;
-            padding-left: 10%;
-            color: white;
-            font-weight: bold;
-            /* height: 40px; */
-        }
-        .infoBanner2{
-            padding-left: 10%;
-            /* height: 36px; */
-        }
-        .editBtn{
-            margin-right: 10px;
-        }
-        .joinBlock{
-            margin-top: 20px;
-        }
-        .btnField{
-            text-align: center;
-        }
-        .btnField button{
-            width: 100px;
-            height: 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            border-width: 1px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .btnField button:hover{
-            cursor: pointer;
-        }
-        .cancleBtn{
-            background-color: #d9d9d9;
-            color: rgb(0, 0, 0);
-            border-color: #000000;
-        }
-        .cancleBtn:hover{
-            background-color: #a4a4a4;
-        }
-        .changeBtn{
-            background-color: #0078FF;
-            color: white;
-            border-color: #0078FF;
-        }
-        .changeBtn:hover{
-            background-color: rgb(6, 81, 131);
-        }
-        .inputbox {
-            border: 0.5px solid black;
-            box-sizing: border-box;
-            width: 400px;
-            height: 40px;
-            border-collapse: collapse;
-            padding-left: 10px;
 
-            display: flex;
-            align-items: center;
+        .field {
+            margin: 40px auto;
+            width: 100%;
+            max-width: 500px; /* 비밀번호 폼은 조금 더 슬림하게 */
+            padding: 0 20px 100px;
         }
-        .inputbox input{
-            border: none;
-            outline: none;
-            width: 370px;
+
+        .infoField {
+            background: white;
+            border-radius: 16px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
         }
-        .inputbox input:focus{
-            border: 2px solid black;
+
+        .infoBanner {
+            background: linear-gradient(135deg, #0078FF 0%, #00C9FF 100%);
+            padding: 20px 24px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
         }
-        table, tr, td, th{
-            border : 1px solid black;
-            border-collapse: collapse;
-            /* padding : 5px 10px; */
-            /* text-align: center; */
-        }
-        td{
-            box-sizing: border-box;
-            width: 400px;
-            height: 40px;
-            padding-left: 10px;
-        }
-        td div {
-            display: flex;
-            align-items: center;
-        }
-        td input{
-            border: none;
-            outline: none;
-            width: 370px;
-        }
-        td input:focus{
-            border: 2px solid black;
-        }
-        .guideSpan{
-            font-size: 12px;
-        }
-        .fontBold{
-            font-weight: bold;
+
+        .infoBanner2 {
+            padding: 20px 24px;
+            color: #475569;
             font-size: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .infoBanner2:last-child {
+            border-bottom: none;
+        }
+
+        /* 가이드 텍스트 스타일 */
+        .guide-box {
+            background: #f1f5f9;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .guideSpan {
+            display: block;
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .fontBold {
+            color: #0078FF;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .infoBanner2 label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+
+        .infoBanner2 i {
+            color: #0078FF;
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .infoBanner2 input[type="password"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            color: #1e293b;
+        }
+
+        .infoBanner2 input[type="password"]:focus {
+            outline: none;
+            border-color: #0078FF;
+            box-shadow: 0 0 0 3px rgba(0, 120, 255, 0.1);
+        }
+
+        /* 버튼 영역 */
+        .btnField {
+            display: flex;
+            flex-direction: column; /* 세로 배치 유지 (기존 디자인 참고) */
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btnField button {
+            width: 100%;
+            height: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .changeBtn {
+            background: linear-gradient(135deg, #0078FF 0%, #00C9FF 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(0, 120, 255, 0.4);
+        }
+
+        .changeBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 120, 255, 0.5);
+        }
+
+        .cancleBtn {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .cancleBtn:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        @media (max-width: 640px) {
+            .field {
+                padding: 20px 16px 80px;
+            }
         }
     </style>
 </head>
 <body>
-        <%@ include file="../components/header.jsp" %>
+    <%@ include file="../components/header.jsp" %>
     <div id="app">
-        <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        
         <div class="field">
             <div class="infoField">
                 <div class="infoBanner">
                     비밀번호 변경
                 </div>
-                <div class="infoBanner2" style="margin-bottom: 80px;">
+
+                <div class="guide-box">
                     <span class="guideSpan">
-                        <span class="fontBold">· </span>다른 아이디/사이트에서 사용한 적 없는 비밀번호
+                        <span class="fontBold">·</span> 다른 사이트에서 사용한 적 없는 비밀번호가 안전합니다.
                     </span>
-                    <br>
                     <span class="guideSpan">
-                        <span class="fontBold">· </span>이전에 사용한 적 없는 비밀번호가 안전합니다.
+                        <span class="fontBold">·</span> 이전에 사용한 적 없는 비밀번호를 권장합니다.
                     </span>
                 </div>
 
-                <div class="infoBanner2" style="margin-bottom: 5px;">
-                    <table>
-                        <tr>
-                            <td>
-                                <div><input type="password" placeholder="현재 비밀번호" v-model="nowPwd"></div>
-                            </td>
-                        </tr>
-                    </table>
+                <div class="infoBanner2">
+                    <label>
+                        <i class="fa-solid fa-lock-open"></i> 현재 비밀번호
+                    </label>
+                    <input type="password" placeholder="현재 비밀번호를 입력하세요" v-model="nowPwd">
                 </div>
                 
-                <div class="infoBanner2" style="margin-bottom: 100px;">
-                    <table>
-                        <tr>
-                            <td>
-                                <div><input type="password" placeholder="새 비밀번호" v-model="newPwd"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div><input type="password" placeholder="새 비밀번호 확인" v-model="newPwd2"></div>
-                            </td>
-                        </tr>
-                    </table>
+                <div class="infoBanner2">
+                    <label>
+                        <i class="fa-solid fa-key"></i> 새 비밀번호
+                    </label>
+                    <input type="password" placeholder="새 비밀번호" v-model="newPwd">
                 </div>
 
-                <div class="btnField">
-                <button class="changeBtn" @click="fnPwdConfirm">확인</button>
-                <br>
-                <button class="cancleBtn" @click="fnBack">취소</button>
-            </div>
+                <div class="infoBanner2">
+                    <label>
+                        <i class="fa-solid fa-check-double"></i> 새 비밀번호 확인
+                    </label>
+                    <input type="password" placeholder="새 비밀번호를 한 번 더 입력하세요" v-model="newPwd2">
+                </div>
 
+                <div style="padding: 24px;">
+                    <div class="btnField">
+                        <button class="changeBtn" @click="fnPwdConfirm">비밀번호 변경 완료</button>
+                        <button class="cancleBtn" @click="fnBack">취소</button>
+                    </div>
+                </div>
             </div>
-            
-            
         </div>
-
-         
     </div>
-        <%@ include file="../components/footer.jsp" %> 
+    <%@ include file="../components/footer.jsp" %>
 </body>
 </html>
 
@@ -223,25 +206,22 @@
     const app = Vue.createApp({
         data() {
             return {
-                // 변수 - (key : value)
                 sessionId : window.sessionData.id,
-                info : {},
                 nowPwd : "",
                 newPwd : "",
                 newPwd2 : "",
-
-                id: window.sessionData.id,
+                // 세션 데이터 (필요시 유지)
                 status: window.sessionData.status,
                 nickname: window.sessionData.nickname,
                 name: window.sessionData.name,
-                point: window.sessionData.point,
+                point: window.sessionData.point
             };
         },
         methods: {
-            // 함수(메소드) - (key : function())
-
             fnPwdConfirm: function () {
                 let self = this;
+                if(!self.nowPwd) { alert("현재 비밀번호를 입력해주세요."); return; }
+                
                 let param = {
                     pwd : self.nowPwd,
                     userId : self.sessionId
@@ -252,31 +232,27 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        //console.log(data);
                         if(data.result == "success"){
                             self.fnConfirm();
-                            // alert("같다.!");
                         } else{
                             alert(data.msg);
-                            return;
                         }
-                        
                     }
                 });
             },
 
             fnConfirm: function() {
                 let self = this;
-                // alert("yeah");
-                if(self.newPwd.length==0 || self.newPwd2.length==0 || self.nowPwd.length==0){
-                    alert("비밀번호를 입력해주세요.");
+                if(self.newPwd.length==0 || self.newPwd2.length==0){
+                    alert("새 비밀번호를 입력해주세요.");
                     return;
                 }
 
                 if(self.newPwd != self.newPwd2){
-                    alert("새 비밀번호가 다릅니다.");
+                    alert("새 비밀번호가 서로 일치하지 않습니다.");
                     return;
                 }
+
                 let param = {
                     userId : self.sessionId,
                     pwd : self.newPwd
@@ -287,37 +263,31 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        //console.log(data);
                         if(data.result == "success"){
-                            // self.fnConfirm();
                             alert(data.msg);
                             location.href="/myInfo.do";
                         } else{
                             alert(data.msg);
-                            return;
                         }
-                        
                     }
                 });
             },
 
             fnBack : function () {
-                let self = this;
                 location.href="/myInfo.do";
             },
 
             blockSpaceInput(event) {
-                if (event.key === " ") { // 공백 키가 눌렸을 때
-                    event.preventDefault(); // 공백 입력을 막음
+                if (event.key === " ") {
+                    event.preventDefault();
                 }
             }
-        }, // methods
+        },
         mounted() {
-            // 처음 시작할 때 실행되는 부분
             let self = this;
-
+            // 모든 비밀번호 입력창에 공백 입력 방지 리스너 등록
             document.querySelectorAll('input[type="password"]').forEach(input => {
-                input.addEventListener('keydown', self.blockSpaceInput); // keydown 이벤트 사용
+                input.addEventListener('keydown', self.blockSpaceInput);
             });
         }
     });

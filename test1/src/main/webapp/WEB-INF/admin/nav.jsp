@@ -8,7 +8,7 @@
             .navBox{
                 width: 150px;
                 border: 1px solid lightgray;
-                height: 800px;
+                height: 100%;
                 background-color: lightgray;
                 margin-bottom: 30px;
                 color: white;
@@ -57,8 +57,8 @@
                 <div class="navChild" data-type="report">신고 관리</div>
                 <div class="navChild" data-type="inquiry">문의</div>
                 <div class="navChild" data-type="userManage">회원 관리</div>
-                <div class="navChild" data-type="hsdf">hsdf</div>
-                <div class="navChild" data-type="t645y">t645y</div>
+                <!-- <div class="navChild" data-type="hsdf">hsdf</div>
+                <div class="navChild" data-type="t645y">t645y</div> -->
             </div>
         </nav>
 

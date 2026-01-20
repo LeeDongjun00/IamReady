@@ -1,20 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true" %>
-<<<<<<< HEAD
   <% String resNum=String.valueOf(request.getAttribute("resNum")); %>
     <!DOCTYPE html>
     <html lang="ko">
-=======
-<% 
-    String resNum = String.valueOf(request.getAttribute("resNum")); 
-    // userId 선언부 삭제됨 (header.jsp와 충돌 방지)
-%>
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Reservation</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
     <head>
       <meta charset="UTF-8" />
@@ -71,7 +58,6 @@
         }
 
 
-<<<<<<< HEAD
         /* ✅ 배경 오버레이  */
         .popup-overlay {
           position: fixed;
@@ -84,386 +70,167 @@
           /* 팝업(1000)보다 1 낮게 */
           display: none;
         }
-=======
-      /* ✅ 배경 오버레이  */
-      .popup-overlay{
-        position: fixed;
-        top:0; left:0; right:0; bottom:0;
-        background: rgba(0,0,0,0.6);
-        z-index: 999;   /* 팝업(1000)보다 1 낮게 */
-        display:none;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
-<<<<<<< HEAD
         /* ✅ 팝업이 오버레이 위로 오게 */
         .sub-popup {
           z-index: 1000;
         }
 
-       /* ================================
-   ✅ 구독 혜택 팝업 프리미엄 스타일
+        /* ================================
+   ✅ 구독 혜택 팝업 스타일
 ================================ */
-.sub-popup {
-  position: fixed;
-  top: 180px;
-  left: 50px;
-  width: 520px;
-  max-width: calc(100vw - 24px);
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 32px 24px 20px;
-  z-index: 1000;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: popupFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-  border: 1px solid #eee;
-}
-=======
-      /* ✅ 팝업이 오버레이 위로 오게 */
-      .sub-popup{
-        z-index: 1000;
-      }
-      /* ================================
-           ✅ 구독 혜택 팝업 스타일
-      ================================ */
-      .sub-popup{
-        position: fixed;
-        top: 220px;
-        left: 50px;
-        width: 520px;
-        max-width: calc(100vw - 24px);
-        background: #fff;
-        border: 1px solid rgba(0,0,0,.10);
-        border-radius: 14px;
-        padding: 22px 22px 16px;
-        z-index: 1000;
-        box-shadow: 0 18px 45px rgba(0,0,0,.18);
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup {
+          position: fixed;
+          top: 220px;
+          left: 50px;
+          width: 520px;
+          max-width: calc(100vw - 24px);
+          background: #fff;
+          border: 1px solid rgba(0, 0, 0, .10);
+          border-radius: 14px;
+          padding: 22px 22px 16px;
+          z-index: 1000;
+          box-shadow: 0 18px 45px rgba(0, 0, 0, .18);
+        }
 
-<<<<<<< HEAD
-/* 상단 배경 장식 (옵션) */
-/* .sub-popup::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-} */
-=======
-      .sub-popup__x{
-        position:absolute;
-        top:10px;
-        right:12px;
-        width:34px;
-        height:34px;
-        border:none;
-        background:transparent;
-        font-size:26px;
-        line-height:34px;
-        cursor:pointer;
-        color:#111;
-        opacity:.65;
-      }
-      .sub-popup__x:hover{ opacity:1; }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__x {
+          position: absolute;
+          top: 10px;
+          right: 12px;
+          width: 34px;
+          height: 34px;
+          border: none;
+          background: transparent;
+          font-size: 26px;
+          line-height: 34px;
+          cursor: pointer;
+          color: #111;
+          opacity: .65;
+        }
 
-<<<<<<< HEAD
-@keyframes popupFade {
-  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
+        .sub-popup__x:hover {
+          opacity: 1;
+        }
 
-.sub-popup__x {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: #f5f5f5;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  color: #888;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
+        .sub-popup__title {
+          text-align: center;
+          margin: 0 0 30px 10px;
+          font-size: 44px;
+          line-height: 1.05;
+          letter-spacing: -0.5px;
+        }
 
-.sub-popup__x:hover {
-  background: #eee;
-  color: #333;
-  transform: rotate(90deg);
-}
+        .sub-popup__desc {
+          text-align: center;
+          font-size: 16px;
+          color: #222;
+          line-height: 1.5;
+          margin-bottom: 16px;
+        }
 
-.sub-popup__title {
-  margin: 0 0 10px 0;
-  font-size: 40px;
-  font-weight: 800;
-  color: #111;
-  text-align: center;
-  letter-spacing: -1px;
-}
-=======
-      .sub-popup__title{
-        text-align: center;
-        margin: 0 0 30px 10px;
-        font-size: 44px;
-        line-height: 1.05;
-        letter-spacing: -0.5px;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__grid {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
 
-<<<<<<< HEAD
-.sub-popup__desc {
-  text-align: center;
-  font-size: 15px;
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 28px;
-}
-=======
-      .sub-popup__desc{
-        text-align: center;
-        font-size: 16px;
-        color:#222;
-        line-height:1.5;
-        margin-bottom: 16px;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__row {
+          display: grid;
+          grid-template-columns: 1fr 30px 1fr;
+          align-items: center;
+          gap: 10px;
+        }
 
-<<<<<<< HEAD
-.sub-popup__desc div::before {
-  content: "✦";
-  margin-right: 6px;
-  color: #4facfe;
-}
-=======
-      .sub-popup__grid{
-        display:flex;
-        flex-direction:column;
-        gap: 16px;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__card {
+          margin: 0;
+          background: #fff;
+          border: 1px solid rgba(0, 0, 0, .08);
+          border-radius: 8px;
+          overflow: hidden;
+          min-height: 120px;
+          display: flex;
+          flex-direction: column;
+        }
 
-<<<<<<< HEAD
-.sub-popup__grid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-=======
-      .sub-popup__row{
-        display:grid;
-        grid-template-columns: 1fr 30px 1fr;
-        align-items:center;
-        gap: 10px;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__card img {
+          width: 100%;
+          height: 150px;
+          object-fit: cover;
+          background: #f3f4f6;
+          display: block;
+        }
 
-<<<<<<< HEAD
-.sub-popup__row {
-  display: grid;
-  grid-template-columns: 1fr 40px 1fr;
-  align-items: center;
-  gap: 12px;
-}
-=======
-      .sub-popup__card{
-        margin:0;
-        background:#fff;
-        border: 1px solid rgba(0,0,0,.08);
-        border-radius: 8px;
-        overflow:hidden;
-        min-height: 120px;
-        display:flex;
-        flex-direction:column;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__arrow {
+          text-align: center;
+          font-size: 26px;
+          font-weight: 700;
+          color: #111;
+          opacity: .7;
+        }
 
-<<<<<<< HEAD
-/* 카드 기본 스타일 */
-.sub-popup__card {
-  margin: 0;
-  background: #f8f9fa;
-  border: 1px solid #eee;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
+        .sub-popup__cap {
+          padding: 10px 10px 12px;
+          text-align: center;
+          font-size: 16px;
+          font-weight: 700;
+          color: #111;
+        }
 
-/* 'After' 카드 강조 (오른쪽 카드) */
-.sub-popup__row .sub-popup__card:last-child {
-  border: 2px solid #4facfe;
-  box-shadow: 0 8px 20px rgba(79, 172, 254, 0.15);
-  background: #fff;
-}
+        .sub-popup__hr {
+          border: none;
+          border-top: 1px solid rgba(0, 0, 0, .10);
+          margin: 14px 0 12px;
+        }
 
-.sub-popup__card img {
-  width: 100%;
-  height: 130px;
-  object-fit: cover;
-  display: block;
-  transition: filter 0.3s;
-}
-=======
-      .sub-popup__card img{
-        width:100%;
-        height: 150px;
-        object-fit: cover;
-        background:#f3f4f6;
-        display:block;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
+        }
 
-<<<<<<< HEAD
-/* 비포 이미지는 약간 흐리게 처리하여 대비 강조 */
-.sub-popup__row .sub-popup__card:first-child img {
-  filter: grayscale(0.5) opacity(0.8);
-}
+        .sub-popup__check {
+          font-size: 14px;
+          color: #111;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
 
-.sub-popup__arrow {
-  text-align: center;
-  font-size: 20px;
-  color: #4facfe;
-  font-weight: bold;
-}
+        .sub-popup__btn {
+          border: none;
+          background: #0ea5e9;
+          color: #fff;
+          font-weight: 700;
+          border-radius: 8px;
+          padding: 8px 14px;
+          cursor: pointer;
+        }
 
-.sub-popup__cap {
-  padding: 10px 5px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: #444;
-  background: #f8f9fa;
-}
-=======
-      .sub-popup__arrow{
-        text-align:center;
-        font-size: 26px;
-        font-weight: 700;
-        color:#111;
-        opacity:.7;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        .sub-popup__btn:hover {
+          opacity: .92;
+        }
 
-<<<<<<< HEAD
-/* After 캡션 강조 */
-.sub-popup__row .sub-popup__card:last-child .sub-popup__cap {
-  color: #007aff;
-  background: rgba(79, 172, 254, 0.05);
-}
-=======
-      .sub-popup__cap{
-        padding: 10px 10px 12px;
-        text-align:center;
-        font-size: 16px;
-        font-weight: 700;
-        color:#111;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+        @media (max-width: 560px) {
+          .sub-popup {
+            left: 12px;
+            right: 12px;
+            width: auto;
+            top: 12px;
+          }
 
-<<<<<<< HEAD
-.sub-popup__hr {
-  border: none;
-  border-top: 1px solid #f0f0f0;
-  margin: 24px 0 16px;
-}
-=======
-      .sub-popup__hr{
-        border:none;
-        border-top: 1px solid rgba(0,0,0,.10);
-        margin: 14px 0 12px;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+          .sub-popup__title {
+            font-size: 34px;
+          }
 
-<<<<<<< HEAD
-.sub-popup__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-=======
-      .sub-popup__footer{
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap: 10px;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
+          .sub-popup__row {
+            grid-template-columns: 1fr 26px 1fr;
+          }
 
-<<<<<<< HEAD
-.sub-popup__check {
-  font-size: 13px;
-  color: #888;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.sub-popup__check input {
-  accent-color: #4facfe;
-}
-
-.sub-popup__btn {
-  border: none;
-  background: linear-gradient(90deg, #111 0%, #333 100%);
-  color: #fff;
-  font-weight: 600;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-=======
-      .sub-popup__check{
-        font-size: 14px;
-        color:#111;
-        display:flex;
-        align-items:center;
-        gap:8px;
-      }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
-
-<<<<<<< HEAD
-.sub-popup__btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-  background: #000;
-}
-=======
-      .sub-popup__btn{
-        border:none;
-        background:#0ea5e9;
-        color:#fff;
-        font-weight:700;
-        border-radius: 8px;
-        padding: 8px 14px;
-        cursor:pointer;
-      }
-      .sub-popup__btn:hover{ opacity:.92; }
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
-
-<<<<<<< HEAD
-/* 모바일 대응 */
-@media (max-width: 560px) {
-  .sub-popup {
-    left: 16px;
-    right: 16px;
-    width: auto;
-    top: 50%;
-    transform: translateY(-50%) !important;
-    padding: 24px 16px 16px;
-  }
-  .sub-popup__title { font-size: 26px; }
-  .sub-popup__card img { height: 100px; }
-}
+          .sub-popup__card img {
+            height: 120px;
+          }
+        }
       </style>
     </head>
 
@@ -482,108 +249,6 @@
                     @click="toggleTheme(item.code)">
                     {{ item.label }}
                   </button>
-=======
-      @media (max-width: 560px){
-        .sub-popup{
-          left: 12px;
-          right: 12px;
-          width: auto;
-          top: 12px;
-        }
-        .sub-popup__title{ font-size: 34px; }
-        .sub-popup__row{ grid-template-columns: 1fr 26px 1fr; }
-        .sub-popup__card img{ height: 120px; }
-      }
-    </style>
-  </head>
-
-  <body>
-    <%@ include file="components/header.jsp" %>
-    <div id="app">
-      <div class="wrap" style="padding-bottom: 80px">
-        <h1 class="page-title2">예약하기</h1>
-        <div class="grid two-col">
-          <section class="panel">
-            <h3>테마 선택 <span class="desc">복수 선택 가능</span></h3>
-            <div class="desc">선택된 테마는 아래에 간단히 표시됩니다.</div>
-            <div class="theme-grid">
-              <button
-                v-for="item in themeOptions"
-                :key="item.code"
-                type="button"
-                :class="['theme-btn', { active: selectedThemes.includes(item.code) }]"
-                @click="toggleTheme(item.code)"
-              >
-                {{ item.label }}
-              </button>
-            </div>
-            <div class="chips" v-if="selectedThemes.length">
-              <span class="chip" v-for="t in selectedThemes" :key="t">{{ labelOf(t) }}</span>
-            </div>
-            <div class="desc" v-else>선택: 없음</div>
-
-            <h3 style="margin-top: 14px">지역 선택</h3>
-            <div class="region-select-wrap">
-              <div class="field">
-                <label>시/도</label>
-                <select v-model="currentSido" @change="onChangeSido" :disabled="loadingSido">
-                  <option value="">선택</option>
-                  <option v-for="s in sidoList" :key="s.code" :value="s.code">{{ s.name }}</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>시/군/구</label>
-                <select v-model="currentSigungu" :disabled="!sigunguList.length || loadingSigungu">
-                  <option value="">전체</option>
-                  <option v-for="g in sigunguList" :key="g.code" :value="g.code">{{ g.name }}</option>
-                </select>
-              </div>
-              <button class="btn-add-region" @click="addRegion" :disabled="!currentSido" title="지역 추가">+</button>
-            </div>
-
-            <div class="chips" v-if="selectedRegions.length > 0">
-              <span class="chip" v-for="(region, index) in selectedRegions" :key="index">
-                {{ region.name }}
-                <button @click="removeRegion(index)" title="삭제">&times;</button>
-              </span>
-            </div>
-            <div class="desc" v-else>방문할 지역을 선택한 후 '+' 버튼을 눌러 목록에 추가해주세요. (복수 선택 가능)</div>
-          </section>
-
-          <section class="panel">
-            <h3 style="margin-top: 14px">일정 선택</h3>
-            <div class="field-row">
-              <div class="field">
-                <label>시작일</label>
-                <input type="text" :value="startDate || ''" readonly placeholder="달력에서 선택" />
-              </div>
-              <div class="field">
-                <label>종료일</label>
-                <input type="text" :value="endDate || ''" readonly placeholder="달력에서 선택" />
-              </div>
-            </div>
-            <div class="inline" style="margin-top: 2px; margin-bottom: 8px">
-              선택된 일정: <strong>{{ displayDateRange }}</strong>
-            </div>
-            <div class="calendar">
-              <div class="cal-header">
-                <button @click.prevent="prevMonth" type="button">&lt;</button>
-                <strong>{{ currentYear }}년 {{ monthName }}</strong>
-                <button @click.prevent="nextMonth" type="button">&gt;</button>
-              </div>
-              <div class="cal-grid week-days">
-                <div class="cal-day-label">일</div>
-                <div class="cal-day-label">월</div>
-                <div class="cal-day-label">화</div>
-                <div class="cal-day-label">수</div>
-                <div class="cal-day-label">목</div>
-                <div class="cal-day-label">금</div>
-                <div class="cal-day-label">토</div>
-              </div>
-              <div class="cal-grid days">
-                <div v-for="(day, i) in calendarGrid" :key="i" :class="['cal-day', getDayClasses(day)]" @click="selectDate(day)">
-                  {{ day.dayNum }}
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
                 </div>
                 <div class="chips" v-if="selectedThemes.length">
                   <span class="chip" v-for="t in selectedThemes" :key="t">{{ labelOf(t) }}</span>
@@ -760,26 +425,12 @@
               <div id="map-recommend" class="map-recommend-area"></div>
               <div id="debugOut" style="display: none"></div>
 
-<<<<<<< HEAD
               <div class="poi-add-panel" v-if="selectedPoi && activeDate">
                 <strong>{{ selectedPoi.title || "이름 없음" }}</strong>
                 <button class="btn-primary" @click="addPoiToItinerary">[ {{ activeDateLabel }} ] 일정에 추가하기</button>
                 <button class="btn-secondary" @click="selectedPoi = null; infowindow.close();">취소</button>
               </div>
             </section>
-=======
-          <div class="tabs" v-if="activeDate">
-            <button type="button" :class="['tab-btn', { active: activeTab === 12 }]" @click="setActiveTab(12)">
-              <i class="fa-solid fa-camera"></i> 관광지 ({{ countForTab(12) }})
-            </button>
-            <button type="button" :class="['tab-btn', { active: activeTab === 32 }]" @click="setActiveTab(32)">
-              <i class="fa-solid fa-hotel"></i> 숙박 ({{ countForTab(32) }})
-            </button>
-            <button type="button" :class="['tab-btn', { active: activeTab === 39 }]" @click="setActiveTab(39)">
-              <i class="fa-solid fa-utensils"></i> 식당 ({{ countForTab(39) }})
-            </button>
-          </div>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
             <section class="panel" style="margin-top: 10px">
               <h3>나의 최종 일정 (순서 변경 가능)</h3>
@@ -811,35 +462,9 @@
 
               <div class="desc" v-if="dateTabs.length > 0">일정 항목을 마우스로 잡고 위아래로 끌어서 순서를 변경할 수 있습니다.</div>
 
-<<<<<<< HEAD
               <div v-if="dateTabs.length > 0">
                 <div v-for="tab in dateTabs" :key="tab.date" class="itinerary-day-block">
                   <h4>[ {{ tab.label }} ] 일정 목록</h4>
-=======
-          <div class="budget-status-wrap" v-if="budget > 0">
-            <div class="budget-status-item">
-              <span class="label">숙박 예산</span>
-              <span :class="['amount', { over: spentAccom > accomBudgetLimit }]">
-                <span class="current">{{ spentAccom.toLocaleString() }}원</span> /
-                <span class="total">{{ accomBudgetLimit.toLocaleString() }}원</span>
-              </span>
-            </div>
-            <div class="budget-status-item">
-              <span class="label">식당 예산</span>
-              <span :class="['amount', { over: spentFood > foodBudgetLimit }]">
-                <span class="current">{{ spentFood.toLocaleString() }}원</span> /
-                <span class="total">{{ foodBudgetLimit.toLocaleString() }}원</span>
-              </span>
-            </div>
-            <div class="budget-status-item">
-              <span class="label">체험/관광 예산</span>
-              <span :class="['amount', { over: spentActivity > activityBudgetLimit }]">
-                <span class="current">{{ spentActivity.toLocaleString() }}원</span> /
-                <span class="total">{{ activityBudgetLimit.toLocaleString() }}원</span>
-              </span>
-            </div>
-          </div>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
                   <div class="itinerary-list" v-if="itinerary[tab.date] && itinerary[tab.date].length > 0">
                     <ul>
@@ -847,7 +472,6 @@
                         :draggable="true" :class="{ 
                         dragging: isDragging(tab.date, index),
                         'drag-over': isDragOver(tab.date, index) 
-<<<<<<< HEAD
                       }" @dragstart="onDragStart(tab.date, index)" @dragover.prevent="onDragOver(tab.date, index)"
                         @dragleave="onDragLeave" @drop="onDrop(tab.date, index)" @dragend="onDragEnd">
                         <span>
@@ -864,25 +488,6 @@
                   </div>
                   <div class="desc" v-else>- 일정이 비어있습니다 -</div>
                 </div>
-=======
-                      }"
-                    @dragstart="onDragStart(tab.date, index)"
-                    @dragover.prevent="onDragOver(tab.date, index)"
-                    @dragleave="onDragLeave"
-                    @drop="onDrop(tab.date, index)"
-                    @dragend="onDragEnd"
-                  >
-                    <span>
-                      {{ poi.title || "이름 없음" }}
-                      ({{ poi.typeId === 12 ? "관광" : poi.typeId === 32 ? "숙박" : "식당" }})
-                      <span v-if="poi.price > 0" style="color: #64748b; font-size: 0.9em; margin-left: 5px">
-                        - {{ poi.price.toLocaleString() }}원
-                      </span>
-                    </span>
-                    <button @click.stop="removePoiFromItinerary(tab.date, index)">삭제</button>
-                  </li>
-                </ul>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
               </div>
               <div class="desc" v-else>먼저 캘린더에서 여행 <strong>시작일</strong>과 <strong>종료일</strong>을 선택해주세요.</div>
             </section>
@@ -918,98 +523,34 @@
         <script src="<%= request.getContextPath() %>/js/reservation-pie.js"></script>
         <script src="<%= request.getContextPath() %>/js/reservation-calendar.js"></script>
 
-<<<<<<< HEAD
         <!-- ================================
      ✅ 구독 혜택 팝업 (7일간 숨김)
 ================================ -->
         <div id="popup-overlay" class="popup-overlay" style="display:none;"></div>
         <div id="ad-popup" class="sub-popup" style="display:none;">
           <button class="sub-popup__x" type="button" onclick="closePopup()" aria-label="닫기">×</button>
-=======
-    <div id="popup-overlay" class="popup-overlay" style="display:none;"></div>
-    <div id="ad-popup" class="sub-popup" style="display:none;">
-      <button class="sub-popup__x" type="button" onclick="closePopup()" aria-label="닫기">×</button>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
-<<<<<<< HEAD
           <h2 class="sub-popup__title">구독 혜택</h2>
-=======
-      <h2 class="sub-popup__title">구독 혜택</h2>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
-<<<<<<< HEAD
           <div class="sub-popup__desc">
-            <div>여행하기 예산배분 잠금 활성화</div>
-            <div>일1회 경로 생성 → 무제한 이용 가능</div>
+            <div>✨ 여행하기 예산배분 잠금 활성화</div>
+            <div>✨ 일1회 경로 생성 → 무제한 이용 가능</div>
           </div>
-=======
-      <div class="sub-popup__desc">
-        <div>여행하기 예산배분 잠금 활성화</div>
-        <div>일1회 경로 생성 → 무제한 이용 가능</div>
-      </div>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
-<<<<<<< HEAD
           <div class="sub-popup__grid">
             <!-- ✅ Row 1: 예산 배분 잠금 → 해제 -->
             <div class="sub-popup__row">
               <figure class="sub-popup__card">
                 <img src="/img/ad/ad1.PNG" alt="예산배분 잠금 상태" />
               </figure>
-=======
-      <div class="sub-popup__grid">
-        <div class="sub-popup__row">
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad1.PNG" alt="예산배분 잠금 상태" />
-          </figure>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
-<<<<<<< HEAD
               <div class="sub-popup__arrow">→</div>
-=======
-          <div class="sub-popup__arrow">→</div>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
-<<<<<<< HEAD
               <figure class="sub-popup__card">
                 <img src="/img/ad/ad2.PNG" alt="예산배분 무제한 상태" />
               </figure>
             </div>
-=======
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad2.PNG" alt="예산배분 무제한 상태" />
-          </figure>
-        </div>
 
-        <div class="sub-popup__row">
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad3.PNG" alt="차량 경로 보기 1회" />
-            <figcaption class="sub-popup__cap">차량 경로 보기 일 1회</figcaption>
-          </figure>
-
-          <div class="sub-popup__arrow">→</div>
-
-          <figure class="sub-popup__card">
-            <img src="/img/ad/ad3.PNG" alt="무제한 이용 가능" />
-            <figcaption class="sub-popup__cap">무제한 이용 가능</figcaption>
-          </figure>
-        </div>
-      </div>
-
-      <hr class="sub-popup__hr" />
-
-      <div class="sub-popup__footer">
-        <label class="sub-popup__check">
-          <input type="checkbox" id="today-check" />
-          7일 동안 보지 않기
-        </label>
-
-        <button class="sub-popup__btn" type="button" onclick="closePopup()">닫기</button>
-      </div>
-    </div>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
-
-<<<<<<< HEAD
             <!-- ✅ Row 2: 경로 보기 1회 → 무제한 -->
             <div class="sub-popup__row">
               <figure class="sub-popup__card">
@@ -1042,11 +583,7 @@
 
 
         <%@ include file="components/footer.jsp" %>
-=======
-    <%@ include file="components/footer.jsp" %>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
-<<<<<<< HEAD
           <script>
             const app = Vue.createApp({
               data() {
@@ -1095,62 +632,7 @@
                   draggedIndex: null,
                   dragOverDate: null,
                   dragOverIndex: null,
-=======
-    <script>
-      const app = Vue.createApp({
-        data() {
-          return {
-            themeOptions: [
-              { code: "FAMILY", label: "가족" },
-              { code: "FRIEND", label: "친구" },
-              { code: "COUPLE", label: "연인" },
-              { code: "LUXURY", label: "호화스러운" },
-              { code: "BUDGET", label: "가성비" },
-              { code: "HEALING", label: "힐링" },
-              { code: "UNIQUE", label: "이색적인" },
-              { code: "ADVENTURE", label: "모험" },
-              { code: "QUIET", label: "조용한" },
-            ],
-            selectedThemes: [],
-            sidoList: [],
-            sigunguList: [],
-            loadingSido: false,
-            loadingSigungu: false,
-            currentSido: "",
-            currentSigungu: "",
-            selectedRegions: [],
 
-            /* ✅ [수정] 컨트롤러에서 넘어온 값으로 초기화 (값이 없으면 0) */
-            /* isELIgnored="true" 이므로 스크립틀릿 사용 */
-            budget: <%= request.getAttribute("budget") != null ? request.getAttribute("budget") : 0 %>,
-            headCount: <%= request.getAttribute("headCount") != null ? request.getAttribute("headCount") : 0 %>,
-
-            spentAccom: 0,
-            spentFood: 0,
-            spentActivity: 0,
-            startDate: null,
-            endDate: null,
-            selectionState: "start",
-            showBoardModal: false,
-            boardUrl: ctx + "/modalBoardList.do",
-            mapInstance: null,
-            geocoder: null,
-            markers: [],
-            fullPoiList: [],
-            activeTab: 12,
-            infowindow: null,
-            baseMarkerImageSrc: null,
-            itinerary: {}, //여행 일정 담음
-            activeDate: null,
-            selectedPoi: null,
-            activeRegion: "all",
-            draggedDate: null,
-            draggedIndex: null,
-            dragOverDate: null,
-            dragOverIndex: null,
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
-
-<<<<<<< HEAD
                   //활용하기
                   resNum: "<%= resNum %>",
                   list: {},
@@ -1161,20 +643,6 @@
                   sessionId: "<%= userId %>",
                 };
               },
-=======
-            //활용하기
-            resNum: "<%= resNum %>",
-            list: {},
-            detail: {},
-            positionsByDay: {},
-            selectedDay: 1,
-            themes: "",
-            
-            /* ✅ [수정] 충돌 방지를 위해 session에서 직접 가져오기 */
-            sessionId: "<%= session.getAttribute("sessionId") != null ? session.getAttribute("sessionId") : "" %>",
-          };
-        },
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
               computed: {
                 isFormValid() {
@@ -1269,7 +737,6 @@
               methods: {
                 // ******* 모든 메소드는 정규 함수로 복구됩니다 *******
 
-<<<<<<< HEAD
                 async loadSido() {
                   const self = this; // Vue 인스턴스 바인딩
                   self.loadingSido = true;
@@ -1283,10 +750,6 @@
                     self.loadingSido = false;
                   }
                 },
-=======
-              // "resNum"으로 반환하므로 키를 resNum으로 변경합니다.
-              const resNum = saveResponse.resNum;
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git
 
                 async loadSigungu() {
                   const self = this; // Vue 인스턴스 바인딩
@@ -1926,7 +1389,6 @@
                 localStorage.setItem("ad-expiry", expiryDate);
               }
 
-<<<<<<< HEAD
               popup.style.display = "none";
               overlay.style.display = "none";
             }
@@ -1934,11 +1396,3 @@
     </body>
 
     </html>
-=======
-  popup.style.display = "none";
-  overlay.style.display = "none";
-}
-    </script>
-  </body>
-</html>
->>>>>>> branch 'main' of https://github.com/jun-000224/Spring_TeamProject.git

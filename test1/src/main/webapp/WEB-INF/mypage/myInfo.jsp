@@ -11,142 +11,247 @@
     <link rel="stylesheet" href="/css/common-style.css">
     <link rel="stylesheet" href="/css/header-style.css">
     <link rel="stylesheet" href="/css/main-images.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        table, tr, td, th{
-            border : 1px solid black;
-            border-collapse: collapse;
-            padding : 5px 10px;
-            text-align: center;
-        }
-        th{
-            background-color: beige;
-        }
-        tr:nth-child(even){
-            background-color: azure;
-        }
-        .checkButton{
-            margin-left: 10px;
-        }
-        .addr{
-            width: 250px;
-        }
-        .inputWidth{
-            width: 150px;
-        }
-        .phone input{
-            width: 50px;
-        }
-        .guide{
-            padding-left: 5px;
-            font-size: 12px;
-            color: blue;
-        }
-        .guideMust{
-            color: red;
-        }
-        .field{
-            margin: 20px auto;
-            width: 500px;
-            height: 800px;
-            padding-bottom: 100px;
-        }
-        .infoField{
-            border-style: solid;
-            border-radius: 10px;
-            border-width: 1px;
-            /* padding-left: 10%; */
-            background-color: white;
-            margin: 30px auto;
-            text-align: left;
-            box-shadow: 0px 0px 5px gray;
-            overflow: hidden;
-        }
-        .infoField div{
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-        .infoBanner{
-            background-color: #0078FF;
-            padding-left: 10%;
-            color: white;
-            font-weight: bold;
-            /* height: 40px; */
-        }
-        .infoBanner2{
-            padding-left: 10%;
-            /* height: 36px; */
-        }
-        .editBtn{
-            float: right;
-            margin-right: 10px;
-        }
-        .editBtn a{
-            margin-right: 10px;
-        }
-        .joinBlock{
-            margin-top: 20px;
-        }
-        .joinBtn{
-            float: right;
-            background-color: #0078FF;
-            color: white;
-            border-color: #0078FF;
-        }
-        .joinBtn:hover{
-            background-color: rgb(6, 81, 131);
-        }
-        .cancleBtn{
-            float: left;
-        }
-        .cancleBtn:hover{
-            background-color: rgb(213, 213, 213);
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background: #f8fafc;
         }
 
-        .info{
+        .field {
+            margin: 40px auto;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 20px 100px;
+        }
+
+        .infoField {
+            background: white;
+            border-radius: 16px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .infoField:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .infoBanner {
+            background: linear-gradient(135deg, #0078FF 0%, #00C9FF 100%);
+            padding: 20px 24px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .infoBanner2 {
+            padding: 16px 24px;
+            color: #475569;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s ease;
+        }
+
+        .infoBanner2:last-child {
+            border-bottom: none;
+        }
+
+        .infoBanner2:hover {
+            background: #f8fafc;
+        }
+
+        .infoBanner2 i {
+            width: 20px;
+            color: #0078FF;
+            font-size: 16px;
+        }
+
+        .info {
             position: relative;
         }
+
+        .editBtn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .editBtn i {
+            font-size: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .editBtn:hover i {
+            transform: scale(1.1);
+        }
+
         .info-dropdown {
-        position: absolute;
-        top: 15px;
-        right: 0px;
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        padding: 8px 12px;
-        list-style: none;
-        margin: 0;
-        z-index: 100;
-        animation: fadeIn 0.2s ease-in-out;
-        min-width: 50px;
-        text-align: center;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            list-style: none;
+            margin: 0;
+            z-index: 100;
+            animation: fadeIn 0.2s ease;
+            min-width: 100px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .info-dropdown li {
-        font-size: 14px;
-        color: #0078FF;
-        padding: 6px 0;
-        cursor: pointer;
-        transition: color 0.2s ease;
+            font-size: 14px;
+            color: #0078FF;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
 
         .info-dropdown li:hover {
-        color: #0056b3;
+            background: #f0f9ff;
+            color: #0056b3;
         }
 
-        .buyBtn{
-            float:right;
-            margin-right: 15px;
+        .info-dropdown li[style*="red"] {
+            color: #ef4444 !important;
+        }
+
+        .info-dropdown li[style*="red"]:hover {
+            background: #fef2f2 !important;
+            color: #dc2626 !important;
+        }
+
+        .buyBtn {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .buyBtn button {
+            background: linear-gradient(135deg, #0078FF 0%, #00C9FF 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 120, 255, 0.3);
+        }
+
+        .buyBtn button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 120, 255, 0.4);
+        }
+
+        .infoBanner2 button {
+            margin-left: auto;
+            background: #f1f5f9;
+            color: #0078FF;
+            border: 1px solid #e2e8f0;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .infoBanner2 button:hover {
+            background: #0078FF;
+            color: white;
+            border-color: #0078FF;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-user {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .status-subscriber {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+        }
+
+        .status-admin {
+            background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
+            color: #5b21b6;
+        }
+
+        .time-left {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f0f9ff;
+            color: #0078FF;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 640px) {
+            .field {
+                padding: 20px 16px 80px;
+            }
+
+            .infoBanner {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+
+            .infoBanner2 {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+
+            .buyBtn {
+                flex-direction: column;
+                align-items: flex-end;
+            }
         }
     </style>
 </head>
 <body>
-        <%@ include file="../components/header.jsp" %>
+    <%@ include file="../components/header.jsp" %>
     <div id="app">
-        <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        
         <div class="field">
             <div class="infoField">
                 <div class="infoBanner">
@@ -154,7 +259,6 @@
                     <span class="editBtn info">
                         <a href="javascript:;">
                             <i class="fa-solid fa-ellipsis-vertical" @click="toggleMenu"></i>
-
                             <ul v-if="infoFlg" class="info-dropdown">
                                 <li @click="fnEdit">수정</li>
                                 <li style="color: red;" @click="fnRelease">탈퇴</li>
@@ -165,73 +269,75 @@
                 
                 <div class="infoBanner2">
                     <i class="fa-solid fa-user"></i>
-                    {{info.name}}
+                    <span>{{info.name}}</span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-phone"></i>
-                    {{info.phone}}
+                    <span>{{info.phone}}</span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-envelope"></i>
-                    {{info.email}}
+                    <span>{{info.email}}</span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-pen-clip"></i>
-                    {{info.userId}}
+                    <span>{{info.userId}}</span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-regular fa-face-smile"></i>
-                    {{info.nickname}}
+                    <span>{{info.nickname}}</span>
                 </div>
                 <div class="infoBanner2">
-                    <span v-if="info.status === 'U'">
+                    <span v-if="info.status === 'U'" class="status-badge status-user">
                         <i class="fa-solid fa-circle-user"></i>
                         일반 사용자
                     </span>
-
-                    <span v-else-if="info.status === 'S'">
+                    <span v-else-if="info.status === 'S'" class="status-badge status-subscriber">
                         <i class="fa-solid fa-star"></i>
                         구독자
                     </span>
-
-                    <span v-else-if="info.status === 'A'">
+                    <span v-else-if="info.status === 'A'" class="status-badge status-admin">
                         <i class="fa-solid fa-user-secret"></i>
                         관리자
                     </span>
-                     {{gradeLabel}}
-
-                    <span class="buyBtn" v-if="info.status === 'U'" >
+                    <span class="buyBtn" v-if="info.status === 'U'">
                         <button @click="fnSub">구독하기</button>
                     </span>
                     <span class="buyBtn" v-else>
-                        남은 기간 : 
-                        {{leftTime}}
+                        <span class="time-left">
+                            <i class="fa-regular fa-clock"></i>
+                            남은 기간: {{leftTime}}
+                        </span>
                     </span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-gift"></i>
-                    {{info.bdate}} (
+                    <span>
+                        {{info.bdate}} (
                         <span v-if="info.gender === 'M'">남</span>
                         <span v-else-if="info.gender === 'F'">여</span>
                         <span v-else>미공개</span>
-                    )
+                        )
+                    </span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-house"></i>
-                    {{info.addr}}
+                    <span>{{info.addr}}</span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-calendar"></i>
-                    {{info.cdate}}
+                    <span>{{info.cdate}}</span>
                     <span class="buyBtn">
-                        가입한지 {{info.cdate2}}일 째!
+                        <span class="time-left">
+                            <i class="fa-solid fa-cake-candles"></i>
+                            가입 {{info.cdate2}}일 째
+                        </span>
                     </span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-regular fa-calendar"></i>
-                    {{info.udate}}
+                    <span>{{info.udate}}</span>
                 </div>
-                
             </div>
             
             <div class="infoField">
@@ -240,16 +346,13 @@
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-key"></i>
-                    비밀번호
-                    <button class="editBtn" @click="fnPwdCert">수정</button>
+                    <span>비밀번호</span>
+                    <button @click="fnPwdCert">수정</button>
                 </div>
             </div>
-            
         </div>
-
-         
     </div>
-        <%@ include file="../components/footer.jsp" %> 
+    <%@ include file="../components/footer.jsp" %>
 </body>
 </html>
 
@@ -257,14 +360,11 @@
     const app = Vue.createApp({
         data() {
             return {
-                // 변수 - (key : value)
                 sessionId : "${sessionId}",
                 info : {},
                 endSub : "",
                 leftTime : "",
-
                 infoFlg : false,
-
                 id: window.sessionData.id,
                 status: window.sessionData.status,
                 nickname: window.sessionData.nickname,
@@ -275,7 +375,6 @@
         },
         
         methods: {
-            // 함수(메소드) - (key : function())
             fnMyInfo: function () {
                 let self = this;
                 let param = {
@@ -287,7 +386,6 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        //console.log(data);
                         self.info = data.info;
                         self.endSub = data.info.subsleft
                         self.fnSubTimeLeft();
@@ -316,7 +414,6 @@
 
                 setTimeout(function () {
                     popup.postMessage({ userId: userId }, window.location.origin);
-                    // console.log("보낸 세션 : ", userId);
                 }, 500);
             },
 
@@ -339,7 +436,6 @@
                 setTimeout(function () {
                     popup.postMessage({ userId: userId, status : status}, 
                     window.location.origin);
-                    // console.log("보낸 세션 : ", userId);
                 }, 500);
             },
 
@@ -347,15 +443,9 @@
                 let self = this;
                 if (!self.endSub) return;
 
-                // console.log(self.endSub);
-
                 let day = Math.floor(self.endSub);
-                // console.log(day);
                 let hour = Math.floor((self.endSub - day)*24);
-                // console.log(hour);
                 let min = Math.floor(((self.endSub - day) * 24 - hour) * 60);
-                // console.log(min);
-                
 
                 if(day<=0){
                     if(hour<=0){
@@ -366,8 +456,6 @@
                 } else {
                     self.leftTime=day + "일";
                 }
-
-                //추가 보완할 것 : 남은 구독 시간이 0이 됐을 때, sessionStatus 조정되도록 하기
             },
 
             toggleMenu() {
@@ -377,28 +465,16 @@
             toggleLogoutMenu() {
                 this.showLogoutMenu = !this.showLogoutMenu;
             },
-            // goToSettings() {
-            //     location.href = "/myPoint.do";
-            // },
+
             goToWithdraw() {
                 location.href = "/member/withdraw.do";
             },
-            // goToLogin() {
-            //     location.href = "/member/login.do";
-            // },
-            // logout() {
-            //     location.href = "/logout.do";
-            // },
-            // goToMyPage() {
-            //     location.href = "/main-myPage.do";
-            // },
 
             fnPwdCert () { 
                 location.href = "/myInfo/pwdChange.do";
             }
-        }, // methods
+        },
         mounted() {
-            // 처음 시작할 때 실행되는 부분
             let self = this;
             self.fnMyInfo();
             self.infoFlg = false;

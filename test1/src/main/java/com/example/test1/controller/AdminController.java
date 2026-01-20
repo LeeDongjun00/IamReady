@@ -338,6 +338,13 @@ public class AdminController {
         
         return new Gson().toJson(resultMap);
     }
-
+    //사용자 로그인 카운트 초기화
+    @RequestMapping(value = "/user-cntReset.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String resetUserCnt(@RequestParam HashMap<String, Object> map) throws Exception {
+        HashMap<String, Object> resultMap = adminService.resetUserCnt(map);
+        
+        return new Gson().toJson(resultMap);
+    }
 
 }
