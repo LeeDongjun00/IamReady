@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <meta charset="UTF-8">
+<script src="/js/page-change.js"></script>
 
 <style>
 .modal-overlay {
@@ -24,6 +25,9 @@
 
 .reportTip {
   font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .reportContents img {
@@ -55,6 +59,25 @@
   text-decoration: line-through;
   color: #9E9E9E;
 }
+
+.processed {
+  /* display: inline-block; */
+  margin-left: 20px;
+  margin-bottom: 10px;
+  margin-right: 2%;
+}
+
+.modalCloseAndFeedView {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+.modalCloseAndFeedView span {
+  cursor: pointer;
+  color: #007BFF;
+  font-style: oblique;
+}
 </style>
 
 <h2>신고 관리</h2>
@@ -69,7 +92,16 @@
     </select>
   </div>
 
-  <div class="reportTip">※신고글 번호를 클릭하여 내용 확인※</div>
+  <div class="reportTip">
+    ※신고글 번호를 클릭하여 내용 확인※
+    <div class="processed">
+      <select name="" id="" @change="fnTest" v-model="processedFilter">
+        <option value="all">::전체::</option>
+        <option value="processed">처리</option>
+        <option value="unprocessed">미처리</option>
+      </select>
+    </div>
+  </div>
   <!-- 신고 관리용 테이블 -->
   <table style="width: 98%;">
     <tr>
@@ -214,7 +246,10 @@
         </div>
       </div>
 
-      <button @click="closeModal">닫기</button>
+      <div class="modalCloseAndFeedView">
+        <button @click="closeModal">닫기</button>
+        <span @click="fnMove(reportInfo.boardNo)">해당 게시글로 이동</span>
+      </div>
     </div>
   </div>
 </div>
@@ -242,15 +277,28 @@
         page: 1,
         pageSize: 5,
         totalCnt : 0,
+
+        processedFilter: 'all',
       };
     },
     methods: {
+      fnTest() {
+        // console.log("선택된 처리 상태:", this.processedFilter);
+        let self = this;
+        self.page = 1; // 필터 변경 시 1페이지로
+        self.loadReport();
+        self.fnReportCnt();
+      },
+
       async loadReport() {
           let self = this;
 
         try {
           const response = await fetch(
-            "/admin/report.dox?page=" + this.page + "&pageSize=" + this.pageSize
+            "/admin/report.dox"
+            + "?page=" + this.page 
+            + "&pageSize=" + this.pageSize
+            + "&processedFilter=" + this.processedFilter
           );
           if (!response.ok) {
             throw new Error('서버 응답 오류');
@@ -392,7 +440,9 @@
 
       fnReportCnt() {
         let self = this;
-        let param = {};
+        let param = {
+          processedFilter: self.processedFilter
+        };
         $.ajax({
             url: "/admin/reportCnt.dox",
             dataType: "json",
@@ -422,6 +472,12 @@
       changePageSize() {
         this.page = 1;          // 페이지 사이즈 변경 시 1페이지로
         this.loadReport();
+        this.fnReportCnt();
+      },
+
+      fnMove(boardNo) {
+        // alert("이동할 게시글 번호: " + boardNo);
+        pageChange("board-view.do", { boardNo: boardNo });
       }
     },
     mounted() {

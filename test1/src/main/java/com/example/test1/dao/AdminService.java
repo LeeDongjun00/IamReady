@@ -107,6 +107,10 @@ public class AdminService {
 			int cnt = adminMapper.selectAllReportCnt(map);
 			System.out.println(cnt);
 			
+			if (map.get("processedFilter") == null) {
+			    map.put("processedFilter", "all");
+			}
+			
 			resultMap.put("result", "success");
 			resultMap.put("CNT", cnt);
 			resultMap.put("msg", "성공");
@@ -224,7 +228,7 @@ public class AdminService {
     //신고목록 가져오기
     public List<HashMap<String, Object>> selectReportList(HashMap<String, Object> param) throws Exception {
     	int page = 1;
-        int pageSize = 10;
+        int pageSize = 5;
 
         if (param.get("page") != null) {
             page = Integer.parseInt(param.get("page").toString());
@@ -232,6 +236,10 @@ public class AdminService {
 
         if (param.get("pageSize") != null) {
             pageSize = Integer.parseInt(param.get("pageSize").toString());
+        }
+        
+        if (param.get("processedFilter") == null) {
+            param.put("processedFilter", "all"); // 기본값
         }
 
         int offset = (page - 1) * pageSize;
@@ -304,6 +312,23 @@ public class AdminService {
 			List<Admin> List = adminMapper.selectAllUsers(map);
 			int cnt = adminMapper.selectAllUsersCnt(map);
 			resultMap.put("user", List);
+			resultMap.put("cnt", cnt);
+			resultMap.put("result", "success");
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.print(e.getMessage());
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+    }
+    
+    public HashMap<String, Object> resetUserCnt(HashMap<String , Object>map)  {
+    	HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			int cnt = adminMapper.resetLoginCnt(map);
 			resultMap.put("cnt", cnt);
 			resultMap.put("result", "success");
 			

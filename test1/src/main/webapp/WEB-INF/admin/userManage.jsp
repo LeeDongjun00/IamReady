@@ -241,6 +241,23 @@
       border-color: var(--primary);
       color: var(--primary);
     }
+
+    .cnt-text {
+      padding: 4px 10px;
+      /* border-radius: 999px; */
+      font-weight: 600;
+      color: #6b7280;          /* 기본 회색 */
+    }
+
+    .cnt-text.clickable {
+      color: #dc2626;          /* 빨간 글씨 */
+      background: #fee2e2;     /* 연한 빨강 배경 */
+      cursor: pointer;
+    }
+
+    .cnt-text.clickable:hover {
+      background: #fecaca;
+    }
   </style>
 
   <h2>👤 회원 관리</h2>
@@ -271,7 +288,7 @@
         <table>
           <thead>
             <tr>
-              <th>번호</th>
+              <!-- <th>번호</th> -->
               <th>아이디</th>
               <th>이름</th>
               <th>닉네임</th>
@@ -284,7 +301,7 @@
           </thead>
           <tbody>
             <tr v-for="(item,index) in list" :key="item.USER_ID">
-              <td>{{ index + 1 }}</td>
+              <!-- <td>{{ index + 1 }}</td> -->
               <td>{{ item.USER_ID }}</td>
               <td>{{ item.NAME }}</td>
               <td>{{ item.NICKNAME }}</td>
@@ -297,7 +314,15 @@
                 </span>
               </td>
               <td>{{ item.CDATE }}</td>
-              <td>{{ item.CNT }}</td>
+              <td
+                  class="cnt-text"
+                  :class="{clickable : item.CNT >= 5 }"
+                  @click="item.CNT >= 5 && fnOpen(item)"
+                >
+                <span>
+                  {{ item.CNT }}
+                </span>
+              </td>
               <td>
                 <button class="btn-detail" @click="openModal(item)">상세</button>
               </td>
@@ -505,6 +530,29 @@
               let self=this;
               self.page=1;
               self.fnList();
+            },
+            fnOpen(item) {
+              let self = this;
+
+              if (!confirm(
+                item.USER_ID + "님의 로그인 실패 횟수가 " + item.CNT + "회입니다.\n초기화하시겠습니까?"
+              )) {
+                return;
+              }
+              
+              let param = {
+                userId: item.USER_ID
+              };
+              // console.log(param);
+              $.ajax({
+                url: "/user-cntReset.dox",
+                dataType: "json",
+                type: "POST",
+                data: param,
+                success: function (data) {
+                  self.fnList();
+                },
+              });
             }
           },
           mounted() {

@@ -205,9 +205,14 @@
         
         // 차트 데이터 준비
         const categories = sortedMonths.map(month => {
-          const [year, monthNum] = month.split('-');
-          return `${year}년 ${monthNum}월`;
+          const parts = month.split('-');      // *** 변경: 배열로 받기
+          const year = parts[0];                // *** 변경: 인덱스로 접근
+          const monthNum = parts[1];            // *** 변경: 인덱스로 접근
+          return year + '년 ' + monthNum + '월'; // *** 변경: + 연산자로 문자열 연결
         });
+
+        console.log(sortedMonths);
+        console.log(categories);
         
         // 각 순위별 시리즈 데이터 준비
         const rank1Data = [];
@@ -256,7 +261,7 @@
           xAxis: {
             categories: categories,
             title: {
-              text: '월'
+              text: '월 별'
             }
           },
           yAxis: {

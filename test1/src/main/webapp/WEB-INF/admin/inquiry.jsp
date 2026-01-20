@@ -287,6 +287,13 @@
             <option value="15">15개씩</option>
           </select>
         </div>
+        <!-- <div class="processedFilter">
+          <select v-model="processedFilter" @change="fnChangeProcessedFilter()" title="처리 상태">
+            <option value="all">전체</option>
+            <option value="processed">답변완료</option>
+            <option value="unprocessed">미답변</option>
+          </select>
+        </div> -->
       </div>
 
       <!-- TABLE -->
@@ -429,6 +436,8 @@
             detail: {},
             commentList: [],
             newComment: "",
+
+            // processedFilter: "all",
           };
         },
         methods: {
@@ -445,6 +454,7 @@
                 page: (self.page - 1) * self.pageSize,
                 pageSize: self.pageSize,
                 pageType: "adminInquiry",
+                processedFilter: self.processedFilter,
               },
               success(res) {
                 self.list = res.list || [];
@@ -521,6 +531,11 @@
             self.page = 1;
             self.fnList();
           },
+          // fnChangeProcessedFilter() {
+          //   let self = this;
+          //   this.page = 1;
+          //   this.fnList();
+          // }
         },
         mounted() {
           this.fnList();
