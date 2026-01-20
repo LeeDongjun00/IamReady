@@ -418,7 +418,13 @@
     </div>
 
     <!-- 댓글 작성 -->
-    <div class="composer">
+
+    <!-- <div style="background: yellow; color: black; padding: 10px;">
+  디버깅 정보: 
+  타입은 [{{ item?.type }}] 이고, 
+  접속아이디는 [{{ userId }}] 입니다.
+</div> -->
+    <div class="composer" v-if="info.type?.trim() !== 'SQ' || (info.type?.trim() === 'SQ' && sessionStatus === 'A')">
       <table id="input">
         <tr>
           <th>댓글</th>
