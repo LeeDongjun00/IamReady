@@ -361,7 +361,7 @@
             </select>
             <select v-model="type" @change="fnList" title="분류">
               <option value="">전체 분류</option>
-              <option value="N">공지사항</option>
+             
               <option value="F">자유게시판</option>
               <option value="Q">질문게시판</option>
               <option value="SQ">문의게시판</option>

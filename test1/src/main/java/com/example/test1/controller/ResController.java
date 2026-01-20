@@ -1,9 +1,9 @@
 package com.example.test1.controller;
 
-import com.example.test1.model.reservation.Poi;
-import com.example.test1.model.Reservation;
-import com.example.test1.model.reservation.ReservationRequest;
 import com.example.test1.dao.ResService;
+import com.example.test1.model.Reservation;
+import com.example.test1.model.reservation.Poi;
+import com.example.test1.model.reservation.ReservationRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,34 @@ public class ResController {
     @Autowired
     private ResService resService;
 
+    @Autowired
+    private HttpSession session;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${kakao_javascript_key}")
     private String kakaoAppKey;
+
+    // =========================
+    // ✅ (추가) 메인 → reservation.do 진입 (지역/인원/예산 들고 시작)
+    // =========================
+    @GetMapping("/reservation.do")
+    public String reservationStart(
+            @RequestParam(value = "regionKey", required = false) String regionKey,
+            @RequestParam(value = "regionName", required = false) String regionName,
+            @RequestParam(value = "headCount", required = false, defaultValue = "0") Integer headCount,
+            @RequestParam(value = "budget", required = false, defaultValue = "0") Long budget,
+            Model model
+    ) {
+        model.addAttribute("kakaoAppKey", kakaoAppKey);
+
+        // reservation.jsp에서 초기값 세팅에 사용
+        model.addAttribute("regionKey", regionKey == null ? "" : regionKey);
+        model.addAttribute("regionName", regionName == null ? "" : regionName);
+        model.addAttribute("headCount", headCount == null ? 0 : headCount);
+        model.addAttribute("budget", budget == null ? 0 : budget);
+        return "reservation";
+    }
 
     // =========================
     // 예약 저장
@@ -37,7 +62,10 @@ public class ResController {
     public ResponseEntity<?> saveReservation(@RequestBody ReservationRequest request) {
         try {
             Reservation reservation = createReservation(request);
-            reservation.setUserId("999");
+
+            // ✅ 로그인 세션 기반 userId 세팅
+            String sessionId = session.getAttribute("sessionId") == null ? null : session.getAttribute("sessionId").toString();
+            reservation.setUserId(sessionId != null && !sessionId.isBlank() ? sessionId : "999");
 
             // descript 저장
             reservation.setDescript(request.getDesecript());
@@ -59,7 +87,8 @@ public class ResController {
             return ResponseEntity.ok(Map.of("resNum", resNum, "message", "일정 저장 성공"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body(Map.of("message", "일정 저장 실패", "error", e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "일정 저장 실패", "error", e.getMessage()));
         }
     }
 
@@ -118,9 +147,10 @@ public class ResController {
 
             boolean ok = resService.updatePackname(resNum, packName.trim(), userId, descript);
             return ok ? ResponseEntity.ok(Map.of("message", "코스명/메모 저장 완료"))
-                      : ResponseEntity.status(404).body(Map.of("message", "대상 예약이 없습니다."));
+                    : ResponseEntity.status(404).body(Map.of("message", "대상 예약이 없습니다."));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("message", "코스명/메모 저장 실패", "error", e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "코스명/메모 저장 실패", "error", e.getMessage()));
         }
     }
 
@@ -136,9 +166,10 @@ public class ResController {
 
             boolean ok = resService.deleteReservationCascade(resNum); // POI → RESERVATION 순서 삭제
             return ok ? ResponseEntity.ok(Map.of("message", "예약 삭제 완료"))
-                      : ResponseEntity.status(404).body(Map.of("message", "삭제 대상 없음"));
+                    : ResponseEntity.status(404).body(Map.of("message", "삭제 대상 없음"));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("message", "삭제 실패", "error", e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "삭제 실패", "error", e.getMessage()));
         }
     }
 
@@ -264,6 +295,7 @@ public class ResController {
         private Long resNum;
         private String day;
         private List<RoutePoiLite> pois;
+
         @Data
         private static class RoutePoiLite {
             private Long contentId;
@@ -273,5 +305,3 @@ public class ResController {
         }
     }
 }
-
-

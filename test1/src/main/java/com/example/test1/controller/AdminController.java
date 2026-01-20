@@ -75,6 +75,60 @@ public class AdminController {
         return resultMap;
     }
     
+    @RequestMapping(value = "/admin/getrbc.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String memberIdCheck(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = adminService.getReportedBC(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+    
+    @RequestMapping(value = "/admin/reportY.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String reportProcessY(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = adminService.reportProcessY(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+    
+    @RequestMapping(value = "/admin/banUser.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String userBan(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = adminService.userBan(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+    
+    @RequestMapping(value = "/admin/reportCnt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String reportCnt(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = adminService.reportCnt(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+    
+    @RequestMapping(value = "/admin/getCNT.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getCNT(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = adminService.getCNT(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+    
+    @RequestMapping(value = "/admin/getTopTheme.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getBestTheme(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = adminService.getBestTheme(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+    
 /******************************************************************/
     //레거시 코드들
     

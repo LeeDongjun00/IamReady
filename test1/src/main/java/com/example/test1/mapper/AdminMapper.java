@@ -10,7 +10,17 @@ import java.util.Map;
 
 @Mapper
 public interface AdminMapper {
+	int selectUserCnt(HashMap<String, Object> map);
+	int selectReportNPCnt(HashMap<String, Object> map);
+	int selectInquiryNPCnt(HashMap<String, Object> map);
 	
+	int updateProcessY(HashMap<String, Object> map);
+	
+	int userBan(HashMap<String, Object> map);
+	
+	int selectAllReportCnt(HashMap<String, Object> map);
+	
+	List<MainBoard> getReportedBoardComment(HashMap<String, Object> map);
 	
     List<MainBoard> selectInquiryBoards();
     // 댓글달기
@@ -54,6 +64,8 @@ public interface AdminMapper {
 	//유저수
 	
 	int selectAllUsersCnt(HashMap<String, Object> map);
+	
+	List<Admin> getTopThemes(HashMap<String, Object> map);
 	
 	
 	

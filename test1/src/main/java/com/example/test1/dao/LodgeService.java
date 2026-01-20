@@ -103,7 +103,7 @@ public class LodgeService {
 	            + "&MobileOS=ETC&MobileApp=AppTest"
 	            + "&contentId=" + contentId
 	            + "&contentTypeId=32";
-
+	    System.out.println(url);
 	    RestTemplate restTemplate = new RestTemplate();
 	    byte[] bytes = restTemplate.getForObject(url, byte[].class);
 	    String xmlResponse = new String(bytes);

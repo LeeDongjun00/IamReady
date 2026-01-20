@@ -3,9 +3,24 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.test1.mapper.AdminMapper">
-
-	<!--<select id="getReportedBoardComment" resultType="com.example.test1.model.MainBoard">
-        SELECT *
+	<!--신고된 게시글 및 댓글 정보 가져오기-->
+	<select id="getReportedBoardComment" resultType="com.example.test1.model.MainBoard">
+        SELECT
+        	REPORTNUM, 
+        	REPORT_TYPE, 
+        	REPORTED_USER_ID,
+        	CONTENT, 
+        	T.BOARDNO AS BOARDNO, 
+        	T.COMMENTNO AS COMMENTNO, 
+        	REPORT_CNT, 
+        	REPORT_USER_ID, 
+        	TITLE, 
+        	BOARDUSER, 
+        	BOARDCONTENTS, 
+        	COMMENTUSER, 
+        	COMMENTCONTENTS, 
+        	STATUS, 
+        	DELETED_YN
 		FROM REPORT R
 		LEFT JOIN (
 			SELECT 
@@ -17,9 +32,25 @@
 				FROM TBL_COMMENT
 			)C ON B.BOARDNO = C.BOARDNO
 		)T ON R.BOARDNO = T.BOARDNO OR R.COMMENTNO = T.COMMENTNO
+		LEFT JOIN (
+		    SELECT USER_ID, STATUS, DELETED_YN
+		    FROM USERS
+		)U ON R.REPORTED_USER_ID = U.USER_ID
 		WHERE R.BOARDNO = #{boardNo} OR R.COMMENTNO = #{commentNo}
 		
-    </select>-->
+    </select>
+    <!--신고 처리 완료-->
+    <update id="updateProcessY" parameterType="hashmap">
+    	UPDATE REPORT
+	    SET REPORT_PROCESS = 'Y'
+	    WHERE REPORTNUM = #{reportNum} 
+    </update>
+    <!--유저밴-->
+    <update id="userBan" parameterType="hashmap">
+    	UPDATE USERS
+	    SET STATUS = 'B'
+	    WHERE USER_ID = #{userId} 
+    </update>
 
     <!-- 문의 게시판 글 조회 -->
     <select id="selectInquiryBoards" resultType="com.example.test1.model.MainBoard">
@@ -97,6 +128,7 @@
 	    WHERE USER_ID = #{userId}
 	</update>
 
+	<!--신고목록 가져오기-->
 	<select id="selectReportList" resultType="hashmap">
 	    SELECT 
 	        R.REPORTNUM,
@@ -108,11 +140,59 @@
 	        R.COMMENTNO,
 	        U.NICKNAME AS REPORTED_NICKNAME,  -- ✅ 유저 닉네임 추가
 	        U.STATUS AS REPORTED_STATUS,      -- ✅ 유저 상태 추가 (선택)
-	        R.REPORT_USER_ID
+	        R.REPORT_USER_ID,
+	        STATUS,
+	        DELETED_YN,
+	        REPORT_PROCESS
 	    FROM REPORT R
 	    LEFT JOIN USERS U ON R.REPORTED_USER_ID = U.USER_ID
 	    LEFT JOIN TBL_COMMENT C ON R.COMMENTNO = C.COMMENTNO
+	    <!--WHERE REPORT_PROCESS = 'N'-->
 	    ORDER BY R.REPORTNUM DESC
+	    OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	
+	<select id="selectAllReportCnt" resultType="int">
+	  SELECT COUNT(*)
+	  FROM REPORT R
+	  <!--WHERE 1=1
+	  	<if test="searchOption == 'USER_ID'">
+			AND USER_ID LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'EMAIL'">
+			AND EMAIL LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'NAME'">
+			AND NAME LIKE '%' || #{keyword} || '%' 
+		</if>-->
+	 
+	</select>
+	
+	<select id="selectUserCnt" resultType="int">
+	<!--사용자 총 수-->
+	  SELECT 
+	    COUNT(*)
+	  FROM USERS
+	</select>
+	<select id="selectReportNPCnt" resultType="int">
+	<!--미처리 신고 수-->
+		SELECT COUNT(*)
+		FROM REPORT
+		WHERE REPORT_PROCESS = 'N'
+	</select>
+	<select id="selectInquiryNPCnt" resultType="int">
+	<!--미답변 문의 수-->
+	SELECT COUNT(*) AS TOTAL_CNT
+	FROM (
+	    SELECT B.BOARDNO, COUNT(COMMENTNO)AS CNT
+	    FROM TBL_BOARD B
+	    LEFT JOIN TBL_COMMENT C
+	      ON B.BOARDNO = C.BOARDNO
+	    WHERE B.TYPE = 'SQ'
+	    GROUP BY B.BOARDNO
+	    HAVING COUNT(C.COMMENTNO) = 0
+	    ORDER BY B.BOARDNO
+	)
 	</select>
 
 
@@ -273,5 +353,40 @@
 		</if>
 	 
 	</select>
+	
+	<select id="getTopThemes" resultType="hashmap">
+	  <![CDATA[
+		  WITH THEM_STATS AS (
+		    SELECT
+		        TO_CHAR(RDATETIME,'YYYY-MM') AS MONTH,
+		        TRIM(REGEXP_SUBSTR(THEMNUM,'[^,]+', 1, LEVEL)) AS THEME,
+		        COUNT(*) AS THEMECNT,
+		        SUM(PRICE) AS TOTAL_AMOUNT
+		    FROM
+		        RESERVATION
+		    CONNECT BY 
+		        REGEXP_SUBSTR(THEMNUM,'[^,]+', 1, LEVEL) IS NOT NULL
+		        AND PRIOR RES_NUM = RES_NUM
+		        AND PRIOR SYS_GUID() IS NOT NULL
+		    GROUP BY
+		        TO_CHAR(RDATETIME,'YYYY-MM'),
+		        TRIM(REGEXP_SUBSTR(THEMNUM,'[^,]+', 1, LEVEL))
+		)
+		SELECT *
+		FROM (
+		    SELECT 
+		        MONTH,
+		        THEME,
+		        THEMECNT,  -- 수정
+		        TOTAL_AMOUNT,
+		        ROW_NUMBER() OVER (PARTITION BY MONTH ORDER BY THEMECNT DESC) AS RN
+		    FROM THEM_STATS
+		)
+		WHERE RN <= 3
+		ORDER BY MONTH, THEMECNT DESC
+
+	  ]]>
+	</select>
+
 
 </mapper>

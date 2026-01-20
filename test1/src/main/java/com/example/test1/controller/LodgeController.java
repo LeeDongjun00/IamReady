@@ -26,7 +26,8 @@ public class LodgeController {
 //  --------------- 숙박결제	
 	@RequestMapping("/lodge.do") 
 	public String lodgeDetail(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
-		request.setAttribute("contentId", map.get("contentId"));
+		request.setAttribute("resNum", map.get("resNum"));
+		request.setAttribute("contentId", map.get("accContentId"));
         return "/lodge";
     }
 

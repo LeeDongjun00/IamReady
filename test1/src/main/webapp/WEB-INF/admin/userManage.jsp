@@ -461,6 +461,9 @@
             },
             fnStatusUser(status) {
               let self = this;
+              if(self.detail.END_SUBS != null && status =='U'){
+                status = 'S'
+              }
               let param = {
                 userId: self.detail.USER_ID,
                 status: status,

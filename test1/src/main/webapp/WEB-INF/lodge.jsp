@@ -365,8 +365,9 @@
       const app = Vue.createApp({
         data() {
           return {
-            resNum: 218,
-            contentId: 142766,
+            sessionId: "${sessionId}",
+            resNum: "${resNum}",
+            contentId: "${contentId}",
             people: 1,
             info: {},
             rooms: [],
@@ -424,7 +425,13 @@
           },
 
           getRoomImages(room) {
-            return [room.roomimg1, room.roomimg2, room.roomimg3, room.roomimg4, room.roomimg5].filter((i) => i);
+            const imgs = [room.roomimg1, room.roomimg2, room.roomimg3, room.roomimg4, room.roomimg5].filter((i) => i);
+
+            if (imgs.length === 0) {
+              return ["https://placehold.co/420x280?text=No+Image"];
+            }
+
+            return imgs;
           },
 
           nextImage(room) {
@@ -491,6 +498,12 @@
         },
         mounted() {
           let self = this;
+
+          if (self.sessionId == "" || self.sessionId == "null") {
+            alert("로그인 후 이용해주세요.");
+            location.href = "/member/login.do";
+            return;
+          }
           self.setToday();
           self.fnInfo();
           self.fnRoom();
