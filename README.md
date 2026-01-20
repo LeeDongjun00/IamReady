@@ -46,11 +46,10 @@
 ## 😀 팀원 구성
 | 이름 | 역할 | GitHub |
 |------|------|--------|
-| 이동준 | PM / 여행 추천·코스 생성 | https://github.com/jun-000224 |
-| 박충현 | 인증·결제·회원 관리 | https://github.com/3y5adf |
-| 하송화 | 커뮤니티·공지 | https://github.com/hasonghwa |
-| 김대근 | 메인·관리자 페이지 | - |
-| 유희연 | 리뷰·찜·예약 조회 | https://github.com/hee8144 |
+| 이동준 | PM / 여행 추천·코스 생성 / 메인 페이지 | https://github.com/jun-000224 |
+| 박충현 | 인증·결제·회원 관리 / 관리자 페이지 | https://github.com/3y5adf |
+| 하송화 | 커뮤니티 페이지 / 공지 페이지 | https://github.com/hasonghwa |
+| 유희연 | 리뷰·찜·예약 조회 / 메인 페이지 | https://github.com/hee8144 |
 
 ---
 
