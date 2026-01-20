@@ -2,7 +2,7 @@
 ### I'm Ready · 준비완료 · 아임레디  
 > **테마 기반 한국 여행 추천 · 코스 생성 · 예약 통합 플랫폼**
 
-![메인페이지](https://github.com/hee8144/image/blob/main/main.png)
+![메인페이지](./main.png)
 
 ---
 
