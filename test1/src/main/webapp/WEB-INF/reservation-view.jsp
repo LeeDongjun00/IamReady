@@ -11,10 +11,10 @@
   <!-- ✅ jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  <!-- ✅ Vue3 (중요: compiler 포함 build) -->
-  <!-- runtime-only 쓰면 {{}} 그대로 보입니다. 반드시 아래 global.prod.js -->
+  <!-- ✅ Vue3 (compiler 포함 build) -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
+  <!-- ✅ Kakao Map -->
   <script type="text/javascript"
           src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoAppKey}&libraries=services"></script>
 
@@ -67,11 +67,11 @@
     @media (max-width:520px){.budget-status-wrap{grid-template-columns:1fr;}.info-list li strong{width:100%;}}
   </style>
 </head>
+
 <body>
 <%@ include file="components/header.jsp" %>
 
 <div class="wrap">
-  <!-- ✅ Vue가 여기 붙습니다 -->
   <div id="app">
     <h1 class="page-title">예약 상세 확인</h1>
 
@@ -80,11 +80,22 @@
       <ul class="info-list">
         <li>
           <strong>여행 코스 이름</strong>
-          <input type="text" class="title-input" v-model="reservation.packname" placeholder="코스 별칭을 입력하세요" />
+          <input type="text" class="title-input"
+                 v-model="reservation.packname"
+                 placeholder="코스 별칭을 입력하세요" />
         </li>
-        <li><strong>여행 기간</strong><span>{{ formatDate(reservation.startDate) }} ~ {{ formatDate(reservation.endDate) }}</span></li>
-        <li><strong>방문 예정 장소</strong><span>총 {{ poiList ? poiList.length : 0 }}지점</span></li>
-        <li><strong>테마</strong><span>{{ displayThemes }}</span></li>
+        <li>
+          <strong>여행 기간</strong>
+          <span>{{ formatDate(reservation.startDate) }} ~ {{ formatDate(reservation.endDate) }}</span>
+        </li>
+        <li>
+          <strong>방문 예정 장소</strong>
+          <span>총 {{ poiList ? poiList.length : 0 }}지점</span>
+        </li>
+        <li>
+          <strong>테마</strong>
+          <span>{{ displayThemes }}</span>
+        </li>
       </ul>
     </div>
 
@@ -93,11 +104,13 @@
       <div class="budget-total"><strong>총 예산:</strong> {{ formatPrice(reservation.price) }}원</div>
 
       <div>
-        사용 가능 포인트 : {{info.totalPoint}}
+        사용 가능 포인트 : {{ info.totalPoint }}
       </div>
       <div>
         포인트 사용량 :
-        <input type="number" v-model="usingPoint" :max="info.totalPoint" min="0" @input="limitPoint" style="width: 80px; text-align: right; height: 20px;">
+        <input type="number" v-model="usingPoint" :max="info.totalPoint" min="0"
+               @input="limitPoint"
+               style="width: 80px; text-align: right; height: 20px;">
         <br><br>
       </div>
 
@@ -131,15 +144,21 @@
     <div class="panel">
       <h2>📋 상세 일정 목록</h2>
       <div class="date-tabs" v-if="Object.keys(itineraryByDate).length > 0">
-        <button type="button" v-for="(pois, date, index) in itineraryByDate" :key="date"
-                :class="['tab-btn', { active: activeDate === date }]" @click="setActiveDate(date)">
+        <button type="button"
+                v-for="(pois, date, index) in itineraryByDate"
+                :key="date"
+                :class="['tab-btn', { active: activeDate === date }]"
+                @click="setActiveDate(date)">
           {{ index + 1 }}일차 ({{ formatDate(date) }})
         </button>
       </div>
 
       <div id="detail-schedule-list">
         <p v-if="poiList.length === 0">유효한 POI 일정이 없습니다.</p>
-        <div v-else v-for="(poi, index) in itineraryByDate[activeDate]" :key="poi.poiId" class="poi-item">
+        <div v-else
+             v-for="(poi, index) in itineraryByDate[activeDate]"
+             :key="poi.poiId || (poi.contentId + '_' + index)"
+             class="poi-item">
           <p>[{{ index + 1 }}] <strong>{{ poi.placeName }}</strong></p>
           <p>방문 예정일: {{ formatDate(poi.reservDate) }}</p>
         </div>
@@ -166,10 +185,18 @@
 
         memo: "",
         reservation: {
-          resNum: 0, packName: "", packname: "",
-          price: 0, startDate: "", endDate: "",
-          themNum: "", descript: "",
-          etcBudget: 0, accomBudget: 0, foodBudget: 0, actBudget: 0
+          resNum: 0,
+          packName: "",
+          packname: "",
+          price: 0,
+          startDate: "",
+          endDate: "",
+          themNum: "",
+          descript: "",
+          etcBudget: 0,
+          accomBudget: 0,
+          foodBudget: 0,
+          actBudget: 0
         },
         poiList: [],
         map: null,
@@ -189,127 +216,168 @@
         usingPoint: 0
       };
     },
+
     computed: {
       displayThemes() {
         if (!this.reservation.themNum) return "선택 안 함";
-        const codes = this.reservation.themNum.split(',');
+        const codes = String(this.reservation.themNum).split(',');
         return codes.map(code => {
           const theme = this.themeOptions.find(t => t.code === code.trim());
           return theme ? theme.label : code;
         }).join(', ');
       }
     },
-    methods: {
-      formatPrice(v){ const n=Number(v); return isFinite(n)? n.toLocaleString() : '0'; },
-      formatDate(d){ if(!d) return "날짜 없음"; try{ return String(d).split(' ')[0]; }catch(e){ return d; } },
 
-      // ✅ poiList에서 숙소(typeId=32) contentId 뽑기
-      setAccContentIdFromPois(){
+    methods: {
+      // ===== 공통 유틸 =====
+      formatDate(d) {
+        if (!d) return "";
+        const dt = new Date(d);
+        if (isNaN(dt.getTime())) return String(d);
+        const yyyy = dt.getFullYear();
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      },
+
+      formatPrice(n) {
+        const num = Number(n || 0);
+        return isNaN(num) ? "0" : num.toLocaleString();
+      },
+
+      // ===== 숙소 contentId 세팅 =====
+      setAccContentIdFromPois() {
         const accomPoi = (this.poiList || []).find(p => String(p.typeId) === '32');
         this.accContentId = (accomPoi && accomPoi.contentId) ? Number(accomPoi.contentId) : null;
       },
 
-      initializeMap(data){
+      // ===== 지도 초기화/마커 =====
+      initializeMap(data) {
         if (!window.kakao || !kakao.maps) {
-          document.getElementById('map-container').innerText='Kakao Map API 로드 실패.';
+          document.getElementById('map-container').innerText = 'Kakao Map API 로드 실패.';
           return;
         }
-        const container=document.getElementById('map-container');
-        const options={ center:new kakao.maps.LatLng(data[0].mapY,data[0].mapX), level:7 };
-        this.map=new kakao.maps.Map(container,options);
 
-        const bounds=new kakao.maps.LatLngBounds();
+        const container = document.getElementById('map-container');
+        const options = { center: new kakao.maps.LatLng(data[0].mapY, data[0].mapX), level: 7 };
+        this.map = new kakao.maps.Map(container, options);
+
+        const bounds = new kakao.maps.LatLngBounds();
         this.clearMarkers();
 
-        data.forEach(p=>{
-          const pos=new kakao.maps.LatLng(p.mapY,p.mapX);
-          const marker=new kakao.maps.Marker({ position:pos });
+        data.forEach(p => {
+          const pos = new kakao.maps.LatLng(p.mapY, p.mapX);
+          const marker = new kakao.maps.Marker({ position: pos });
           marker.setMap(this.map);
           this.markers.push(marker);
 
-          const info=new kakao.maps.InfoWindow({
-            content:'<div style="padding:5px;">'+(p.placeName||p.contentId)+'</div>'
+          const info = new kakao.maps.InfoWindow({
+            content: '<div style="padding:5px;">' + (p.placeName || p.contentId) + '</div>'
           });
-          kakao.maps.event.addListener(marker,'mouseover',()=>info.open(this.map,marker));
-          kakao.maps.event.addListener(marker,'mouseout',()=>info.close());
+
+          kakao.maps.event.addListener(marker, 'mouseover', () => info.open(this.map, marker));
+          kakao.maps.event.addListener(marker, 'mouseout', () => info.close());
 
           bounds.extend(pos);
         });
 
         this.map.setBounds(bounds);
-      },
-      clearMarkers(){
-        if(!this.markers) return;
-        this.markers.forEach(m=>m.setMap(null));
-        this.markers=[];
+
+        // relayout 보강 (컨테이너 렌더 후)
+        setTimeout(() => {
+          if (this.map && this.map.relayout) this.map.relayout();
+        }, 0);
       },
 
-      drawPolyline(points){
-        if(!this.map) return;
-        if(this.routePolyline){ this.routePolyline.setMap(null); this.routePolyline=null; }
-        if(!points||points.length===0) return;
+      clearMarkers() {
+        if (!this.markers) return;
+        this.markers.forEach(m => m.setMap(null));
+        this.markers = [];
+      },
 
-        const path=points.map(pt=>new kakao.maps.LatLng(pt.y,pt.x));
-        this.routePolyline=new kakao.maps.Polyline({ path, strokeWeight:5, strokeOpacity:0.9 });
+      // ===== 경로 폴리라인 =====
+      drawPolyline(points) {
+        if (!this.map) return;
+        if (this.routePolyline) {
+          this.routePolyline.setMap(null);
+          this.routePolyline = null;
+        }
+        if (!points || points.length === 0) return;
+
+        const path = points.map(pt => new kakao.maps.LatLng(pt.y, pt.x));
+        this.routePolyline = new kakao.maps.Polyline({
+          path,
+          strokeWeight: 5,
+          strokeOpacity: 0.9
+        });
         this.routePolyline.setMap(this.map);
 
-        const bounds=new kakao.maps.LatLngBounds();
-        path.forEach(latlng=>bounds.extend(latlng));
+        const bounds = new kakao.maps.LatLngBounds();
+        path.forEach(latlng => bounds.extend(latlng));
         this.map.setBounds(bounds);
       },
-      clearRoute(){
-        if(this.routePolyline){ this.routePolyline.setMap(null); this.routePolyline=null; }
-        this.routeSummary=null;
+
+      clearRoute() {
+        if (this.routePolyline) {
+          this.routePolyline.setMap(null);
+          this.routePolyline = null;
+        }
+        this.routeSummary = null;
       },
 
-      async buildCarRoute(){
-        const pois=this.itineraryByDate[this.activeDate]||[];
-        const valid=pois.filter(p=>p.mapX!=null&&p.mapY!=null&&!isNaN(p.mapX)&&!isNaN(p.mapY));
-        if(valid.length<2){
+      async buildCarRoute() {
+        const pois = this.itineraryByDate[this.activeDate] || [];
+        const valid = pois.filter(p => p.mapX != null && p.mapY != null && !isNaN(p.mapX) && !isNaN(p.mapY));
+
+        if (valid.length < 2) {
           alert('경로를 그릴 최소 2개 지점(출발/도착)이 필요합니다.');
           return;
         }
-        try{
-          const payload={
-            resNum:this.reservation.resNum,
-            day:this.activeDate,
-            pois: valid.map(p=>({
-              contentId:p.contentId,
-              name:p.placeName||'',
-              x:Number(p.mapX),
-              y:Number(p.mapY)
+
+        try {
+          const payload = {
+            resNum: this.reservation.resNum,
+            day: this.activeDate,
+            pois: valid.map(p => ({
+              contentId: p.contentId,
+              name: p.placeName || '',
+              x: Number(p.mapX),
+              y: Number(p.mapY)
             }))
           };
-          const resp=await $.ajax({
-            url:'/api/route/build',
-            type:'POST',
-            contentType:'application/json',
-            data:JSON.stringify(payload)
+
+          const resp = await $.ajax({
+            url: '/api/route/build',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload)
           });
+
           this.drawPolyline(resp.points);
-          this.routeSummary=resp.summary||null;
-        }catch(e){
+          this.routeSummary = resp.summary || null;
+
+        } catch (e) {
           console.error(e);
           alert('경로 계산에 실패했습니다.');
         }
       },
 
-      // ✅ 여기만 변경: 결제 호출 제거 + 저장 후 lodge.do로 resNum/accContentId 넘김
-      async fnSave(){
-        try{
-          const name=(this.reservation.packname||'').trim();
-          if(name.length===0){
-            if(!confirm('코스 이름이 비어 있습니다. 그대로 진행할까요?')) return;
+      // ✅ 결제 호출 제거 + 저장 후 lodge.do로 resNum/accContentId 넘김
+      async fnSave() {
+        try {
+          const name = (this.reservation.packname || '').trim();
+
+          if (name.length === 0) {
+            if (!confirm('코스 이름이 비어 있습니다. 그대로 진행할까요?')) return;
           }
 
-          // 숙소 없으면 막고 싶으면 여기서 return
-          if(!this.accContentId){
+          if (!this.accContentId) {
             alert('숙소(contentId)가 없습니다. (typeId=32 숙소 POI가 없을 수 있습니다)');
             return;
           }
 
-          // 1) 저장 (코스명/메모 + accContentId 같이 보내기)
-          const payload={
+          // 1) 저장
+          const payload = {
             resNum: this.reservation.resNum,
             packName: name,
             userId: this.userId,
@@ -318,85 +386,91 @@
           };
 
           await $.ajax({
-            url:'/api/reservation/update/packname',
-            type:'POST',
-            contentType:'application/json',
+            url: '/api/reservation/update/packname',
+            type: 'POST',
+            contentType: 'application/json',
             data: JSON.stringify(payload)
           });
 
-          // 2) lodge로 이동 (값 2개 넘김)
+          // 2) lodge로 이동
           const qs =
             '?resNum=' + encodeURIComponent(this.reservation.resNum) +
             '&accContentId=' + encodeURIComponent(this.accContentId);
 
           window.location.href = '/lodge.do' + qs;
 
-        }catch(e){
+        } catch (e) {
           console.error(e);
           alert('저장/이동 중 오류가 발생했습니다.');
         }
       },
 
-      fnCancelReservation(){
-        if(!confirm('정말로 이 예약을 삭제하시겠습니까?')) return;
+      fnCancelReservation() {
+        if (!confirm('정말로 이 예약을 삭제하시겠습니까?')) return;
+
         $.ajax({
-          url:'/api/reservation/delete',
-          type:'POST',
-          contentType:'application/json',
-          data:JSON.stringify({ resNum:this.reservation.resNum }),
-          success:()=>{
+          url: '/api/reservation/delete',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ resNum: this.reservation.resNum }),
+          success: () => {
             alert('예약이 삭제되었습니다.');
-            window.location.href='/main-list.do';
+            window.location.href = '/main-list.do';
           },
-          error:(jqXHR)=>{
-            alert('삭제 실패 ('+jqXHR.status+')');
+          error: (jqXHR) => {
+            alert('삭제 실패 (' + jqXHR.status + ')');
           }
         });
       },
 
-      groupPoisByDate(list){
-        const sorted=[].concat(list).sort((a,b)=>new Date(a.reservDate)-new Date(b.reservDate));
-        const grouped={};
-        sorted.forEach(p=>{
-          const d=this.formatDate(p.reservDate);
-          if(!grouped[d]) grouped[d]=[];
+      groupPoisByDate(list) {
+        const sorted = [].concat(list || []).sort((a, b) => new Date(a.reservDate) - new Date(b.reservDate));
+        const grouped = {};
+        sorted.forEach(p => {
+          const d = this.formatDate(p.reservDate);
+          if (!grouped[d]) grouped[d] = [];
           grouped[d].push(p);
         });
-        this.itineraryByDate=grouped;
-        if(Object.keys(grouped).length>0) this.activeDate=Object.keys(grouped)[0];
+        this.itineraryByDate = grouped;
+        if (Object.keys(grouped).length > 0) this.activeDate = Object.keys(grouped)[0];
       },
-      setActiveDate(d){
-        this.activeDate=d;
+
+      setActiveDate(d) {
+        this.activeDate = d;
         this.clearRoute();
       },
 
-      fnMemberPoint(){
-        const self=this;
+      fnMemberPoint() {
+        const self = this;
         $.ajax({
           url: "/point/recent.dox",
           dataType: "json",
           type: "POST",
           data: { userId: self.userId },
-          success: function (data) { self.info = data.info || {}; }
+          success: function (data) { self.info = (data && data.info) ? data.info : {}; },
+          error: function () { self.info = {}; }
         });
       },
 
-      limitPoint(){
-        this.usingPoint = Math.floor(this.usingPoint);
+      limitPoint() {
+        this.usingPoint = Math.floor(Number(this.usingPoint || 0));
         const max = Number(this.info.totalPoint || 0);
-        if(this.usingPoint > max) this.usingPoint = max;
-        if(this.usingPoint < 0 || isNaN(this.usingPoint)) this.usingPoint = 0;
+        if (this.usingPoint > max) this.usingPoint = max;
+        if (this.usingPoint < 0 || isNaN(this.usingPoint)) this.usingPoint = 0;
       }
     },
 
-    mounted(){
-      try{
+    mounted() {
+      try {
         // ✅ JSP에서 내려준 JSON
-        this.reservation = JSON.parse('<c:out value="${reservationJson}" escapeXml="false" />');
-        this.reservation.packname = this.reservation.packName || this.reservation.packname || '';
-        if(this.reservation.descript) this.memo = this.reservation.descript;
+        const reservationJson = '<c:out value="${reservationJson}" escapeXml="false" />';
+        const poiListJson = '<c:out value="${poiListJson}" escapeXml="false" />';
 
-        const rawPoiList = JSON.parse('<c:out value="${poiListJson}" escapeXml="false" />');
+        this.reservation = JSON.parse(reservationJson || '{}');
+        this.reservation.packname = this.reservation.packName || this.reservation.packname || '';
+        if (this.reservation.descript) this.memo = this.reservation.descript;
+
+        const rawPoiList = JSON.parse(poiListJson || '[]');
         this.poiList = (rawPoiList || []).filter(p => p.contentId && !isNaN(p.contentId) && Number(p.contentId) > 0);
 
         // ✅ 숙소 contentId 세팅
@@ -406,14 +480,14 @@
         this.groupPoisByDate(this.poiList);
 
         // ✅ 지도
-        const validMapPois = this.poiList.filter(p=>p.mapY!=null && p.mapX!=null && !isNaN(p.mapY) && !isNaN(p.mapX));
-        if(validMapPois.length>0) this.initializeMap(validMapPois);
-        else document.getElementById('map-container').innerText='DB에 저장된 좌표 정보가 없습니다.';
+        const validMapPois = this.poiList.filter(p => p.mapY != null && p.mapX != null && !isNaN(p.mapY) && !isNaN(p.mapX));
+        if (validMapPois.length > 0) this.initializeMap(validMapPois);
+        else document.getElementById('map-container').innerText = 'DB에 저장된 좌표 정보가 없습니다.';
 
         // ✅ 포인트
         this.fnMemberPoint();
 
-      }catch(e){
+      } catch (e) {
         console.error('[mounted error]', e);
         alert('페이지 데이터 파싱 중 오류가 발생했습니다. (콘솔 확인)');
       }
@@ -422,5 +496,6 @@
 
   app.mount('#app');
 </script>
+
 </body>
 </html>

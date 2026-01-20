@@ -94,7 +94,7 @@
         position: fixed;
         top:0; left:0; right:0; bottom:0;
         background: rgba(0,0,0,0.6);
-        z-index: 999;   /* 팝업(1000)보다 1 낮게 */
+        z-index: 999;
         display:none;
       }
 
@@ -232,12 +232,7 @@
       .sub-popup__btn:hover{ opacity:.92; }
 
       @media (max-width: 560px){
-        .sub-popup{
-          left: 12px;
-          right: 12px;
-          width: auto;
-          top: 12px;
-        }
+        .sub-popup{ left: 12px; right: 12px; width: auto; top: 12px; }
         .sub-popup__title{ font-size: 34px; }
         .sub-popup__row{ grid-template-columns: 1fr 26px 1fr; }
         .sub-popup__card img{ height: 120px; }
@@ -350,6 +345,9 @@
                 </div>
               </div>
             </div>
+            <div class="premium-msg">구독 전용 기능입니다</div>
+            <div class="premium-sub">예산 비중을 직접 상세하게 설정해보세요</div>
+          </div>
 
             <button class="btn-generate" @click="fnCreate">
               <i class="fa-solid fa-wand-magic-sparkles"></i> 추천 목록 생성
@@ -475,7 +473,7 @@
             <div class="budget-status-item">
               <span class="label">체험/관광 예산</span>
               <span :class="['amount', { over: spentActivity > activityBudgetLimit }]">
-                <span class="current">{{ spentActivity.toLocaleString() }}원</span> /
+                <span class="current">-</span> /
                 <span class="total">{{ activityBudgetLimit.toLocaleString() }}원</span>
               </span>
             </div>
@@ -581,30 +579,24 @@
             <img src="/img/ad/ad2.PNG" alt="예산배분 무제한 상태" />
           </figure>
         </div>
-
         <div class="sub-popup__row">
           <figure class="sub-popup__card">
             <img src="/img/ad/ad3.PNG" alt="차량 경로 보기 1회" />
             <figcaption class="sub-popup__cap">차량 경로 보기 일 1회</figcaption>
           </figure>
-
           <div class="sub-popup__arrow">→</div>
-
           <figure class="sub-popup__card">
             <img src="/img/ad/ad3.PNG" alt="무제한 이용 가능" />
             <figcaption class="sub-popup__cap">무제한 이용 가능</figcaption>
           </figure>
         </div>
       </div>
-
       <hr class="sub-popup__hr" />
-
       <div class="sub-popup__footer">
         <label class="sub-popup__check">
           <input type="checkbox" id="today-check" />
           7일 동안 보지 않기
         </label>
-
         <button class="sub-popup__btn" type="button" onclick="closePopup()">닫기</button>
       </div>
     </div>
@@ -638,6 +630,9 @@
             /* ✅ [수정] Controller에서 넘겨준 값으로 초기화 (isELIgnored="true"이므로 스크립틀릿 사용) */
             budget: <%= request.getAttribute("budget") != null ? request.getAttribute("budget") : 0 %>,
             headCount: <%= request.getAttribute("headCount") != null ? request.getAttribute("headCount") : 0 %>,
+            
+            /* ✅ [중요] 구독 여부 (기본값 false) */
+            isPremium: <%= request.getAttribute("isPremium") != null ? request.getAttribute("isPremium") : false %>,
 
             spentAccom: 0,
             spentFood: 0,
@@ -654,7 +649,7 @@
             activeTab: 12,
             infowindow: null,
             baseMarkerImageSrc: null,
-            itinerary: {}, //여행 일정 담음
+            itinerary: {}, 
             activeDate: null,
             selectedPoi: null,
             activeRegion: "all",

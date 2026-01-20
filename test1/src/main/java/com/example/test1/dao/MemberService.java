@@ -156,7 +156,7 @@ public class MemberService {
 		
 		try {
 			Member member = memberMapper .memberIdFind(map);
-			String message = ""; 
+			String message = "";
 			String result = "";
 			
 			if(member != null) {
@@ -365,8 +365,27 @@ public class MemberService {
 		if(profileImgPath != null) {
 			resultMap.put("result", "success");
 			resultMap.put("info", profileImgPath);
-		} 
+		}
 
 		return resultMap;
+	}
+
+	// ==========================================
+	// ✅ [추가] 구독 및 추천 생성 제한 관련 메서드
+	// ==========================================
+
+	// 1. 유저 정보 조회 (Controller에서 호출)
+	public Member getUserById(String userId) {
+		return memberMapper.selectUserById(userId);
+	}
+
+	// 2. 추천 생성 횟수 1 증가 (Controller에서 호출)
+	public void incrementGenCount(String userId) {
+		memberMapper.updateGenCount(userId);
+	}
+
+	// 3. 모든 유저 횟수 초기화 (스케줄러에서 호출)
+	public void resetAllGenCounts() {
+		memberMapper.resetAllGenCounts();
 	}
 }

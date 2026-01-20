@@ -1,6 +1,8 @@
 package com.example.test1.controller;
 
+import com.example.test1.dao.MemberService;
 import com.example.test1.dao.ResService;
+import com.example.test1.model.Member;
 import com.example.test1.model.Reservation;
 import com.example.test1.model.reservation.Poi;
 import com.example.test1.model.reservation.ReservationRequest;
@@ -26,6 +28,9 @@ public class ResController {
     private ResService resService;
 
     @Autowired
+    private MemberService memberService;
+
+    @Autowired
     private HttpSession session;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -34,24 +39,78 @@ public class ResController {
     private String kakaoAppKey;
 
     // =========================
-    // ✅ (추가) 메인 → reservation.do 진입 (지역/인원/예산 들고 시작)
+    // 페이지 진입 (구독 여부 확인)
     // =========================
     @GetMapping("/reservation.do")
     public String reservationStart(
             @RequestParam(value = "regionKey", required = false) String regionKey,
             @RequestParam(value = "regionName", required = false) String regionName,
+            @RequestParam(value = "areaCode", required = false, defaultValue = "") String areaCode,
             @RequestParam(value = "headCount", required = false, defaultValue = "0") Integer headCount,
             @RequestParam(value = "budget", required = false, defaultValue = "0") Long budget,
             Model model
     ) {
-        model.addAttribute("kakaoAppKey", kakaoAppKey);
+        String userId = (String) session.getAttribute("sessionId");
+        boolean isPremium = false;
 
-        // reservation.jsp에서 초기값 세팅에 사용
+        // 사용자 구독 상태 확인 (CHAR 타입 공백 제거 포함)
+        if (userId != null) {
+            try {
+                Member user = memberService.getUserById(userId); 
+                if (user != null && user.getStatus() != null && "S".equals(user.getStatus().trim())) {
+                    isPremium = true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        model.addAttribute("kakaoAppKey", kakaoAppKey);
+        model.addAttribute("isPremium", isPremium);
+
+        // 초기 설정값 전달
         model.addAttribute("regionKey", regionKey == null ? "" : regionKey);
         model.addAttribute("regionName", regionName == null ? "" : regionName);
+        model.addAttribute("areaCode", areaCode == null ? "" : areaCode);
         model.addAttribute("headCount", headCount == null ? 0 : headCount);
         model.addAttribute("budget", budget == null ? 0 : budget);
+
         return "reservation";
+    }
+
+    // =========================
+    // 추천 생성 횟수 제한 체크
+    // =========================
+    @PostMapping("/api/recommend/check-limit")
+    @ResponseBody
+    public ResponseEntity<?> checkGenLimit(@RequestBody Map<String, String> body) {
+        String userId = (String) session.getAttribute("sessionId");
+        
+        if (userId == null) {
+            return ResponseEntity.status(401).body(Map.of("message", "로그인이 필요합니다."));
+        }
+
+        try {
+            Member user = memberService.getUserById(userId);
+            
+            // 1. 구독자(S)는 무제한 이용
+            if (user != null && user.getStatus() != null && "S".equals(user.getStatus().trim())) {
+                return ResponseEntity.ok(Map.of("status", "success", "isPremium", true));
+            }
+
+            // 2. 비구독자: 일일 횟수 체크 (3회 미만일 때만 성공)
+            if (user.getGenCnt() < 3) {
+                memberService.incrementGenCount(userId); // DB 카운트 증가
+                
+                int remain = 3 - (user.getGenCnt() + 1);
+                return ResponseEntity.ok(Map.of("status", "success", "isPremium", false, "remain", remain));
+            } else {
+                // 3회 이상이면 제한
+                return ResponseEntity.ok(Map.of("status", "limit_exceeded"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
     }
 
     // =========================
@@ -63,11 +122,9 @@ public class ResController {
         try {
             Reservation reservation = createReservation(request);
 
-            // ✅ 로그인 세션 기반 userId 세팅
             String sessionId = session.getAttribute("sessionId") == null ? null : session.getAttribute("sessionId").toString();
             reservation.setUserId(sessionId != null && !sessionId.isBlank() ? sessionId : "999");
 
-            // descript 저장
             reservation.setDescript(request.getDesecript());
 
             Long totalPrice = calculateTotalPrice(request);
@@ -114,7 +171,7 @@ public class ResController {
     }
 
     // =========================
-    // (신규) 결제 금액 조회: accom + food 합계
+    // 결제 금액 조회
     // =========================
     @GetMapping("/api/reservation/pay/amount")
     @ResponseBody
@@ -155,7 +212,7 @@ public class ResController {
     }
 
     // =========================
-    // 여행 포기(예약 삭제)
+    // 예약 삭제
     // =========================
     @PostMapping("/api/reservation/delete")
     @ResponseBody
@@ -164,7 +221,7 @@ public class ResController {
             Long resNum = body.get("resNum") == null ? null : Long.valueOf(body.get("resNum").toString());
             if (resNum == null) return ResponseEntity.badRequest().body(Map.of("message", "resNum 누락"));
 
-            boolean ok = resService.deleteReservationCascade(resNum); // POI → RESERVATION 순서 삭제
+            boolean ok = resService.deleteReservationCascade(resNum);
             return ok ? ResponseEntity.ok(Map.of("message", "예약 삭제 완료"))
                     : ResponseEntity.status(404).body(Map.of("message", "삭제 대상 없음"));
         } catch (Exception e) {
@@ -174,7 +231,7 @@ public class ResController {
     }
 
     // =========================
-    // 자동차 길찾기
+    // 자동차 경로 생성
     // =========================
     @PostMapping("/api/route/build")
     @ResponseBody
@@ -202,7 +259,7 @@ public class ResController {
         }
     }
 
-    // ---------- Helpers ----------
+    // ---------- Private Helpers ----------
 
     private Long calculateTotalPrice(ReservationRequest request) {
         return request.getItinerary().values().stream()
@@ -289,7 +346,7 @@ public class ResController {
         reservation.setActBudget((float) actAmt);
     }
 
-    /** 프론트 요청 DTO */
+    /** 프론트 요청용 DTO */
     @Data
     private static class RouteBuildRequest {
         private Long resNum;
@@ -300,8 +357,8 @@ public class ResController {
         private static class RoutePoiLite {
             private Long contentId;
             private String name;
-            private double x; // 경도
-            private double y; // 위도
+            private double x;
+            private double y;
         }
     }
 }
