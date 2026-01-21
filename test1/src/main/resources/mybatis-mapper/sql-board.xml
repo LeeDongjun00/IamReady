@@ -33,7 +33,7 @@
 		</if>
 		
 		<if test="searchOption == 'id'">
-		AND B.USER_ID LIKE '%' || #{keyword} || '%' 
+		AND NICKNAME LIKE '%' || #{keyword} || '%' 
 		</if>
 		<if test="searchOption == 'title'">
 		AND TITLE LIKE '%' || #{keyword} || '%' 

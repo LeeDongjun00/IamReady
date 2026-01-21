@@ -275,6 +275,7 @@
                                 history.back();
                             } else {
                                 alert("오류 발생");
+                                console.log(data);
                             }
                         }
                     });

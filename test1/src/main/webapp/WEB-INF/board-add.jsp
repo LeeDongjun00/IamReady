@@ -450,6 +450,7 @@
                     <div class="button-area">
                         <a href="board-list.do"><button class="cancel-btn">취소</button></a>
                         <button @click="fnAdd">등록</button>
+                        
                     </div>
                 </div>
 
@@ -486,6 +487,7 @@
                         userId: self.userId,
                         type: self.type
                     };
+                    console.log(param);
                     $.ajax({
                         url: "/board-add.dox",
                         dataType: "json",
@@ -507,9 +509,11 @@
                                     alert("제목을 적어주세요");
                                 } else {
                                     alert("등록되었습니다.");
-                                    //console.log(data);
+                                    // console.log(data);
                                     location.href = "board-list.do";
+                                     
                                 }
+                               
 
 
 

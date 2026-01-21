@@ -102,7 +102,7 @@
       padding:14px 16px; font-size:15px; color:#2B3441;
     }
     .content{
-      line-height:1.78; font-size:16px; word-break:break-word;
+      line-height:1.78; font-size:16px; word-break:break-word; 
     }
     .content img{ max-width:100%; height:auto; border-radius:10px; display:block; margin:8px 0 }
 
@@ -289,6 +289,9 @@
       height: 50px;
       border-radius: 50%;
     }
+
+
+   
   </style>
 </head>
 <body>
@@ -323,7 +326,7 @@
     <!-- 본문 카드 -->
     <div class="card post">
       <table class="table">
-        <tr>
+        <!-- <tr>
           <th>제목</th>
           <td>{{ info.title }}</td>
         </tr>
@@ -337,7 +340,7 @@
         <tr>
           <th>조회수</th>
           <td>{{ info.cnt }}</td>
-        </tr>
+        </tr> -->
         <tr>
           <th>내용</th>
           <td><div class="content" v-html="info.contents"></div></td>

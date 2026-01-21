@@ -127,6 +127,7 @@ try {
 			// TODO: handle exception
 			resultMap.put("result", "fail");
 			resultMap.put("msg", "서버오류 다시시도");
+			System.out.println(e);
 		}
 		return resultMap;
 	
