@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Team Project</title>
 
-    <!-- Vendor -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script type="text/javascript"
@@ -20,7 +19,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js"></script>
 
-    <!-- Global CSS -->
     <link rel="stylesheet" href="/css/main-style.css" />
     <link rel="stylesheet" href="/css/common-style.css" />
     <link rel="stylesheet" href="/css/header-style.css" />
@@ -1293,7 +1291,6 @@
 
       <div id="app">
         <div class="content-wrapper">
-          <!-- ✅ 최상단 광고 배너 -->
           <div class="top-banner-wrap">
             <div class="swiper top-banner-slider">
               <div class="swiper-wrapper">
@@ -1315,9 +1312,7 @@
             </div>
           </div>
 
-          <!-- ✅ 메인 2컬럼 -->
           <div class="main-panels">
-            <!-- ✅ 좌측: 지역 탭 + 대표명소(랜덤 관광지 이미지) -->
             <aside class="left-card">
               <div class="region-top">
                 <div class="region-title">
@@ -1381,9 +1376,7 @@
                 </div>
               </div>
 
-              <!-- ✅ 랜덤 관광지 카드 -->
               <div class="spot-card">
-                <!-- 이미지가 있으면 이미지, 없으면 placeholder -->
                 <img v-if="spotImageUrl" class="spot-img" :src="spotImageUrl" :alt="spotTitle" />
                 <div v-else class="img-placeholder"></div>
 
@@ -1396,7 +1389,6 @@
               </div>
             </aside>
 
-            <!-- ✅ 우측: 카카오 지도 -->
             <section class="right-card">
               <div class="map_wrap">
                 <div id="map"></div>
@@ -1414,12 +1406,10 @@
                 <div class="map-bottom-bar">
                   <div class="map-bottom-field">
                     <span class="label">인원수</span>
-                    <!-- ✅ 초기값 0 / min도 0으로 -->
                     <input type="number" min="0" v-model.number="headCount" placeholder="예: 2" />
                   </div>
                   <div class="map-bottom-field">
                     <span class="label">예산</span>
-                    <!-- ✅ 초기값 0 -->
                     <input type="number" min="0" v-model.number="budget" placeholder="예: 300000" />
                   </div>
                   <button type="button" class="btn-start-trip" @click="fnStartTrip">여행하기</button>
@@ -1427,16 +1417,11 @@
               </div>
             </section>
           </div>
-          <!-- /main-panels -->
-
-          <!-- 프리미엄 광고 + 추천 여행지 둘러보기 -->
           <div class="below-panels">
-            <!-- 좌측: 플랫폼 광고 -->
             <div class="premium-ad-card">
               <img src="/images/premium_ad.png" alt="premium_ad" />
             </div>
 
-            <!-- 우측: 추천 여행지 둘러보기(캐러셀) -->
             <div class="region-carousel-card">
               <div class="region-carousel-head">
                 <div class="region-carousel-title">
@@ -1487,7 +1472,6 @@
             </div>
           </div>
 
-          <!-- 후기 슬라이더 -->
           <div class="swiper review-slider" style="margin-top: 40px">
             <h2>추천 후기글</h2>
             <div class="swiper-wrapper">
@@ -1537,7 +1521,6 @@
             <div class="swiper-button-prev review-button-prev"></div>
           </div>
 
-          <!-- 추천 게시글 -->
           <div style="margin-top: 24px">
             <h2>추천 게시글</h2>
             <div class="bestCard-container">
@@ -1567,13 +1550,7 @@
             </div>
           </div>
         </div>
-        <!-- /content-wrapper -->
-      </div>
-      <!-- /app -->
-
-
-      <!-- ✅ 구독 혜택 팝업 (7일간 숨김) -->
-
+        </div>
       <div id="popup-overlay" class="popup-overlay" style="display:none;"></div>
 
       <div id="ad-popup" class="sub-popup" style="display:none;">
@@ -1635,59 +1612,54 @@
                 thumbnailMap: {},
                 page: 1,
                 pageSize: 6,
+                
+                // ✅ 제공해주신 이미지 리스트로 확장
                 randomImages: [
-                  "/img/defaultImg01.jpg",
-                  "/img/defaultImg02.jpg",
-                  "/img/defaultImg03.jpg",
-                  "/img/defaultImg04.jpg",
-                  "/img/defaultImg05.jpg",
-                  "/img/defaultImg06.jpg",
+                    "/img/defaultImg01.jpg", "/img/defaultImg02.jpg", "/img/defaultImg03.jpg", "/img/defaultImg04.jpg", "/img/defaultImg05.jpg", "/img/defaultImg06.jpg",
+                    "/img/defaultmg07.jpg", "/img/defaultmg08.jpg", "/img/defaultmg09.jpg", "/img/defaultmg10.jpg", "/img/defaultmg11.jpg", "/img/defaultmg12.jpg",
+                    "/img/defaultmg13.jpg", "/img/defaultmg14.jpg", "/img/defaultmg15.jpg", "/img/defaultmg16.jpg", "/img/defaultimg17.jpg", "/img/defaultimg18.jpg",
+                    "/img/defaultimg19.jpg", "/img/defaultimg20.jpg", "/img/defaultimg21.jpg", "/img/defaultimg22.jpg", "/img/defaultimg23.jpg", "/img/defaultimg24.jpg",
+                    "/img/defaultimg25.jpg", "/img/defaultimg26.jpg", "/img/defaultimg27.jpg", "/img/defaultimg28.jpg", "/img/defaultimg29.jpg", "/img/defaultimg30.jpg",
+                    "/img/defaultimg31.jpg", "/img/defaultimg32.jpg", "/img/defaultimg33.jpg", "/img/defaultimg34.jpg", "/img/defaultimg35.jpg", "/img/defaultimg36.jpg",
+                    "/img/defaultimg37.jpg", "/img/defaultimg38.jpg", "/img/defaultimg39.jpg", "/img/defaultimg40.jpg", "/img/defaultimg41.jpg", "/img/defaultimg42.jpg",
+                    "/img/defaultimg43.jpg", "/img/defaultimg44.jpg", "/img/defaultimg45.jpg", "/img/defaultimg46.jpg", "/img/defaultimg47.jpg", "/img/defaultimg48.jpg",
+                    "/img/defaultimg49.jpg",
+                    "/img/defaultImg50.PNG", "/img/defaultImg51.PNG", "/img/defaultImg52.PNG", "/img/defaultImg53.PNG", "/img/defaultImg54.PNG", "/img/defaultImg55.PNG",
+                    "/img/defaultImg56.PNG", "/img/defaultImg57.PNG", "/img/defaultImg58.PNG", "/img/defaultImg59.PNG", "/img/defaultImg60.PNG", "/img/defaultImg61.PNG",
+                    "/img/defaultImg62.PNG", "/img/defaultImg63.PNG", "/img/defaultImg64.PNG", "/img/defaultImg65.PNG", "/img/defaultImg66.PNG", "/img/defaultImg67.PNG",
+                    "/img/defaultImg68.PNG", "/img/defaultImg69.PNG", "/img/defaultImg70.PNG", "/img/defaultImg71.PNG", "/img/defaultImg72.PNG", "/img/defaultImg73.PNG",
+                    "/img/defaultImg74.PNG", "/img/defaultImg75.PNG"
                 ],
 
-                /* ✅ 요구사항: 초기값 0 */
                 headCount: 0,
                 budget: 0,
 
                 topBannerSwiper: null,
                 reviewSwiper: null,
-
-                /* ✅ (추가) 추천 여행지 둘러보기 Swiper */
                 regionSwiper: null,
 
                 selectedRegionKey: "",
                 selectedRegionName: "",
 
-                /* ✅ 좌측 랜덤 관광지 표시용 */
                 spotTitle: "지역을 선택해 주세요",
                 spotDesc: "※ 지역을 선택하면 관광지 사진이 랜덤으로 표시됩니다",
-                spotImageUrl: "",
+                spotImageUrl: "", // 초기엔 비워둠 (placeholder 표시)
 
-                /* ✅ 지역키 -> (지도 이동용 + Tour API areaCode 매핑용) */
                 REGION: {
                   seoul: { name: "서울특별시", lat: 37.5665, lng: 126.978, jitter: 0.05, spot: "서울 랜덤 관광지" },
                   gyeonggi: { name: "경기도", lat: 37.4138, lng: 127.5183, jitter: 0.12, spot: "경기 랜덤 관광지" },
                   incheon: { name: "인천광역시", lat: 37.4563, lng: 126.7052, jitter: 0.08, spot: "인천 랜덤 관광지" },
-
                   gangwon: { name: "강원특별자치도", lat: 37.8228, lng: 128.1555, jitter: 0.16, spot: "강원 랜덤 관광지" },
                   chungnam: { name: "충청남도", lat: 36.6588, lng: 126.6728, jitter: 0.14, spot: "충남 랜덤 관광지" },
                   jeonbuk: { name: "전북특별자치도", lat: 35.7175, lng: 127.153, jitter: 0.14, spot: "전북 랜덤 관광지" },
-
                   daegu: { name: "대구광역시", lat: 35.8714, lng: 128.6014, jitter: 0.07, spot: "대구 랜덤 관광지" },
                   busan: { name: "부산광역시", lat: 35.1796, lng: 129.0756, jitter: 0.08, spot: "부산 랜덤 관광지" },
                   jeju: { name: "제주특별자치도", lat: 33.4996, lng: 126.5312, jitter: 0.12, spot: "제주 랜덤 관광지" },
                 },
 
-                /* ✅ Tour API 지역코드(백엔드 호출 파라미터로 사용) */
                 AREA_CODE: {
-                  seoul: 1,
-                  incheon: 2,
-                  daegu: 4,
-                  busan: 6,
-                  gyeonggi: 31,
-                  gangwon: 32,
-                  chungnam: 34,
-                  jeonbuk: 37,
-                  jeju: 39,
+                  seoul: 1, incheon: 2, daegu: 4, busan: 6, gyeonggi: 31,
+                  gangwon: 32, chungnam: 34, jeonbuk: 37, jeju: 39,
                 },
               };
             },
@@ -1807,19 +1779,13 @@
 
                 const areaCode = self.AREA_CODE[self.selectedRegionKey] || "";
 
-                // areaCode가 없으면 fallback
                 if (!areaCode) {
                   self.spotTitle = self.REGION[self.selectedRegionKey]?.spot || "랜덤 관광지";
                   self.spotDesc = "※ areaCode 매핑이 없어 기본 이미지로 표시됩니다";
-                  self.spotImageUrl = self.getRandomImage();
+                  self.spotImageUrl = self.getRandomImage(); // ✅ 여기서 사용됨
                   return;
                 }
 
-                /*
-                  ✅ 여기 URL만 프로젝트에 맞게 맞추면 됩니다.
-                  - 추천: /tour-random-spot.dox
-                  - 응답 예시: { spot: { title: "...", firstimage: "http...", addr1: "...", mapx: "...", mapy: "..." } }
-                */
                 $.ajax({
                   url: "/tour-random-spot.dox",
                   dataType: "json",
@@ -1833,15 +1799,24 @@
 
                     self.spotTitle = title;
                     self.spotDesc = addr ? addr : "※ 해당 관광지의 주소 정보가 없습니다";
-                    self.spotImageUrl = img ? img : self.getRandomImage();
+                    // ✅ 이미지가 없으면 랜덤 이미지 사용
+                    self.spotImageUrl = img ? img : self.getRandomImage(); 
                   },
                   error: function () {
-                    // 실패 시에도 화면이 비지 않게 fallback
                     self.spotTitle = self.REGION[self.selectedRegionKey]?.spot || "랜덤 관광지";
-                    self.spotDesc = "※ 관광지 이미지를 불러오지 못해 기본 이미지로 대체합니다";
-                    self.spotImageUrl = self.getRandomImage();
+                    self.spotDesc = "※ 관광지 이미지를 출력합니다.";
+                    self.spotImageUrl = self.getRandomImage(); // ✅ 에러 시에도 사용됨
                   },
                 });
+              },
+
+              /* ✅ 랜덤 이미지 추출 (셔플링 방식) */
+              getRandomImage() {
+                if (!this.shuffled || this.shuffled.length === 0) {
+                    // 배열 복사 후 랜덤 섞기 (Fisher-Yates Shuffle 유사)
+                    this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                }
+                return this.shuffled.pop(); // 하나씩 꺼내서 줌 (중복 방지)
               },
 
               initTopBannerSwiper() {
@@ -1959,12 +1934,6 @@
                     self.fnResList();
                   },
                 });
-              },
-
-              getRandomImage() {
-                if (!this.shuffled) this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
-                if (this.shuffled.length === 0) this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
-                return this.shuffled.pop();
               },
 
               /* ✅ (핵심) alert 대신 reservation.do로 값 넘기기 */
