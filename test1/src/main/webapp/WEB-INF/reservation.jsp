@@ -221,7 +221,6 @@ String.valueOf(request.getAttribute("resNum")); %>
     <%@ include file="components/header.jsp" %>
     <div id="app">
       <div class="wrap" style="padding-bottom: 80px">
-        <h1 class="page-title2">예약하기</h1>
         <div class="grid two-col">
           <section class="panel">
             <h3>테마 선택 <span class="desc">복수 선택 가능</span></h3>

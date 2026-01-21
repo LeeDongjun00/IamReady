@@ -126,7 +126,11 @@
 
       /* 좋아요 / 조회수 아이콘 */
       .material-symbols-outlined {
-        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 48;
         color: #777;
         font-size: 24px;
         cursor: pointer;
@@ -353,15 +357,15 @@
           <label for="tag">태그 필터</label>
           <select id="tag" v-model="tag" @change="fnList">
             <option value="">전체</option>
-            <option value="가족">가족</option>
-            <option value="친구">친구</option>
-            <option value="연인">연인</option>
-            <option value="호화스러운">호화스러운</option>
-            <option value="가성비">가성비</option>
-            <option value="힐링">힐링</option>
-            <option value="이색적인">이색적인</option>
-            <option value="모험">모험</option>
-            <option value="조용한">조용한</option>
+            <option value="FAMILY">가족</option>
+            <option value="FRIEND">친구</option>
+            <option value="COUPLE">연인</option>
+            <option value="LUXURY">호화스러운</option>
+            <option value="BUDGET">가성비</option>
+            <option value="HEALING">힐링</option>
+            <option value="MOOD_UNIQUE">이색적인</option>
+            <option value="ADVENTURE">모험</option>
+            <option value="QUIET">조용한</option>
           </select>
         </div>
         <button @click="fnadd">글쓰러가기</button>
@@ -372,7 +376,11 @@
           <div class="card-inner">
             <!-- 앞면 -->
             <div class="card-front">
-              <img class="card-img" :src="thumbnailMap[item.resNum]?.firstimage || getRandomImage()" :alt="item.packname" />
+              <img
+                class="card-img"
+                :src="thumbnailMap[item.resNum]?.firstimage || getRandomImage()"
+                :alt="item.packname"
+              />
             </div>
 
             <!-- 뒷면 -->
@@ -385,7 +393,13 @@
                     </div>
                   </div>
                   <div style="display: flex">
-                    <span class="material-symbols-outlined" :class="{ liked: item.liked }" @click.stop="toggleLike(item)"> favorite </span>
+                    <span
+                      class="material-symbols-outlined"
+                      :class="{ liked: item.liked }"
+                      @click.stop="toggleLike(item)"
+                    >
+                      favorite
+                    </span>
                     <div>{{ item.fav }}</div>
                   </div>
                 </div>
@@ -405,7 +419,11 @@
                 </div>
 
                 <div class="card-footer">
-                  <button style="margin-right: 10px" @click.stop="fnActive(item.resNum)" v-if="userId !=null & userId !='' & status == 'S'">
+                  <button
+                    style="margin-right: 10px"
+                    @click.stop="fnActive(item.resNum)"
+                    v-if="userId !=null & userId !='' & status == 'S'"
+                  >
                     활용하기
                   </button>
                   <button @click.stop="fnDetail(item.resNum)">상세보기</button>
@@ -424,7 +442,12 @@
         </a>
 
         <!-- 페이지 번호 -->
-        <a href="javascript:;" v-for="num in pageGroupEnd - pageGroupStart + 1" :key="num" @click="fnchange(pageGroupStart + num - 1)">
+        <a
+          href="javascript:;"
+          v-for="num in pageGroupEnd - pageGroupStart + 1"
+          :key="num"
+          @click="fnchange(pageGroupStart + num - 1)"
+        >
           <span :class="{ active: page == (pageGroupStart + num - 1) }">{{ pageGroupStart + num - 1 }}</span>
         </a>
 
@@ -466,6 +489,7 @@
       methods: {
         fnList() {
           let self = this;
+          self.list = [];
           $.ajax({
             url: "/review-list.dox",
             dataType: "json",
@@ -477,6 +501,8 @@
               page: (self.page - 1) * self.pageSize,
             },
             success: function (data) {
+              console.log(self.tag);
+
               self.list = data.list;
               self.totalPages = Math.ceil(data.cnt / self.pageSize);
               let group = Math.floor((self.page - 1) / self.pageGroupSize);
@@ -485,7 +511,6 @@
               self.pageGroupStart = group * self.pageGroupSize + 1;
               self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
               console.log(data);
-              
             },
           });
         },

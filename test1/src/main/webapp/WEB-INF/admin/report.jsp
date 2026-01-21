@@ -310,7 +310,7 @@
           
           self.list = data.reportList;
 
-          console.log(self.list);
+          // console.log(self.list);
 
         } catch (error) {
           console.error('대시보드 데이터 조회 실패', error);
@@ -352,7 +352,7 @@
               if(data.result == "success"){
                 // console.log(data);
                 self.reportInfo = data.info[0];
-                console.log(self.reportInfo);
+                // console.log(self.reportInfo);
               } else {
                 console.log("오류 발생")
               }
@@ -402,9 +402,9 @@
             type: "POST",
             data: param,
             success: function (data) {
-                console.log(data.result);
+                // console.log(data.result);
               if(data.result == "success"){
-                console.log(data);
+                // console.log(data);
                 self.loadReport();
                 
               } else {
@@ -426,9 +426,9 @@
             type: "POST",
             data: param,
             success: function (data) {
-                console.log(data.result);
+                // console.log(data.result);
               if(data.result == "success"){
-                console.log(data);
+                // console.log(data);
                 self.loadReport();
                 self.showBanBox = false;
               } else {
@@ -455,7 +455,7 @@
                 // self.loadReport();
                 // self.showBanBox = false;
                 self.totalCnt = data.CNT;
-                console.log("총 신고 건수: " + self.totalCnt);
+                // console.log("총 신고 건수: " + self.totalCnt);
               } else {
                 console.log("오류 발생")
               }
