@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="/css/main-images.css" />
 
     <style>
-      body {
-        font-family: "Noto Sans KR", sans-serif;
-        background-color: #f6f7fb;
-        margin: 0;
-      }
+		body {
+		        font-family: "Noto Sans KR", sans-serif;
+		        background-color: #ffffff; /* 흰색으로 변경 */
+		        margin: 0;
+		      }
 
       h2 {
         text-align: center;

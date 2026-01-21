@@ -19,7 +19,7 @@
     <style>
       /* ====== 고급 · 미니멀 공식 서비스 스타일 ====== */
       :root {
-        --bg: #f7f8fa;
+        --bg: #ffffff;
         --card: #ffffff;
         --text: #1f2937;
         --muted: #6b7280;
@@ -442,7 +442,7 @@
                 keyword: "",
                 sessionId: "${sessionId}",
                 page: 1,
-                pageSize: 5,
+                pageSize: 10,
                 pageGroupSize: 10,
                 totalPages: 0,
                 pageGroupStart: 1,
