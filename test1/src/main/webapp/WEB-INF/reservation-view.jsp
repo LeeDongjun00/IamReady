@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
   <style>
-    :root { --brand:#3498db; --brand-600:#2980b9; --danger:#e74c3c; --danger-600:#c0392b; --text:#333; --muted:#555; --border:#e0e0e0; --bg:#f4f7f6; }
+    :root { --brand:#3498db; --brand-600:#2980b9; --danger:#e74c3c; --danger-600:#c0392b; --text:#333; --muted:#555; --border:#e0e0e0; --bg:#ffffff; }
     body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);}
     .wrap{max-width:1100px;margin:24px auto 60px;padding:0 16px;}
     .page-title{font-size:2.25rem;font-weight:700;color:#2c3e50;border-bottom:3px solid var(--brand);padding-bottom:10px;margin-bottom:20px;}
