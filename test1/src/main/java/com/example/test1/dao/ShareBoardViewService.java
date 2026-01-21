@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -246,69 +248,60 @@ public class ShareBoardViewService {
     
     public Map<Integer, HashMap<String, Object>> thumbnailMap(HashMap<String, Object> paramMap) {
         Map<Integer, HashMap<String, Object>> resultMap = new HashMap<>();
-
         List<Review> resList = reviewMapper.thumbnailWithResNum(paramMap);
-        String[] randomImages = {
-                "/img/defaultImg01.jpg", "/img/defaultImg02.jpg", "/img/defaultImg03.jpg",
-                "/img/defaultImg04.jpg", "/img/defaultImg05.jpg", "/img/defaultImg06.jpg"
-        };
+        String[] randomImages = {"/img/defaultImg01.jpg", "/img/defaultImg02.jpg", "/img/defaultImg03.jpg",
+                                 "/img/defaultImg04.jpg", "/img/defaultImg05.jpg", "/img/defaultImg06.jpg"};
         Random random = new Random();
-
-        // ✅ 중복 contentId의 이미지를 저장할 로컬 캐시 선언
         Map<String, String> imageCache = new HashMap<>();
 
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
         for (Review r : resList) {
-            Integer resNum = r.getResNum();
-            String contentId = (r.getContentId() != null) ? String.valueOf(r.getContentId()) : null;
+            futures.add(CompletableFuture.runAsync(() -> {
+                Integer resNum = r.getResNum();
+                String contentId = (r.getContentId() != null) ? String.valueOf(r.getContentId()) : null;
+                String firstImage;
 
-            // 1. contentId가 없는 경우 처리
-            if (contentId == null || contentId.isEmpty()) {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("contentId", "");
-                map.put("firstimage", randomImages[random.nextInt(randomImages.length)]);
-                resultMap.put(resNum, map);
-                continue;
-            }
-
-            String firstImage;
-
-            // 2. ✅ 캐시에 이미 존재하는 contentId인지 확인
-            if (imageCache.containsKey(contentId)) {
-                firstImage = imageCache.get(contentId);
-            } else {
-                // 캐시에 없으면 API 호출
-                try {
-                    firstImage = getFirstImage(contentId);
-                } catch (Exception e) {
-                    System.err.println("[WARN] 이미지 조회 실패: contentId=" + contentId);
-                    firstImage = null;
-                }
-
-                // API 결과가 없으면 랜덤 이미지 선택
-                if (firstImage == null || firstImage.trim().isEmpty()) {
+                if (contentId == null || contentId.isEmpty()) {
                     firstImage = randomImages[random.nextInt(randomImages.length)];
+                } else if (imageCache.containsKey(contentId)) {
+                    firstImage = imageCache.get(contentId);
+                } else {
+                    try {
+                        firstImage = getFirstImage(contentId);
+                        if (firstImage == null || firstImage.isEmpty()) {
+                            firstImage = randomImages[random.nextInt(randomImages.length)];
+                        }
+                        imageCache.put(contentId, firstImage);
+                    } catch (Exception e) {
+                        firstImage = randomImages[random.nextInt(randomImages.length)];
+                    }
                 }
 
-                // ✅ 결과를 캐시에 저장 (다음 중복 시 API 호출 방지)
-                imageCache.put(contentId, firstImage);
-            }
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("contentId", contentId);
+                map.put("firstimage", firstImage);
 
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("contentId", contentId);
-            map.put("firstimage", firstImage);
-            resultMap.put(resNum, map);
+                synchronized(resultMap) {
+                    resultMap.put(resNum, map);
+                }
+            }));
         }
+
+        futures.forEach(f -> {
+            try { f.get(); } catch (InterruptedException | ExecutionException e) { e.printStackTrace(); }
+        });
 
         return resultMap;
     }
-
     // API로 이미지 가져오기
     public String getFirstImage(String contentId) throws Exception {
     	String encodedKey = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
         String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
-                + "?ServiceKey=" + encodedKey
+                + "?ServiceKey=" + apiKey
                 + "&MobileOS=ETC&MobileApp=AppTest"
-                + "&contentId=" + contentId;
+                + "&contentId=" + contentId
+                ;
         System.out.println(url);
         RestTemplate restTemplate = new RestTemplate();
         byte[] bytes = restTemplate.getForObject(url, byte[].class);
