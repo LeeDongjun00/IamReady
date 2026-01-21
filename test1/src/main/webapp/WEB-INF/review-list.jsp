@@ -514,7 +514,17 @@
 			"/img/defaultimg36.jpg",
 			"/img/defaultimg37.jpg",
 			"/img/defaultimg38.jpg",
-			"/img/defaultimg39.jpg"
+			"/img/defaultimg39.jpg",
+			"/img/defaultimg40.jpg",
+			"/img/defaultimg41.jpg",
+			"/img/defaultimg42.jpg",
+			"/img/defaultimg43.jpg",
+			"/img/defaultimg44.jpg",
+			"/img/defaultimg45.jpg",
+			"/img/defaultimg46.jpg",
+			"/img/defaultimg47.jpg",
+			"/img/defaultimg48.jpg",
+			"/img/defaultimg49.jpg"
           ],
           status: window.sessionData.status,
         };
