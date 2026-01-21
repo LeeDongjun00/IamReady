@@ -465,7 +465,7 @@
                 type: "POST",
                 data: param,
                 success: function (data) {
-                  console.log(data);
+                  // console.log(data);
                   self.list = data.user;
                   self.totalPages = Math.ceil((data.cnt || 0) / self.pageSize);
 
@@ -499,7 +499,7 @@
                 type: "POST",
                 data: param,
                 success: function (data) {
-                  console.log(data);
+                  // console.log(data);
                   self.fnList();
                     self.showModal = false;
                   if (status == "B") {
