@@ -349,7 +349,7 @@
           </button>
         </div>
 
-        <h2>📋 게시글 목록</h2>
+        <h2>Review</h2>
       </div>
 
       <div class="middle">

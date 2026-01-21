@@ -8,17 +8,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>예약 상세 확인</title>
 
-  <!-- ✅ jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  <!-- ✅ Vue3 (compiler 포함 build) -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
-  <!-- ✅ Kakao Map -->
   <script type="text/javascript"
           src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoAppKey}&libraries=services"></script>
 
-  <!-- Global CSS -->
   <link rel="stylesheet" href="/css/main-style.css">
   <link rel="stylesheet" href="/css/common-style.css">
   <link rel="stylesheet" href="/css/header-style.css">
@@ -180,7 +176,7 @@
       return {
         userId: "${sessionId}",
 
-        // ✅ 숙소 contentId (POI typeId=32에서 찾음)
+        // ✅ 숙소 contentId
         accContentId: null,
 
         memo: "",
@@ -229,15 +225,15 @@
     },
 
     methods: {
-      // ===== 공통 유틸 =====
+      // ✅ [수정됨 1] 날짜 포맷 함수 (강력한 자르기)
       formatDate(d) {
-        if (!d) return "";
-        const dt = new Date(d);
-        if (isNaN(dt.getTime())) return String(d);
-        const yyyy = dt.getFullYear();
-        const mm = String(dt.getMonth() + 1).padStart(2, '0');
-        const dd = String(dt.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
+        if (!d || d === 'null' || d === 'undefined') return '';
+        const str = String(d).trim();
+        // "2026-01-22 00:00:00" 처럼 길면 앞 10자리만 자름
+        if (str.length >= 10) {
+            return str.substring(0, 10);
+        }
+        return str;
       },
 
       formatPrice(n) {
@@ -245,48 +241,46 @@
         return isNaN(num) ? "0" : num.toLocaleString();
       },
 
-      // ===== 숙소 contentId 세팅 =====
       setAccContentIdFromPois() {
         const accomPoi = (this.poiList || []).find(p => String(p.typeId) === '32');
         this.accContentId = (accomPoi && accomPoi.contentId) ? Number(accomPoi.contentId) : null;
       },
 
-      // ===== 지도 초기화/마커 =====
       initializeMap(data) {
         if (!window.kakao || !kakao.maps) {
-          document.getElementById('map-container').innerText = 'Kakao Map API 로드 실패.';
+          const el = document.getElementById('map-container');
+          if(el) el.innerText = 'Kakao Map API 로드 실패.';
           return;
         }
-
         const container = document.getElementById('map-container');
-        const options = { center: new kakao.maps.LatLng(data[0].mapY, data[0].mapX), level: 7 };
+        const lat = data[0].mapY || 37.566826;
+        const lng = data[0].mapX || 126.9786567;
+        const options = { center: new kakao.maps.LatLng(lat, lng), level: 7 };
         this.map = new kakao.maps.Map(container, options);
 
         const bounds = new kakao.maps.LatLngBounds();
         this.clearMarkers();
 
         data.forEach(p => {
+          if (!p.mapY || !p.mapX) return;
           const pos = new kakao.maps.LatLng(p.mapY, p.mapX);
           const marker = new kakao.maps.Marker({ position: pos });
           marker.setMap(this.map);
           this.markers.push(marker);
 
           const info = new kakao.maps.InfoWindow({
-            content: '<div style="padding:5px;">' + (p.placeName || p.contentId) + '</div>'
+            content: '<div style="padding:5px; color:#000;">' + (p.placeName || p.contentId) + '</div>'
           });
-
           kakao.maps.event.addListener(marker, 'mouseover', () => info.open(this.map, marker));
           kakao.maps.event.addListener(marker, 'mouseout', () => info.close());
-
           bounds.extend(pos);
         });
-
-        this.map.setBounds(bounds);
-
-        // relayout 보강 (컨테이너 렌더 후)
+        
+        if (data.length > 0) this.map.setBounds(bounds);
+        
         setTimeout(() => {
           if (this.map && this.map.relayout) this.map.relayout();
-        }, 0);
+        }, 200);
       },
 
       clearMarkers() {
@@ -295,7 +289,6 @@
         this.markers = [];
       },
 
-      // ===== 경로 폴리라인 =====
       drawPolyline(points) {
         if (!this.map) return;
         if (this.routePolyline) {
@@ -307,8 +300,7 @@
         const path = points.map(pt => new kakao.maps.LatLng(pt.y, pt.x));
         this.routePolyline = new kakao.maps.Polyline({
           path,
-          strokeWeight: 5,
-          strokeOpacity: 0.9
+          strokeWeight: 5, strokeOpacity: 0.9, strokeColor: '#e74c3c'
         });
         this.routePolyline.setMap(this.map);
 
@@ -327,171 +319,212 @@
 
       async buildCarRoute() {
         const pois = this.itineraryByDate[this.activeDate] || [];
-        const valid = pois.filter(p => p.mapX != null && p.mapY != null && !isNaN(p.mapX) && !isNaN(p.mapY));
-
+        const valid = pois.filter(p => p.mapX && p.mapY);
         if (valid.length < 2) {
           alert('경로를 그릴 최소 2개 지점(출발/도착)이 필요합니다.');
           return;
         }
-
         try {
           const payload = {
             resNum: this.reservation.resNum,
             day: this.activeDate,
             pois: valid.map(p => ({
-              contentId: p.contentId,
-              name: p.placeName || '',
-              x: Number(p.mapX),
-              y: Number(p.mapY)
+              contentId: p.contentId, name: p.placeName || '', x: Number(p.mapX), y: Number(p.mapY)
             }))
           };
-
           const resp = await $.ajax({
-            url: '/api/route/build',
-            type: 'POST',
-            contentType: 'application/json',
+            url: '/api/route/build', type: 'POST', contentType: 'application/json',
             data: JSON.stringify(payload)
           });
-
           this.drawPolyline(resp.points);
           this.routeSummary = resp.summary || null;
-
         } catch (e) {
           console.error(e);
-          alert('경로 계산에 실패했습니다.');
+          alert('경로 계산 실패 (서버 로그 확인 필요)');
         }
       },
 
-      // ✅ 결제 호출 제거 + 저장 후 lodge.do로 resNum/accContentId 넘김
       async fnSave() {
         try {
           const name = (this.reservation.packname || '').trim();
-
-          if (name.length === 0) {
-            if (!confirm('코스 이름이 비어 있습니다. 그대로 진행할까요?')) return;
-          }
-
+          if (name.length === 0 && !confirm('코스 이름이 비어 있습니다. 진행할까요?')) return;
           if (!this.accContentId) {
-            alert('숙소(contentId)가 없습니다. (typeId=32 숙소 POI가 없을 수 있습니다)');
+            alert('숙소 정보가 없어 결제를 진행할 수 없습니다.');
             return;
           }
-
-          // 1) 저장
           const payload = {
             resNum: this.reservation.resNum,
-            packName: name,
-            userId: this.userId,
-            descript: this.memo,
-            accContentId: this.accContentId
+            packName: name, userId: this.userId, descript: this.memo, accContentId: this.accContentId
           };
-
           await $.ajax({
-            url: '/api/reservation/update/packname',
-            type: 'POST',
-            contentType: 'application/json',
+            url: '/api/reservation/update/packname', type: 'POST', contentType: 'application/json',
             data: JSON.stringify(payload)
           });
-
-          // 2) lodge로 이동
-          const qs =
-            '?resNum=' + encodeURIComponent(this.reservation.resNum) +
-            '&accContentId=' + encodeURIComponent(this.accContentId);
-
-          window.location.href = '/lodge.do' + qs;
-
+          window.location.href = '/lodge.do?resNum=' + encodeURIComponent(this.reservation.resNum) + '&accContentId=' + encodeURIComponent(this.accContentId);
         } catch (e) {
-          console.error(e);
-          alert('저장/이동 중 오류가 발생했습니다.');
+          alert('저장 중 오류가 발생했습니다.');
         }
       },
 
       fnCancelReservation() {
-        if (!confirm('정말로 이 예약을 삭제하시겠습니까?')) return;
-
+        if (!confirm('정말로 예약을 취소하시겠습니까?')) return;
         $.ajax({
-          url: '/api/reservation/delete',
-          type: 'POST',
-          contentType: 'application/json',
+          url: '/api/reservation/delete', type: 'POST', contentType: 'application/json',
           data: JSON.stringify({ resNum: this.reservation.resNum }),
-          success: () => {
-            alert('예약이 삭제되었습니다.');
-            window.location.href = '/main-list.do';
-          },
-          error: (jqXHR) => {
-            alert('삭제 실패 (' + jqXHR.status + ')');
-          }
+          success: () => { alert('삭제되었습니다.'); window.location.href = '/main-list.do'; },
+          error: () => alert('삭제 실패')
         });
       },
 
+      // ✅ [수정됨 2] 날짜 그룹핑 및 자동 계산
       groupPoisByDate(list) {
-        const sorted = [].concat(list || []).sort((a, b) => new Date(a.reservDate) - new Date(b.reservDate));
+        if (!list || list.length === 0) return;
+        
+        // 기준일(시작일) 가져오기 - 시간 정보 제거하고 처리
+        let startDt = new Date();
+        if (this.reservation.startDate) {
+            const s = String(this.reservation.startDate).replace(' ', 'T').substring(0, 10);
+            const d = new Date(s);
+            if (!isNaN(d.getTime())) startDt = d;
+        }
+
+        list.forEach(p => {
+            // 이미 날짜가 잘 들어있으면 패스
+            if (p.reservDate && p.reservDate !== 'null' && p.reservDate.length >= 10) return;
+            
+            // day 값 확인 (day, dayNum, nDay 등 다양한 변수명 대응)
+            const dVal = p.day || p.dayNum || p.nDay || p.jcnt;
+            const dNum = parseInt(dVal);
+            
+            if (!isNaN(dNum)) {
+                const calcDate = new Date(startDt);
+                calcDate.setDate(calcDate.getDate() + (dNum - 1));
+                
+                const yyyy = calcDate.getFullYear();
+                const mm = String(calcDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(calcDate.getDate()).padStart(2, '0');
+                p.reservDate = `${yyyy}-${mm}-${dd}`;
+            }
+        });
+
+        const sorted = list.sort((a, b) => {
+            if (!a.reservDate) return 1; if (!b.reservDate) return -1;
+            return a.reservDate.localeCompare(b.reservDate);
+        });
+
         const grouped = {};
         sorted.forEach(p => {
-          const d = this.formatDate(p.reservDate);
-          if (!grouped[d]) grouped[d] = [];
-          grouped[d].push(p);
+            const d = this.formatDate(p.reservDate);
+            const key = d || "날짜 미정";
+            if (!grouped[key]) grouped[key] = [];
+            grouped[key].push(p);
         });
-        this.itineraryByDate = grouped;
-        if (Object.keys(grouped).length > 0) this.activeDate = Object.keys(grouped)[0];
-      },
 
-      setActiveDate(d) {
-        this.activeDate = d;
-        this.clearRoute();
+        this.itineraryByDate = grouped;
+        const keys = Object.keys(grouped).sort();
+        if (keys.length > 0) this.activeDate = keys[0];
       },
+      
+      setActiveDate(d) { this.activeDate = d; this.clearRoute(); },
 
       fnMemberPoint() {
         const self = this;
         $.ajax({
-          url: "/point/recent.dox",
-          dataType: "json",
-          type: "POST",
-          data: { userId: self.userId },
-          success: function (data) { self.info = (data && data.info) ? data.info : {}; },
-          error: function () { self.info = {}; }
+          url: "/point/recent.dox", type: "POST", data: { userId: self.userId },
+          success: (res) => { self.info = (res && res.info) ? res.info : { totalPoint: 0 }; },
+          error: () => { self.info = { totalPoint: 0 }; }
         });
       },
 
       limitPoint() {
-        this.usingPoint = Math.floor(Number(this.usingPoint || 0));
-        const max = Number(this.info.totalPoint || 0);
-        if (this.usingPoint > max) this.usingPoint = max;
-        if (this.usingPoint < 0 || isNaN(this.usingPoint)) this.usingPoint = 0;
+        let val = parseInt(this.usingPoint);
+        const max = parseInt(this.info.totalPoint || 0);
+        if (isNaN(val) || val < 0) val = 0;
+        if (val > max) val = max;
+        this.usingPoint = val;
       }
     },
 
-    mounted() {
-      try {
-        // ✅ JSP에서 내려준 JSON
-        const reservationJson = '<c:out value="${reservationJson}" escapeXml="false" />';
-        const poiListJson = '<c:out value="${poiListJson}" escapeXml="false" />';
+    
+	mounted() {
+	      try {
+	        const rawRes = JSON.parse('<c:out value="${reservationJson}" escapeXml="false" />' || '{}');
+	        const rawPoi = JSON.parse('<c:out value="${poiListJson}" escapeXml="false" />' || '[]');
 
-        this.reservation = JSON.parse(reservationJson || '{}');
-        this.reservation.packname = this.reservation.packName || this.reservation.packname || '';
-        if (this.reservation.descript) this.memo = this.reservation.descript;
+	        console.log("=== [DEBUG] 서버 데이터 확인 ===", rawRes);
 
-        const rawPoiList = JSON.parse(poiListJson || '[]');
-        this.poiList = (rawPoiList || []).filter(p => p.contentId && !isNaN(p.contentId) && Number(p.contentId) > 0);
+	        // 1. 기본 정보 매핑
+	        this.reservation.resNum = rawRes.resNum || rawRes.RES_NUM || 0;
+	        this.reservation.packname = rawRes.packName || rawRes.packname || rawRes.PACK_NAME || '';
+	        
+	        // 날짜 처리
+	        const sDate = rawRes.startDate || rawRes.sdate || rawRes.S_DATE || rawRes.start_date || '';
+	        const eDate = rawRes.endDate || rawRes.edate || rawRes.E_DATE || rawRes.end_date || '';
+	        this.reservation.startDate = sDate.length > 10 ? sDate.substring(0, 10) : sDate;
+	        this.reservation.endDate = eDate.length > 10 ? eDate.substring(0, 10) : eDate;
 
-        // ✅ 숙소 contentId 세팅
-        this.setAccContentIdFromPois();
+	        this.reservation.themNum = rawRes.themNum || rawRes.themnum || rawRes.THEM_NUM || '';
+	        this.reservation.descript = rawRes.descript || rawRes.DESCRIPT || '';
 
-        // ✅ 일정 그룹핑
-        this.groupPoisByDate(this.poiList);
+	        // 2. 총 예산
+	        this.reservation.price = rawRes.price || rawRes.budget || rawRes.total_price || rawRes.total_budget || rawRes.PRICE || 0;
 
-        // ✅ 지도
-        const validMapPois = this.poiList.filter(p => p.mapY != null && p.mapX != null && !isNaN(p.mapY) && !isNaN(p.mapX));
-        if (validMapPois.length > 0) this.initializeMap(validMapPois);
-        else document.getElementById('map-container').innerText = 'DB에 저장된 좌표 정보가 없습니다.';
+	        // 3. [핵심 수정] 예산 상세 매핑 (금액이 없으면 비율로 계산)
+	        // 먼저 직접적인 금액(Budget)이 있는지 확인
+	        this.reservation.etcBudget = rawRes.etcBudget || rawRes.etc_budget || rawRes.ETC_BUDGET || 0;
+	        this.reservation.accomBudget = rawRes.accomBudget || rawRes.accom_budget || rawRes.ACCOM_BUDGET || 0;
+	        this.reservation.foodBudget = rawRes.foodBudget || rawRes.food_budget || rawRes.FOOD_BUDGET || 0;
+	        this.reservation.actBudget = rawRes.actBudget || rawRes.act_budget || rawRes.ACT_BUDGET || 0;
 
-        // ✅ 포인트
-        this.fnMemberPoint();
+	        // 4. [여기가 중요!] 금액이 0원이고 'budgetWeights' 묶음(비율)이 있는 경우 자동 계산
+	        const total = Number(this.reservation.price);
+	        if (total > 0 && this.reservation.accomBudget === 0) {
+	            
+	            // Case A: budgetWeights 객체로 묶여서 오는 경우 (가장 유력)
+	            if (rawRes.budgetWeights) {
+	                console.log("=== [알림] budgetWeights 발견! 비율로 금액을 자동 계산합니다. ===");
+	                const w = rawRes.budgetWeights; // { etc: 10, accom: 40... }
+	                
+	                this.reservation.etcBudget = Math.floor(total * ((w.etc || 0) / 100));
+	                this.reservation.accomBudget = Math.floor(total * ((w.accom || 0) / 100));
+	                this.reservation.foodBudget = Math.floor(total * ((w.food || 0) / 100));
+	                this.reservation.actBudget = Math.floor(total * ((w.act || 0) / 100));
+	            } 
+	            // Case B: 풀어진 변수명으로 오는 경우 (etc_ratio 등)
+	            else {
+	                const etcW = rawRes.etc_ratio || rawRes.etcRatio || 0;
+	                const accomW = rawRes.accom_ratio || rawRes.accomRatio || 0;
+	                const foodW = rawRes.food_ratio || rawRes.foodRatio || 0;
+	                const actW = rawRes.act_ratio || rawRes.actRatio || 0;
 
-      } catch (e) {
-        console.error('[mounted error]', e);
-        alert('페이지 데이터 파싱 중 오류가 발생했습니다. (콘솔 확인)');
-      }
-    }
+	                if (etcW || accomW || foodW || actW) {
+	                    console.log("=== [알림] 비율 변수 발견! 금액을 자동 계산합니다. ===");
+	                    const divider = (etcW + accomW + foodW + actW) > 1.5 ? 100 : 1; // 합이 100이면 나누기 100, 1.0이면 나누기 1
+	                    
+	                    this.reservation.etcBudget = Math.floor(total * (etcW / divider));
+	                    this.reservation.accomBudget = Math.floor(total * (accomW / divider));
+	                    this.reservation.foodBudget = Math.floor(total * (foodW / divider));
+	                    this.reservation.actBudget = Math.floor(total * (actW / divider));
+	                }
+	            }
+	        }
+	        
+	        if (this.reservation.descript) this.memo = this.reservation.descript;
+
+	        this.poiList = rawPoi.filter(p => p.contentId && Number(p.contentId) > 0);
+	        this.setAccContentIdFromPois();
+	        this.groupPoisByDate(this.poiList);
+
+	        const mapPois = this.poiList.filter(p => p.mapY && p.mapX);
+	        if (mapPois.length > 0) this.initializeMap(mapPois);
+	        else document.getElementById('map-container').innerText = '지도에 표시할 장소가 없습니다.';
+	        
+	        this.fnMemberPoint();
+
+	      } catch (e) {
+	        console.error("데이터 로딩 중 오류:", e);
+	      }
+	    }
   });
 
   app.mount('#app');
