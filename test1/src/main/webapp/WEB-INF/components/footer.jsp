@@ -183,20 +183,20 @@
         <div class="footer-bottom">
             <div class="left-area">
                 <div class="company-info" style="margin-bottom: 10px;">
-                    <span>(주)팀프로젝트</span>
-                    <span>대표: 이동준</span>
+                    <span>(주)팀프로젝트 </span>
+                    <span>대표: 이동준 </span>
                     <span>사업자등록번호: 123-45-67890</span>
                 </div>
                 <div class="company-info">
-                    <span>주소: 서울특별시 강남구 테헤란로 123</span>
+                    <span>주소: 서울특별시 강남구 테헤란로 123 </span>
                     <span>이메일: help@project.com</span>
                 </div>
                 <p style="margin-top: 15px;">&copy; 2026 Team Project. All Rights Reserved.</p>
             </div>
             
             <div class="social-icons">
-                <a href="#">Instagram</a>
-                <a href="#">Youtube</a>
+                <a href="#">Instagram </a>
+                <a href="#">Youtube </a>
                 <a href="#">Facebook</a>
             </div>
         </div>

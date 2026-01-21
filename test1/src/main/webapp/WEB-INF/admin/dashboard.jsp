@@ -145,7 +145,7 @@
           type: "POST",
           data: param,
           success: function (data) {
-            console.log(data);
+            // console.log(data);
             self.memberCnt = data.userCnt;
             self.reportCnt = data.reportCnt;
             self.unansweredCnt = data.inquiryCnt;
@@ -180,7 +180,7 @@
           type: "POST",
           data: param,
           success: function (data) {
-            console.log(data);
+            // console.log(data);
             
             if(data.result === "success" && data.topTheme) {
               self.renderTopThemeChart(data.topTheme);
@@ -211,8 +211,8 @@
           return year + '년 ' + monthNum + '월'; // *** 변경: + 연산자로 문자열 연결
         });
 
-        console.log(sortedMonths);
-        console.log(categories);
+        // console.log(sortedMonths);
+        // console.log(categories);
         
         // 각 순위별 시리즈 데이터 준비
         const rank1Data = [];

@@ -219,12 +219,14 @@
                 margin-top: 14px;
                 display: flex;
                 justify-content: center;
-                width : 200px
+                /* width : 200px */
+                width: 100%;
             }
 
             .kakaoBtn a {
-                width: 100%;
-                max-width: 100%;
+                /* width: 100%;
+                max-width: 100%; */
+                width: 200px;
                 border-radius: 10px;
                 overflow: hidden;
                 border: 1px solid var(--border);
@@ -313,14 +315,9 @@
                             <div class="brand-badge">R</div>
                             <h1 class="brand-title">READY 로그인</h1>
                         </div>
-                        <p class="brand-sub">계정으로 로그인해 주세요.</p>
+                        <!-- <p class="brand-sub">계정으로 로그인해 주세요.</p> -->
 
-                        <!-- 카카오 로그인 (상단으로 이동) -->
-                        <div class="kakaoBtn">
-                            <a :href="kakaolocation" aria-label="카카오 로그인">
-                                <img src="/img/kakao.png" alt="카카오로 로그인">
-                            </a>
-                        </div>
+                        
 
                         <!-- 아이디/비밀번호 -->
                         <div class="field" style="margin-top:16px;">
@@ -355,6 +352,13 @@
                         <div class="cta-join">
                             아직 회원이 아니시라면
                             <a @click.prevent="fnJoin" href="/member/join.do" aria-label="회원가입으로 이동">회원가입</a>
+                        </div>
+
+                        <!-- 카카오 로그인 -->
+                        <div class="kakaoBtn">
+                            <a :href="kakaolocation" aria-label="카카오 로그인">
+                                <img src="/img/kakao.png" alt="카카오로 로그인">
+                            </a>
                         </div>
                     </div>
                 </div>
