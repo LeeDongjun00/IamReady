@@ -40,14 +40,21 @@
         font-weight: 600;
         font-size: 16px;
         transition: color 0.2s;
+        padding: 5px 0; /* 클릭 영역 확보 */
     }
 
     nav a:hover {
         color: #2c3e50;
     }
 
+    /* 선택된 카테고리 강조 스타일 */
+    nav a.active {
+        color: #0ea5e9 !important; /* 예쁜 파란색 (Sky Blue) */
+        font-weight: 800;          /* 글자 두껍게 */
+    }
+
     /* ========================================= */
-    /* ✅ [디자인] 로그인 버튼 (알약 모양) */
+    /* 로그인 버튼 (알약 모양 + 텍스트 유지) */
     /* ========================================= */
     .login-btn button {
         background-color: #2c3e50; /* 브랜드 컬러 */
@@ -70,13 +77,13 @@
     }
 
     /* ========================================= */
-    /* 유저 프로필 배지 (로그인 후) */
+    /* ✅ 유저 프로필 배지 (로그인 후) */
     /* ========================================= */
     .user-profile-badge {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 16px 6px 8px; /* 왼쪽 여백은 아이콘 때문에 조금 줄임 */
+        padding: 6px 16px 6px 8px; 
         background-color: #f8f9fa;
         border: 1px solid #e9ecef;
         border-radius: 50px;
@@ -108,18 +115,16 @@
         font-weight: 400;
     }
 
-    /* 등급 아이콘/라벨 스타일 (Vue 바인딩 되는 부분) */
     .grade-icon-area {
         display: flex;
         align-items: center;
         justify-content: center;
-        /* 필요 시 크기 조절하세요 */
     }
 
     /* 드롭다운 메뉴 */
     .logout-dropdown {
         position: absolute;
-        top: 55px; /* 배지 바로 아래 */
+        top: 55px;
         right: 0;
         width: 200px;
         background: #fff;
@@ -155,7 +160,7 @@
     .logout-dropdown a {
         display: block;
         width: 100%;
-        color: inherit; /* 링크 색상 상속 */
+        color: inherit;
         text-decoration: none;
     }
 
@@ -169,7 +174,7 @@
     <header>
         <div class="logo">
             <a href="/main-list.do">
-                <img src="/img/logo/projectLogo.jpg" alt="Logo">
+                <img src="/img/logo/projectLogo.jpg" alt="">
             </a>
         </div>
         <nav>
@@ -180,7 +185,7 @@
                 <li class="main-menu"><a href="/main-Notice.do">공지사항</a></li>
                 <% if("A".equals(userStatus)) { %>
                     <li class="main-menu">
-                        <a href="/admin-page.do" style="color: #e74c3c;">관리자 페이지</a>
+                        <a href="/admin-page.do">관리자 페이지</a>
                     </li>
                 <% } %>
             </ul>
@@ -224,7 +229,6 @@
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 <script>
-    // JSP 스크립틀릿으로 넘어온 데이터 JS에서 사용
     window.sessionData = {
         id: "<%= userId %>",
         status: "<%= userStatus %>",
@@ -245,7 +249,6 @@
         if(menu) menu.style.display = showLogoutMenu ? 'block' : 'none';
     }
 
-    // 화면 아무 곳이나 클릭하면 드롭다운 닫기 (UX 개선)
     document.addEventListener('click', function(e) {
         const badge = document.querySelector('.user-profile-badge');
         const menu = document.getElementById('logoutMenu');
@@ -254,6 +257,20 @@
             showLogoutMenu = false;
             menu.style.display = 'none';
         }
+    });
+
+    // ✅ [NEW] 현재 페이지 메뉴 강조 (Active 상태 자동 적용)
+    document.addEventListener("DOMContentLoaded", function() {
+        const currentPath = window.location.pathname; // 현재 주소 (예: /reservation.do)
+        const menuLinks = document.querySelectorAll('.main-menu a');
+
+        menuLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            // 현재 주소가 링크 주소를 포함하고 있으면 active 클래스 추가
+            if (href && currentPath.includes(href)) {
+                link.classList.add('active');
+            }
+        });
     });
 </script>
 
