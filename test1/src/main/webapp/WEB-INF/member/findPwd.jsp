@@ -500,7 +500,7 @@
                     /* 문자 인증 전송 */
                     fnSms() {
                         let param = {
-                            phone : self.phone1+self.phone2+self.phone3
+                            phone : this.phone1+this.phone2+this.phone3
                         };
                         $.ajax({
                             url: "/send-one",
@@ -542,6 +542,7 @@
                         if (this.certifiStr == this.inputNum) {
                             alert("문자인증 완료");
                             this.certifiFlg = true;
+                            this.changeFlg = true;
                         } else {
                             alert("문자인증 실패");
                         }

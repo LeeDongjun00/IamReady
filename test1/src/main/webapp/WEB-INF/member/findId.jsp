@@ -400,9 +400,13 @@
                     },
 
                     fnSms() {
+                        // console.log(this.phone1);
+                        // console.log(this.phone2);
+                        // console.log(this.phone3);
                         var param = {
-                            phone : self.phone1+self.phone2+self.phone3
+                            phone: this.phone1 + this.phone2 + this.phone3
                         };
+                        // console.log(param);
                         $.ajax({
                             url: "/send-one",
                             dataType: "json",
