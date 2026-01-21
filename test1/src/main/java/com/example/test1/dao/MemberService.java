@@ -73,9 +73,6 @@ public class MemberService {
 		String message = "";
 		String result = "";
 		
-		
-		
-		
 		if(member != null) {
 			Boolean loginFlg = passwordEncoder.matches((String) map.get("pwd"), member.getPassword());
 //			System.out.println(loginFlg);

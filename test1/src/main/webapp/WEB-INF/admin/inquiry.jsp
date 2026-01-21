@@ -375,7 +375,7 @@
             </div>
 
             <!-- 답변 작성 폼 -->
-            <div v-if="userId==='admin01'" style="margin-top: 20px">
+            <div v-if="userStatus==='A'" style="margin-top: 20px">
               <textarea
                 v-model="newComment"
                 placeholder="답변을 입력하세요."
@@ -422,6 +422,7 @@
         data() {
           return {
             userId: "${sessionId}",
+            userStatus : "${sessionStatus}",
             list: [],
             keyword: "",
             searchOption: "all",
@@ -539,6 +540,7 @@
         },
         mounted() {
           this.fnList();
+          // console.log("User Status:", this.userStatus)
         },
       });
 

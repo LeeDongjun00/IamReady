@@ -274,8 +274,8 @@
             formatter: function() {
               return '<b>' + this.x + '</b><br/>' +
                     '<b>테마:</b> ' + this.point.name + '<br/>' +
-                    '<b>예약 건수:</b> ' + this.y + '건<br/>' +
-                    '<b>총 매출:</b> ' + this.point.amount.toLocaleString() + '원';
+                    '<b>예약 건수:</b> ' + this.y + '건<br/>' 
+                    // +'<b>총 매출:</b> ' + this.point.amount.toLocaleString() + '원';
             }
           },
           plotOptions: {
@@ -316,7 +316,15 @@
     mounted() {
       let self = this;
       self.fnGetCnt();
-      self.getTopTheme();
+      // self.getTopTheme();
+
+      // Highcharts 로드 대기
+      const checkHighcharts = setInterval(() => {
+        if (typeof Highcharts !== 'undefined') {
+          clearInterval(checkHighcharts);
+          self.getTopTheme();
+        }
+      }, 50);
     }
   });
   window.currentVueApp = app;
