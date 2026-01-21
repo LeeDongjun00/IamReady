@@ -409,8 +409,8 @@
     </head>
 
     <body>
+        <%@ include file="components/header.jsp" %>
         <div id="app">
-            <%@ include file="components/header.jsp" %>
 
                 <div class="mypage-container">
                     <h2>📝 나의 작성글 / 💬 답글</h2>

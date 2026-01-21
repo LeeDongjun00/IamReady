@@ -30,11 +30,20 @@
             text-align: center;
             font-size: 15px;
         }
-        th {
-            background-color: beige;
+        thead th{
+            background-color: #2563eb;
+            color: white;
         }
-        tr:nth-child(even) {
+        tbody tr:hover > td {
+            background-color: lightblue;
+            /* cursor: pointer; */
+        }
+        /* tr:nth-child(even) {
             background-color: azure;
+        } */
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
         .admin-layout {
             display: flex;

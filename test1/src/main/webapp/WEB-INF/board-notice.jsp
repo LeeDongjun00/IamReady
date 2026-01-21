@@ -300,9 +300,9 @@
   </head>
 
   <body>
+    <!-- 헤더 -->
+    <%@ include file="components/header.jsp" %>
     <div id="app">
-      <!-- 헤더 -->
-      <%@ include file="components/header.jsp" %>
 
       <!-- 검색/필터 -->
       <section class="board-filter">

@@ -38,17 +38,29 @@
         color: #64748b;
       }
 
-      /* 필터 */
-      .board-filter {
+      /* 전체 컨테이너 */
+      .board-container {
         width: 82.5%;
-        margin: 20px auto;
-        padding: 18px;
+        margin: 20px auto 40px;
         background: #fff;
         border-radius: 14px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        padding: 18px;
+      }
+
+      /* 필터 */
+      .board-filter {
+        width: 100%;
+        margin: 0 0 20px 0;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
         display: flex;
         justify-content: space-between;
         gap: 10px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e5e7eb;
       }
       .board-filter select,
       .board-filter input {
@@ -61,14 +73,14 @@
         padding: 10px 14px;
         border-radius: 10px;
         border: none;
-        background: #6366f1;
+        background: #2563eb;
         color: #fff;
         font-weight: 700;
         cursor: pointer;
       }
 
       /* 테이블 */
-      table {
+      /* table {
         width: 82.5%;
         margin: 0 auto;
         border-collapse: collapse;
@@ -88,11 +100,11 @@
         padding: 14px;
         font-size: 15px;
         border-bottom: 1px solid #e5e7eb;
-      }
-      tbody tr:hover {
+      } */
+      /* tbody tr:hover {
         background: #f5f3ff;
         cursor: pointer;
-      }
+      } */
       .col-num {
         width: 80px;
         text-align: center;
@@ -261,84 +273,90 @@
         font-size: 12px;
         color: #64748b;
       }
+
+      .filter-con {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* 여기서 간격 조절 */
+      }
     </style>
   </head>
 
   <body>
     <div id="inquiryApp">
-      <h2 class="inquiry-title">문의 게시판</h2>
-      <p class="inquiry-desc">서비스 이용 중 궁금한 사항을 문의해주세요.</p>
+      <h2 class="inquiry-title">문의 관리</h2>
+      <!-- <p class="inquiry-desc">서비스 이용 중 궁금한 사항을 문의해주세요.</p> -->
 
-      <!-- SEARCH -->
-      <div class="board-filter">
-        <div class="filter-con">
-          <select v-model="searchOption">
-            <option value="all">전체</option>
-            <option value="title">제목</option>
-            <option value="id">작성자</option>
-          </select>
-          <input v-model="keyword" placeholder="검색어 입력" @keyup.enter="page=1; fnList()" />
-          <button @click="page=1; fnList()">검색</button>
+      <div class="board-container">
+        <!-- SEARCH -->
+        <div class="board-filter">
+          <div class="filter-con">
+            <select v-model="searchOption">
+              <option value="all">전체</option>
+              <option value="title">제목</option>
+              <option value="id">작성자</option>
+            </select>
+            <input v-model="keyword" placeholder="검색어 입력" @keyup.enter="page=1; fnList()" />
+            <button @click="page=1; fnList()">검색</button>
+          </div>
+          <div class="filter-row">
+            <select v-model="pageSize" @change="fnChangePageSize()" title="페이지 크기">
+              <option value="5">5개씩</option>
+              <option value="10">10개씩</option>
+              <option value="15">15개씩</option>
+            </select>
+          </div>
+          <!-- <div class="processedFilter">
+            <select v-model="processedFilter" @change="fnChangeProcessedFilter()" title="처리 상태">
+              <option value="all">전체</option>
+              <option value="processed">답변완료</option>
+              <option value="unprocessed">미답변</option>
+            </select>
+          </div> -->
         </div>
-        <div class="filter-row">
-          <select v-model="pageSize" @change="fnChangePageSize()" title="페이지 크기">
-            <option value="5">5개씩</option>
-            <option value="10">10개씩</option>
-            <option value="15">15개씩</option>
-          </select>
+        <!-- TABLE -->
+        <table>
+          <thead>
+            <tr>
+              <th class="col-num">번호</th>
+              <th class="col-author">작성자</th>
+              <th>제목</th>
+              <th class="col-date">작성일</th>
+              <th>답변 상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in list" :key="item.boardNo" @click="openPopup(item.boardNo)">
+              <td class="col-num">{{ item.boardNo }}</td>
+              <td class="col-author">{{ item.userId }}</td>
+              <td>
+                <span class="type-SQ">문의</span>
+                {{ item.title }}
+                <span v-if="item.commentCnt" class="comment-pill">+{{ item.commentCnt }}</span>
+              </td>
+              <td class="col-date">{{ item.cdateTime }}</td>
+              <td>
+                <button class="reply-btn" :disabled="item.commentCnt>0" @click.stop="goReply(item.boardNo)">
+                  {{ item.commentCnt > 0 ? "답변완료" : "미답변" }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- PAGINATION -->
+        <div class="pagination">
+          <a class="page-btn" v-if="page>1" @click="fnMove(-1)">◀</a>
+          <a
+            class="page-num"
+            v-for="num in (pageGroupEnd-pageGroupStart+1)"
+            :key="num"
+            :class="{active: page===(pageGroupStart+num-1)}"
+            @click="fnPage(pageGroupStart+num-1)"
+          >
+            {{ pageGroupStart + num - 1 }}
+          </a>
+          <a class="page-btn" v-if="page<totalPages" @click="fnMove(1)">▶</a>
         </div>
-        <!-- <div class="processedFilter">
-          <select v-model="processedFilter" @change="fnChangeProcessedFilter()" title="처리 상태">
-            <option value="all">전체</option>
-            <option value="processed">답변완료</option>
-            <option value="unprocessed">미답변</option>
-          </select>
-        </div> -->
-      </div>
-
-      <!-- TABLE -->
-      <table>
-        <thead>
-          <tr>
-            <th class="col-num">번호</th>
-            <th class="col-author">작성자</th>
-            <th>제목</th>
-            <th class="col-date">작성일</th>
-            <th>답변상태</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in list" :key="item.boardNo" @click="openPopup(item.boardNo)">
-            <td class="col-num">{{ item.boardNo }}</td>
-            <td class="col-author">{{ item.userId }}</td>
-            <td>
-              <span class="type-SQ">문의</span>
-              {{ item.title }}
-              <span v-if="item.commentCnt" class="comment-pill">+{{ item.commentCnt }}</span>
-            </td>
-            <td class="col-date">{{ item.cdateTime }}</td>
-            <td>
-              <button class="reply-btn" :disabled="item.commentCnt>0" @click.stop="goReply(item.boardNo)">
-                {{ item.commentCnt > 0 ? "답변완료" : "미답변" }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- PAGINATION -->
-      <div class="pagination">
-        <a class="page-btn" v-if="page>1" @click="fnMove(-1)">◀</a>
-        <a
-          class="page-num"
-          v-for="num in (pageGroupEnd-pageGroupStart+1)"
-          :key="num"
-          :class="{active: page===(pageGroupStart+num-1)}"
-          @click="fnPage(pageGroupStart+num-1)"
-        >
-          {{ pageGroupStart + num - 1 }}
-        </a>
-        <a class="page-btn" v-if="page<totalPages" @click="fnMove(1)">▶</a>
       </div>
 
       <!-- POPUP -->

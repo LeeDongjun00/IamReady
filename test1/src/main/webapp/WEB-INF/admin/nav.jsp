@@ -55,7 +55,7 @@
             <div class="navBox">
                 <div class="navChild active" data-type="dashboard">대시보드</div>
                 <div class="navChild" data-type="report">신고 관리</div>
-                <div class="navChild" data-type="inquiry">문의</div>
+                <div class="navChild" data-type="inquiry">문의 관리</div>
                 <div class="navChild" data-type="userManage">회원 관리</div>
                 <!-- <div class="navChild" data-type="hsdf">hsdf</div>
                 <div class="navChild" data-type="t645y">t645y</div> -->

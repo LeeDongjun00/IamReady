@@ -12,6 +12,8 @@
     }
 
     .user-container {
+      width: 82.5%;
+      margin: 20px auto 40px;
       background: #fff;
       padding: 24px;
       border-radius: 12px;
@@ -21,6 +23,9 @@
     .search-con {
       display: flex;
       justify-content: space-between;
+      /* padding-bottom: 16px; */
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .search-box {
@@ -63,25 +68,25 @@
     border-color: #2563eb;
   }
 
-    table {
+    /* table {
       width: 100%;
       border-collapse: collapse;
-    }
+    } */
 
-    thead {
+    /* thead {
       background: #f1f5f9;
-    }
+    } */
 
-    th,
+    /* th,
     td {
       padding: 14px;
       text-align: center;
       border-bottom: 1px solid black;
-    }
+    } */
 
-    tr:hover {
+    /* tr:hover {
       background: #f9fafb;
-    }
+    } */
 
     .status {
       padding: 6px 12px;
@@ -258,9 +263,16 @@
     .cnt-text.clickable:hover {
       background: #fecaca;
     }
+
+    .userManage-title {
+      width: 82.5%;
+      margin: 32px auto 6px;
+      font-size: 22px;
+      font-weight: 800;
+    }
   </style>
 
-  <h2>👤 회원 관리</h2>
+  <div class="userManage-title">회원 관리</div>
 
   <div id="userManageApp" class="user-container">
     <!-- 검색 -->
@@ -283,6 +295,8 @@
       </div>
     </div>
 
+
+    
       <!-- 유저 목록 -->
       <div>
         <table>
@@ -295,7 +309,7 @@
               <th>이메일</th>
               <th>상태</th>
               <th>가입일</th>
-              <th>로그인실패횟수</th>
+              <th>로그인 실패 횟수</th>
               <th>상세정보</th>
             </tr>
           </thead>
