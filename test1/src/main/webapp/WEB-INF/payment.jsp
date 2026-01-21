@@ -163,12 +163,13 @@
                   console.log(rsp);
                   self.paymentUid = rsp.imp_uid;
                   self.fnAdd();
+                  location.href = "/main-list.do";
                 } else {
                   // 결제 실패 시
                   alert("오류가 발생했습니다.");
                   return;
                 }
-              }
+              },
             );
           },
           fnAdd() {
