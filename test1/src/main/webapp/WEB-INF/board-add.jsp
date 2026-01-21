@@ -427,7 +427,6 @@
 
                         <div class="form-item board-type-box">
                             <select v-model="type">
-                                <option v-if="sessionStatus==='A'" value="N">공지사항</option>
                                 <option value="F">자유게시판</option>
                                 <option value="Q">질문게시판</option>
                                 <option value="SQ">문의게시판</option>
