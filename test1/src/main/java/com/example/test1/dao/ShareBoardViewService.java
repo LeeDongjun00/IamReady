@@ -55,7 +55,7 @@ public class ShareBoardViewService {
 		
 			String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
                     + "?MobileOS=ETC&MobileApp=AppTest"
-                    + "&ServiceKey=" + encodedKey
+                    + "&ServiceKey=" + apiKey
                     + "&contentId=" + contentId;
 
             RestTemplate restTemplate = new RestTemplate();
@@ -100,100 +100,81 @@ public class ShareBoardViewService {
     }
   //contentId 리스트
     public Map<Integer, List<HashMap<String, Object>>> fetchAllInfo(HashMap<String, Object> map) {
-
         Map<Integer, List<HashMap<String, Object>>> dayMap = new HashMap<>();
-
-        // ✅ contentId 기준 캐시 (API 중복 호출 방지)
         Map<String, List<HashMap<String, Object>>> infoCache = new HashMap<>();
-
-        // DB에서 contentId 리스트 가져오기
         List<Share> shares = ShareBoardMapper.sharInfo(map);
 
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
         for (Share share : shares) {
+            futures.add(CompletableFuture.runAsync(() -> {
+                String contentId = String.valueOf(share.getContentId());
+                if (contentId == null || contentId.isEmpty()) return;
 
-            String contentId = String.valueOf(share.getContentId())  != null
-                    ? String.valueOf(share.getContentId())
-                    : null;
-            if (contentId == null || contentId.isEmpty()) continue;
+                int dayNum = share.getDayNum();
+                String reserveDate = share.getDay();
+                List<HashMap<String, Object>> infoList;
 
-            int dayNum = share.getDayNum();
-            String reserveDate = share.getDay();
-
-            List<HashMap<String, Object>> infoList;
-
-            // ===============================
-            // ✅ 캐시 확인
-            // ===============================
-            if (infoCache.containsKey(contentId)) {
-
-                // 🔹 캐시된 데이터 복사 (day, dayNum 꼬임 방지)
-                infoList = new ArrayList<>();
-                for (HashMap<String, Object> cached : infoCache.get(contentId)) {
-                    HashMap<String, Object> copy = new HashMap<>(cached);
-                    copy.put("day", reserveDate);
-                    copy.put("dayNum", dayNum);
-                    infoList.add(copy);
-                }
-
-            } else {
-
-                boolean success = false;
-                int attempts = 0;
-                int maxRetries = 2; // ✅ 5 → 2로 줄임
-
-                infoList = new ArrayList<>();
-
-                while (!success && attempts < maxRetries) {
-                    try {
-                        infoList = getInfo(contentId, reserveDate, dayNum);
-
-                        // 🔹 캐시에 "원본" 저장
-                        List<HashMap<String, Object>> cacheCopy = new ArrayList<>();
-                        for (HashMap<String, Object> info : infoList) {
-                            cacheCopy.add(new HashMap<>(info));
+                synchronized (infoCache) { // 캐시 동시 접근 방지
+                    if (infoCache.containsKey(contentId)) {
+                        infoList = new ArrayList<>();
+                        for (HashMap<String, Object> cached : infoCache.get(contentId)) {
+                            HashMap<String, Object> copy = new HashMap<>(cached);
+                            copy.put("day", reserveDate);
+                            copy.put("dayNum", dayNum);
+                            infoList.add(copy);
                         }
-                        infoCache.put(contentId, cacheCopy);
+                    } else {
+                        boolean success = false;
+                        int attempts = 0;
+                        int maxRetries = 2;
+                        infoList = new ArrayList<>();
 
-                        success = true;
-                    } catch (Exception e) {
-                        attempts++;
-                        try {
-                            Thread.sleep(500); // 1초 → 0.5초
-                        } catch (InterruptedException ie) {
-                            Thread.currentThread().interrupt();
+                        while (!success && attempts < maxRetries) {
+                            try {
+                                infoList = getInfo(contentId, reserveDate, dayNum);
+
+                                // 캐시에 저장
+                                List<HashMap<String, Object>> cacheCopy = new ArrayList<>();
+                                for (HashMap<String, Object> info : infoList) {
+                                    cacheCopy.add(new HashMap<>(info));
+                                }
+                                infoCache.put(contentId, cacheCopy);
+
+                                success = true;
+                            } catch (Exception e) {
+                                attempts++;
+                                try { Thread.sleep(500); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+                            }
                         }
                     }
                 }
 
-                if (!success) {
-                    infoList = new ArrayList<>();
+                Double rating = share.getRating();
+                String content = share.getContent();
+
+                synchronized (dayMap) { // dayMap 동시 접근 방지
+                    for (HashMap<String, Object> infoMap : infoList) {
+                        infoMap.put("dayNum", dayNum);
+                        if (rating != null) {
+                            infoMap.put("rating", rating);
+                            infoMap.put("content", content);
+                        } else {
+                            infoMap.put("rating", 0);
+                        }
+                        dayMap.computeIfAbsent(dayNum, k -> new ArrayList<>()).add(infoMap);
+                    }
                 }
-            }
-
-            Double rating = share.getRating();
-            String content = share.getContent();
-
-            // ===============================
-            // dayNum 기준으로 결과 저장
-            // ===============================
-            for (HashMap<String, Object> infoMap : infoList) {
-
-                infoMap.put("dayNum", dayNum);
-
-                if (rating != null) {
-                    infoMap.put("rating", rating);
-                    infoMap.put("content", content);
-                } else {
-                    infoMap.put("rating", 0);
-                }
-
-                dayMap.computeIfAbsent(dayNum, k -> new ArrayList<>()).add(infoMap);
-            }
+            }));
         }
+
+        // 모든 CompletableFuture가 끝날 때까지 기다리기
+        futures.forEach(f -> {
+            try { f.get(); } catch (InterruptedException | ExecutionException e) { e.printStackTrace(); }
+        });
 
         return dayMap;
     }
-
 
   //디테일 정보
     public List<HashMap<String, Object>> DetailInfo(String contentId)throws Exception {
@@ -203,7 +184,7 @@ public class ShareBoardViewService {
 		String encodedKey = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
 		
 			String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
-                    + "?ServiceKey=" + encodedKey
+                    + "?ServiceKey=" + apiKey
                     + "&MobileOS=ETC&MobileApp=AppTest"
                     + "&contentId=" + contentId;
 
