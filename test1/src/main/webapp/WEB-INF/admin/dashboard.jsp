@@ -84,7 +84,10 @@
   <!-- 상단 카드 영역 -->
   <div class="dashboard-cards">
 
-    <div class="dashboard-card">
+    <div 
+      class="dashboard-card canClick"
+      @click="goToNav('userManage')"
+    >
       <p class="card-title">총 회원수</p>
       <p class="card-value normal">{{ memberCnt }}</p>
     </div>
