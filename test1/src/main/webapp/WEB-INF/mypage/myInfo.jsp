@@ -303,7 +303,7 @@
                     <span class="buyBtn" v-if="info.status === 'U'">
                         <button @click="fnSub">구독하기</button>
                     </span>
-                    <span class="buyBtn" v-else>
+                    <span class="buyBtn" v-else-if="info.status === 'S'">
                         <span class="time-left">
                             <i class="fa-regular fa-clock"></i>
                             남은 기간: {{leftTime}}
