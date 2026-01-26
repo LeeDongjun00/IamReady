@@ -45,7 +45,7 @@
 ## 😀 팀원 구성
 | 이름 | 역할 | GitHub |
 |------|------|--------|
-| 이동준 | PM / 여행 추천·코스 생성 / 메인 페이지 | https://github.com/jun-000224 |
+| 이동준 | PM / 여행 추천·코스 생성 / 메인 페이지 | https://github.com/LeeDongjun00 |
 | 박충현 | 인증·결제·회원 관리 / 관리자 페이지 | https://github.com/3y5adf |
 | 하송화 | 커뮤니티 페이지 / 공지 페이지 | https://github.com/hasonghwa |
 | 유희연 | 리뷰·찜·예약 조회 / 메인 페이지 | https://github.com/hee8144 |
@@ -73,7 +73,7 @@
 ---
 
 ## 📽 서비스 핵심 플로우 (Service Flow)
-**IMREADY**는 복잡한 여행 준비 과정을 **'조건 입력 → 코스 최적화 → 예약'**으로 이어지는 직관적인 플로우로 제공합니다.
+**IMREADY**는 복잡한 여행 준비 과정을 '조건 입력 → 코스 최적화 → 예약'으로 이어지는 직관적인 플로우로 제공합니다.
 
 ### 1️⃣ 조건 설정 및 테마 가중치 배분
 사용자가 선호하는 여행 테마와 지역, 예산을 입력하고 각 카테고리(숙박, 식당, 체험 등)별 예산 비중을 직접 조절하여 맞춤형 추천의 기초를 만듭니다.
@@ -85,18 +85,18 @@
 ### 2️⃣ 테마 기반 추천 및 코스 최적화
 설정된 가중치를 바탕으로 추천된 장소들을 지도에서 확인하고, 드래그 앤 드롭을 통해 여행 동선을 자유롭게 최적화합니다.
 
-![코스 추천 및 편집](./images/schedule_add.png)
+<img src="./images/schedule_add.png" alt="코스 추천 및 편집" style="border: 1px solid black;">
 
 ### 3️⃣ 경로 시각화 및 최종 동선 확인
 선택된 장소들 간의 최단 경로를 **Kakao Map API**로 탐색하여 총 이동 거리와 예상 소요 시간을 실시간으로 산출합니다.
 
-![여행 경로 지도](./images/schedule_checkCar.png)
+<img src="./images/schedule_checkCar.png" alt="여행 경로 지도" style="border: 1px solid black;">
 - **주요 기능:** 차량 경로 탐색, 총 거리(km) 및 예상 시간(분) 데이터 시각화
 
 ### 4️⃣ 숙소 상세 조회 및 예약 통합 결제
 여행의 핵심인 숙박 시설의 상세 정보(객실 타입, 체크인/아웃 정보)를 확인하고, 인원 및 날짜 설정 후 즉시 예약 플로우를 진행합니다.
 
-![숙소 상세 예약](./images/reservation_acc.png)
+<img src="./images/reservation_acc.png" alt="숙소 상세 예약" style="border: 1px solid black;">
 - **주요 기능:** 객실별 실시간 가격 확인, 투숙 인원 유효성 체크, 통합 예약 시스템 연동
 
 ---
@@ -130,6 +130,3 @@
 
 ## 📕 발표 PPT
 ▶ [IMREADY 발표 자료 보기]()
-
-## 🎞 시연 영상
-▶ [IMREADY 시연 영상 보기]()
